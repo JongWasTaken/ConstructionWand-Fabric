@@ -1,0 +1,66 @@
+package pw.smto.constructionwand.integrations.jei;
+
+import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.registration.IRecipeRegistration;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import pw.smto.constructionwand.ConstructionWand;
+import pw.smto.constructionwand.Registry;
+import pw.smto.constructionwand.basics.ConfigClient;
+import pw.smto.constructionwand.basics.ConfigServer;
+@JeiPlugin
+public class ConstructionWandJeiPlugin implements IModPlugin
+{
+    private static final Identifier pluginId = new Identifier(ConstructionWand.MOD_ID, ConstructionWand.MOD_ID);
+    private static final String baseKey = ConstructionWand.MOD_ID + ".description.";
+    private static final String baseKeyItem = "item." + ConstructionWand.MOD_ID + ".";
+
+    @NotNull
+    @Override
+    @SuppressWarnings("unchecked")
+    public Identifier getPluginUid() {
+        return pluginId;
+    }
+
+    private Text keyComboText(boolean shiftOpt, Text optkeyText) {
+        String key = shiftOpt ? "sneak_opt" : "sneak";
+        return Text.translatable(baseKey + "key." + key, optkeyText).formatted(Formatting.BLUE);
+    }
+
+    @Override
+    public void registerRecipes(@NotNull IRecipeRegistration registration) {
+        Text optkeyText = Text.translatable(InputConstants.getKey(ConfigClient.OPT_KEY.get(), -1).getName())
+                .withStyle(Formatting.BLUE);
+        Text wandModeText = keyComboText(ConfigClient.SHIFTOPT_MODE.get(), optkeyText);
+        Text wandGuiText = keyComboText(ConfigClient.SHIFTOPT_GUI.get(), optkeyText);
+
+        for(RegistryObject<Item> wandSupplier : ModItems.WANDS) {
+            Item wand = wandSupplier.get();
+            ConfigServer.WandProperties wandProperties = ConfigServer.getWandProperties(wand);
+
+            String durabilityKey = wand == ModItems.WAND_INFINITY.get() ? "unlimited" : "limited";
+            Text durabilityText = Text.translatable(baseKey + "durability." + durabilityKey, wandProperties.getDurability());
+
+            registration.addIngredientInfo(new ItemStack(wand), VanillaTypes.ITEM_STACK,
+                    Text.translatable(baseKey + "wand",
+                            Text.translatable(baseKeyItem + ForgeRegistries.ITEMS.getKey(wand).getPath()),
+                            wandProperties.getLimit(), durabilityText, optkeyText, wandModeText, wandGuiText)
+            );
+        }
+
+        for(Item core : Registry.Items.CORES) {
+            registration.addIngredientInfo(new ItemStack(core), VanillaTypes.ITEM_STACK,
+                    Text.translatable(baseKey + Registries.ITEM.getId(core).getPath())
+                            .append("\n\n")
+                            .append(Text.translatable(baseKey + "core", wandModeText))
+            );
+        }
+    }
+}

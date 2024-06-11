@@ -1,0 +1,14 @@
+{
+  "type": "constructionwand:wand_upgrade",
+  "ingredients": [
+    {
+      "tag": "constructionwand:wands"
+    },
+    {
+      "tag": "constructionwand:cores"
+    }
+  ],
+  "result": {
+    "item": "constructionwand:stone_wand"
+  }
+}

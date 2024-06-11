@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "constructionwand",
+	"version": "${version}",
+	"name": "Construction Wand (Fabric)",
+	"description": "Construction Wands make building easier!\n\nWith a Construction Wand you can place multiple blocks (up to 1024) at once, extending your build on the side you're\nfacing. If that's not enough: you can upgrade your wand with additional cores, allowing you to place a block\nbehind the block you are facing, conjure blocks in mid air or destroy lots of blocks very fast.\n\nThis is a fabric port of Theta-Dev's original minecraft mod. May the odds continue to be in your favor.",
+	"authors": [
+		"JongWasTaken",
+		"Theta-Dev"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/JongWasTaken/ConstructionWand-Fabric"
+	},
+	"license": "MIT",
+	"icon": "logo.png",
+	"environment": "*",
+	"mixins": [
+		"constructionwand.mixins.json",
+		{
+			"config": "constructionwand.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"entrypoints": {
+		"main": [
+          "pw.smto.constructionwand.ConstructionWand"
+		],
+		"client": [
+			"pw.smto.constructionwand.ConstructionWandClient"
+		]
+	},
+	"accessWidener" : "constructionwand.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*",
+		"owo-lib": "*"
+	}
+}

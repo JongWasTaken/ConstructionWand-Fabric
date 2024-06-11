@@ -1,0 +1,6 @@
+accessWidener v2 named
+
+accessible method net/minecraft/client/render/WorldRenderer drawCuboidShapeOutline (Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;Lnet/minecraft/util/shape/VoxelShape;DDDFFFF)V
+accessible field net/minecraft/client/MinecraftClient renderTickCounter Lnet/minecraft/client/render/RenderTickCounter;
+accessible method net/minecraft/item/Item getMaxDamage ()I
+extendable method net/minecraft/item/Item getMaxDamage ()I
