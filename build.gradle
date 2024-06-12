@@ -88,7 +88,14 @@ processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand(Map<String, Object>.of(
+				"version", project.version.toString().split("\\+")[0],
+				"loader_version", loader_version,
+				"minecraft_version", minecraft_version,
+				"fabric_version", fabric_version.toString().split("\\+")[0],
+				"owo_version", owo_version.toString().split("\\+")[0],
+				"rei_version", rei_version
+		))
 	}
 }
 

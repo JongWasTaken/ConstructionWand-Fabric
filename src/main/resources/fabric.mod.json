@@ -9,8 +9,9 @@
 		"Theta-Dev"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/JongWasTaken/ConstructionWand-Fabric"
+		"homepage": "https://github.com/JongWasTaken/ConstructionWand-Fabric",
+		"sources": "https://github.com/JongWasTaken/ConstructionWand-Fabric",
+		"issues": "https://github.com/JongWasTaken/ConstructionWand-Fabric/issues"
 	},
 	"license": "MIT",
 	"icon": "logo.png",
@@ -35,10 +36,13 @@
 	},
 	"accessWidener" : "constructionwand.accesswidener",
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.20.1",
+		"fabricloader": ">=${loader_version}",
+		"minecraft": "~${minecraft_version}",
 		"java": ">=17",
-		"fabric-api": "*",
-		"owo-lib": "*"
+		"fabric-api": "${fabric_version}",
+		"owo-lib": "${owo_version}"
+	},
+	"suggests": {
+		"roughly-enough-items": "${rei_version}"
 	}
 }
