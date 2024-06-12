@@ -2,11 +2,9 @@ package pw.smto.constructionwand.network;
 
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
-import pw.smto.constructionwand.ConstructionWand;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public class PacketUndoBlocks
 {

@@ -3,8 +3,6 @@ package pw.smto.constructionwand.network;
 import net.minecraft.network.PacketByteBuf;
 import pw.smto.constructionwand.basics.option.IOption;
 
-import java.util.function.Supplier;
-
 public class PacketWandOption
 {
     public final String key;

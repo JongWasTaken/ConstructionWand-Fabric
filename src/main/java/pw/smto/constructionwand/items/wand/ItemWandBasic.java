@@ -4,7 +4,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import org.jetbrains.annotations.NotNull;
-import pw.smto.constructionwand.basics.ConfigServer;
 
 public class ItemWandBasic extends ItemWand
 {
@@ -20,10 +19,10 @@ public class ItemWandBasic extends ItemWand
     //    return ConfigServer.getWandProperties(this).getDurability();
     //}
 
-    //@Override
-    //public int remainingDurability(ItemStack stack) {
-    //    return stack.getMaxDamage() - stack.getDamage();
-    //}
+    @Override
+    public int remainingDurability(ItemStack stack) {
+        return stack.getMaxDamage() - stack.getDamage();
+    }
 
     @Override
     public boolean canRepair(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {

@@ -3,13 +3,11 @@ package pw.smto.constructionwand.crafting;
 import com.google.gson.JsonObject;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
@@ -31,7 +29,6 @@ public class RecipeWandUpgrade extends ShapelessRecipe
         super(new Identifier(MOD_ID, "wand_upgrade"), group, CraftingRecipeCategory.MISC, result, ingredients);
     }
 
-    /*
     @Override
     public boolean matches(@NotNull RecipeInputInventory inv, @NotNull World worldIn) {
         ItemStack wand = null;
@@ -50,8 +47,6 @@ public class RecipeWandUpgrade extends ShapelessRecipe
         if(wand == null || upgrade == null) return false;
         return !new WandOptions(wand).hasUpgrade(upgrade) && ConfigServer.getWandProperties(wand.getItem()).isUpgradeable();
     }
-
-     */
 
     @NotNull
     @Override

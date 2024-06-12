@@ -1,11 +1,14 @@
 package pw.smto.constructionwand.basics.option;
 
 import net.minecraft.item.Item;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import pw.smto.constructionwand.api.IWandUpgrade;
 import pw.smto.constructionwand.ConstructionWand;
+import pw.smto.constructionwand.api.IWandUpgrade;
 
 import java.util.ArrayList;
 

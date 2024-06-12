@@ -30,9 +30,10 @@ public class ConstructionWand implements ModInitializer
     @Override
     public void onInitialize() {
         LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
+        Registry.registerAll();
+        ConfigServer.init();
         ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.SERVER, ConfigServer.SPEC);
         ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.CLIENT, ConfigClient.SPEC);
-        Registry.registerAll();
         Network.init();
         ContainerRegistrar.register();
         CommonEvents.init();

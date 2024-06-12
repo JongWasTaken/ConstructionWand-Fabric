@@ -13,20 +13,20 @@ import java.util.List;
 
 public class ConfigServer
 {
-    public static final ForgeConfigSpec SPEC;
+    public static ForgeConfigSpec SPEC;
 
-    public static final ForgeConfigSpec.IntValue LIMIT_CREATIVE;
-    public static final ForgeConfigSpec.IntValue MAX_RANGE;
-    public static final ForgeConfigSpec.IntValue UNDO_HISTORY;
-    public static final ForgeConfigSpec.BooleanValue ANGEL_FALLING;
+    public static ForgeConfigSpec.IntValue LIMIT_CREATIVE;
+    public static ForgeConfigSpec.IntValue MAX_RANGE;
+    public static ForgeConfigSpec.IntValue UNDO_HISTORY;
+    public static ForgeConfigSpec.BooleanValue ANGEL_FALLING;
 
-    public static final ForgeConfigSpec.ConfigValue<List<?>> SIMILAR_BLOCKS;
+    public static ForgeConfigSpec.ConfigValue<List<?>> SIMILAR_BLOCKS;
     private static final String[] SIMILAR_BLOCKS_DEFAULT = {
             "minecraft:dirt;minecraft:grass_block;minecraft:coarse_dirt;minecraft:podzol;minecraft:mycelium;minecraft:farmland;minecraft:dirt_path;minecraft:rooted_dirt"
     };
 
-    public static final ForgeConfigSpec.BooleanValue TE_WHITELIST;
-    public static final ForgeConfigSpec.ConfigValue<List<?>> TE_LIST;
+    public static ForgeConfigSpec.BooleanValue TE_WHITELIST;
+    public static ForgeConfigSpec.ConfigValue<List<?>> TE_LIST;
     private static final String[] TE_LIST_DEFAULT = {"chiselsandbits"};
 
     private static final HashMap<Identifier, WandProperties> wandProperties = new HashMap<>();
@@ -83,7 +83,7 @@ public class ConfigServer
         }
 
         public int getLimit() {
-            return limit == null ? 0 : limit.get();
+            return limit == null ? 5 : limit.get();
         }
 
         public int getAngel() {
@@ -99,7 +99,7 @@ public class ConfigServer
         }
     }
 
-    static {
+    public static void init() {
         final var builder = new ForgeConfigSpec.Builder();
 
         builder.comment("This is the Server config for ConstructionWand.",

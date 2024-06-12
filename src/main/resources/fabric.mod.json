@@ -28,6 +28,9 @@
 		],
 		"client": [
 			"pw.smto.constructionwand.ConstructionWandClient"
+		],
+		"rei_client": [
+			"pw.smto.constructionwand.integrations.rei.ConstructionWandReiPlugin"
 		]
 	},
 	"accessWidener" : "constructionwand.accesswidener",

@@ -40,7 +40,6 @@ public class ActionConstruction implements IWandAction
 
         Direction placeDirection = rayTraceResult.getSide();
         BlockState targetBlock = world.getBlockState(rayTraceResult.getBlockPos());
-        // TODO: here as well (offset -> add?)
         BlockPos startingPoint = rayTraceResult.getBlockPos().add(placeDirection.getVector());
 
         // Is place direction allowed by lock?

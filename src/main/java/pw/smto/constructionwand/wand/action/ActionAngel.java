@@ -9,7 +9,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.api.IWandSupplier;
 import pw.smto.constructionwand.basics.ConfigServer;
@@ -58,7 +57,7 @@ public class ActionAngel implements IWandAction
         LinkedList<ISnapshot> placeSnapshots = new LinkedList<>();
         if(!player.isCreative() && !ConfigServer.ANGEL_FALLING.get() && player.fallDistance > 10) return placeSnapshots;
         Vec3d playerVec = WandUtil.entityPositionVec(player);
-        Vec3d lookVec = player.getEyePos().multiply(2, 2, 2);
+        Vec3d lookVec = player.getRotationVector().multiply(2, 2, 2);
         Vec3d placeVec = playerVec.add(lookVec);
         BlockPos currentPos = WandUtil.posFromVec(placeVec);
 

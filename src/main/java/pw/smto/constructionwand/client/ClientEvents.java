@@ -1,39 +1,27 @@
 package pw.smto.constructionwand.client;
 
-import io.wispforest.owo.ui.event.KeyPress;
-import io.wispforest.owo.util.EventSource;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.input.Input;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.basics.ConfigClient;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
-import pw.smto.constructionwand.network.PacketQueryUndo;
-import pw.smto.constructionwand.network.PacketWandOption;
 
 public class ClientEvents
 {
     private static boolean optPressed = false;
     private static long lastClickTime = 0;
-
+    @Environment(EnvType.CLIENT)
     public static void init() {
         // send OPT key state to server
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {

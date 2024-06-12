@@ -1,6 +1,9 @@
 package pw.smto.constructionwand.items.wand;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureMap;
@@ -95,15 +98,14 @@ public abstract class ItemWand extends Item implements ICustomItemModel
         return Integer.MAX_VALUE;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(@NotNull ItemStack itemstack, World worldIn, @NotNull List<Text> lines, @NotNull TooltipContext extraInfo) {
         WandOptions options = new WandOptions(itemstack);
         int limit = options.cores.get().getWandAction().getLimit(itemstack);
-
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
-
         // +SHIFT tooltip: show all options + installed cores
-        if(true) { // TODO: Screen.hasShiftDown()
+        if(Screen.hasShiftDown()) {
             for(int i = 1; i < options.allOptions.length; i++) {
                 IOption<?> opt = options.allOptions[i];
                 lines.add(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
@@ -127,6 +129,7 @@ public abstract class ItemWand extends Item implements ICustomItemModel
                     .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.WHITE)));
             lines.add(Text.translatable(langTooltip + "shift").formatted(Formatting.AQUA));
         }
+
     }
 
     public static void optionMessage(PlayerEntity player, IOption<?> option) {

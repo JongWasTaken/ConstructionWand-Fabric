@@ -31,7 +31,7 @@ import java.util.function.Predicate;
 public class WandUtil
 {
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
-        return ItemStack.areEqual(stackA, stackB);
+        return ItemStack.areItemsEqual(stackA, stackB);
     }
 
     public static boolean stackEquals(ItemStack stackA, Item item) {
@@ -55,7 +55,7 @@ public class WandUtil
     }
 
     public static Vec3d entityPositionVec(Entity entity) {
-        return new Vec3d(entity.getX(), entity.getY() - entity.getMountedHeightOffset() + entity.getHeight() / 2, entity.getZ());
+        return new Vec3d(entity.getX(), entity.getY() + entity.getHeight() / 2, entity.getZ());
     }
 
     public static Vec3d blockPosVec(BlockPos pos) {

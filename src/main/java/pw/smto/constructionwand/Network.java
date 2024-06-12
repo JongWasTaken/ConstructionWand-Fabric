@@ -11,9 +11,7 @@ import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static pw.smto.constructionwand.ConstructionWand.MOD_ID;
 
