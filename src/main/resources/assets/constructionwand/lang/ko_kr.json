@@ -66,5 +66,8 @@
     "constructionwand.description.core_angel": "엔젤 코어는 마주보고 있는 블록(또는 블록 행)의 반대쪽에 블록을 배치합니다. 최대 거리는 완드의 티어에 따라 다릅니다. 빈 공간을 우클릭하면 공중에 블록을 배치할 수 있습니다. 그렇게 하려면 보조 손에 배치하려는 블록이 있어야 합니다.",
     "constructionwand.description.core_destruction": "파괴 코어는 당신 쪽의 (타일 엔티티가 없는)블록을 파괴합니다. 최대 블록 수는 완드의 티어에 따라 다릅니다. 파괴된 블록은 공허로 사라지며 실수를 했다면 실행 취소 기능을 사용할 수 있습니다.",
   
-    "stat.constructionwand.use_wand": "완드로 배치한 블록 수"
+    "stat.constructionwand.use_wand": "완드로 배치한 블록 수",
+
+    "tag.item.constructionwand.cores": "ConstructionWand Cores",
+    "tag.item.constructionwand.wands": "ConstructionWand Wands"
   }

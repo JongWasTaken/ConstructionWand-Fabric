@@ -66,5 +66,8 @@
   "constructionwand.description.core_angel": "天使核心可将一个方块放置在你所面对的方块(或一排方块)的对面。最大距离取决于手杖材质。在空地上手持手杖并单击鼠标右键即可在空中放置方块。要做到这一点。你需要将想要被在空中放置的方块放在你的副手栏中。",
   "constructionwand.description.core_destruction": "毁灭核心会破坏面向你一侧的方块(破坏时被破坏的方块不可存在实体)。最大破坏方块数取决于手杖材质。被使用毁灭核心破坏的方块会消失。如果你只是不小心使用了毁灭核心。可以使用“撤消”功能以撤回被破坏并消失的物品返回原处。",
 
-  "stat.constructionwand.use_wand": "使用建筑手杖所放置的方块"
+  "stat.constructionwand.use_wand": "使用建筑手杖所放置的方块",
+
+  "tag.item.constructionwand.cores": "ConstructionWand Cores",
+  "tag.item.constructionwand.wands": "ConstructionWand Wands"
 }

@@ -50,7 +50,7 @@ public class ScreenWand extends Screen {
 
     @Override
     public void render(@NotNull DrawContext guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(guiGraphics);
+        renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredTextWithShadow(textRenderer, wand.getName(), width / 2, height / 2 - FIELD_HEIGHT / 2 - SPACING_HEIGHT, 16777215);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }

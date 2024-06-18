@@ -18,7 +18,7 @@ import pw.smto.constructionwand.basics.ConfigServer;
 
 public class ConstructionWandReiPlugin implements REIClientPlugin
 {
-    //private static final Identifier pluginId = new Identifier(ConstructionWand.MOD_ID, ConstructionWand.MOD_ID);
+    //private static final Identifier pluginId = Identifier.of(ConstructionWand.MOD_ID, ConstructionWand.MOD_ID);
     private static final String baseKey = ConstructionWand.MOD_ID + ".description.";
     private static final String baseKeyItem = "item." + ConstructionWand.MOD_ID + ".";
 

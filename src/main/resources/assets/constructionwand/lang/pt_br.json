@@ -66,5 +66,8 @@
     "constructionwand.description.core_angel": "O núcleo do anjo coloca um bloco no lado oposto do bloco (ou fileira de blocos) que você está enfrentando.A distância máxima depende da camada de varinha.Clique com o botão direito do mouse em espaço vazio para colocar um bloco no ar.Para fazer isso, você precisará ter o bloco que deseja colocar em sua mão.",
     "constructionwand.description.core_destruction": "O núcleo de destruição destrói blocos (sem entidades de ladrilhos) do lado de frente para você.O número máximo de blocos depende da camada de varinha.Blocos destruídos desaparecem no vazio, você pode usar o recurso de desfazer se cometer um erro.",
   
-    "stat.constructionwand.use_wand": "Blocos colocados usando varinha"
+    "stat.constructionwand.use_wand": "Blocos colocados usando varinha",
+
+    "tag.item.constructionwand.cores": "ConstructionWand Cores",
+    "tag.item.constructionwand.wands": "ConstructionWand Wands"
   }

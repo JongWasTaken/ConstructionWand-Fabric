@@ -4,13 +4,13 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.item.TooltipContext;
 import net.minecraft.data.client.Models;
 import net.minecraft.data.client.TextureMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
@@ -84,10 +84,10 @@ public abstract class ItemWand extends Item implements ICustomItemModel
         return wandJob;
     }
 
-    @Override
-    public boolean isSuitableFor(@NotNull BlockState blockIn) {
-        return false;
-    }
+    //@Override
+    //public boolean isSuitableFor(@NotNull BlockState blockIn) {
+    //    return false;
+    //}
 
     @Override
     public boolean canRepair(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
@@ -100,7 +100,7 @@ public abstract class ItemWand extends Item implements ICustomItemModel
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(@NotNull ItemStack itemstack, World worldIn, @NotNull List<Text> lines, @NotNull TooltipContext extraInfo) {
+    public void appendTooltip(ItemStack itemstack, TooltipContext context, List<Text> lines, TooltipType type) {
         WandOptions options = new WandOptions(itemstack);
         int limit = options.cores.get().getWandAction().getLimit(itemstack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";

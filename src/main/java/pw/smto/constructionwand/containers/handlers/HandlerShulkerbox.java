@@ -3,12 +3,15 @@ package pw.smto.constructionwand.containers.handlers;
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.collection.DefaultedList;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
@@ -56,22 +59,22 @@ public class HandlerShulkerbox implements IContainerHandler
     }
 
     private DefaultedList<ItemStack> getItemList(ItemStack itemStack) {
-        NbtCompound nbtCompound = BlockItem.getBlockEntityNbt(itemStack);
+        NbtCompound nbtCompound = itemStack.getOrDefault(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT).copyNbt();
         DefaultedList<ItemStack> defaultedList = DefaultedList.ofSize(SLOTS, ItemStack.EMPTY);
         if (nbtCompound != null) {
             if (nbtCompound.contains("Items", NbtElement.LIST_TYPE)) {
-                Inventories.readNbt(nbtCompound, defaultedList);
+                Inventories.readNbt(nbtCompound, defaultedList, DynamicRegistryManager.EMPTY);
             }
         }
         return defaultedList;
     }
 
     private void setItemList(ItemStack itemStack, DefaultedList<ItemStack> itemStacks) {
-        NbtCompound nbtCompound = BlockItem.getBlockEntityNbt(itemStack);
+        NbtCompound nbtCompound = itemStack.getOrDefault(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.DEFAULT).copyNbt();
         if (nbtCompound != null) {
             nbtCompound.remove("Items");
-            Inventories.writeNbt(nbtCompound, itemStacks);
-            BlockItem.setBlockEntityNbt(itemStack, BlockEntityType.SHULKER_BOX, nbtCompound);
+            Inventories.writeNbt(nbtCompound, itemStacks, DynamicRegistryManager.EMPTY);
+            itemStack.set(DataComponentTypes.BLOCK_ENTITY_DATA, NbtComponent.of(nbtCompound));
         }
     }
 }

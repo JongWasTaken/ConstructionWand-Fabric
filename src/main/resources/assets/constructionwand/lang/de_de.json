@@ -66,5 +66,8 @@
   "constructionwand.description.core_angel": "Der Kristall der Engel platziert einen Block auf der gegenüberliegenden Seites des Blocks (oder der Blockreihe) den du anschaust. Die maximale Entfernung hängt vom Material des Stabes ab. Ein Rechtsklick ins Leere platziert einen Block mitten in der Luft. Hierfür musst du den Block, den du platzieren willst, in der linken Hand halten.",
   "constructionwand.description.core_destruction": "Der Kristall der Zerstörung zerstört Blöcke (keine Tile Entities) auf der dir zugewandten Seite. Die maximale Anzahl Blöcke hängt vonm Material des Stabes ab. Zerstörte Blöcke verschwinden im Nichts, du kannst Fehler jedoch rückgängig machen.",
 
-  "stat.constructionwand.use_wand": "Blöcke mithilfe des Stabs platziert"
+  "stat.constructionwand.use_wand": "Blöcke mithilfe des Stabs platziert",
+
+  "tag.item.constructionwand.cores": "ConstructionWand Kristalle",
+  "tag.item.constructionwand.wands": "ConstructionWand Stäbe"
 }

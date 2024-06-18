@@ -23,7 +23,7 @@ public class ReplacementRegistry
             HashSet<Item> set = new HashSet<>();
 
             for(String id : ((String) key).split(";")) {
-                Item item = Registries.ITEM.get(new Identifier(id));
+                Item item = Registries.ITEM.get(Identifier.of(id));
                 if(item == null || item == Items.AIR) {
                     ConstructionWand.LOGGER.warn("Replacement Registry: Could not find item " + id);
                     continue;

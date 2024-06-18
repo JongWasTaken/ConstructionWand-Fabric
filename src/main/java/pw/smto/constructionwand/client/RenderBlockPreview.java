@@ -49,9 +49,9 @@ public class RenderBlockPreview
 
         if(blocks == null || blocks.isEmpty()) return true;
 
-        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * context.tickDelta();
-        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * context.tickDelta();
-        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickDelta();
+        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * context.tickCounter().getTickDelta(false);
+        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * context.tickCounter().getTickDelta(false);
+        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickCounter().getTickDelta(false);
 
         for(BlockPos block : blocks) {
             WorldRenderer.drawBox(

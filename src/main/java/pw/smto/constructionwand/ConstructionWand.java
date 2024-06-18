@@ -1,6 +1,6 @@
 package pw.smto.constructionwand;
 
-import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.forge.v4.ForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.fml.config.ModConfig;
@@ -24,7 +24,7 @@ public class ConstructionWand implements ModInitializer
     public static UndoHistory undoHistory = new UndoHistory();
 
     public static Identifier loc(String name) {
-        return new Identifier(MOD_ID, name);
+        return Identifier.of(MOD_ID, name);
     }
 
     @Override

@@ -2,6 +2,8 @@ package pw.smto.constructionwand.basics.option;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.Nullable;
@@ -48,8 +50,10 @@ public class WandOptions
 
     public final IOption<?>[] allOptions;
 
+
     public WandOptions(ItemStack wandStack) {
-        tag = wandStack.getOrCreateSubNbt(TAG_ROOT);
+        //tag = wandStack.getOrCreateSubNbt(TAG_ROOT);
+        tag = wandStack.getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 
         cores = new WandUpgradesSelectable<>(tag, "cores", new CoreDefault());
 
@@ -95,5 +99,9 @@ public class WandOptions
     public boolean addUpgrade(IWandUpgrade upgrade) {
         if(upgrade instanceof IWandCore) return cores.addUpgrade((IWandCore) upgrade);
         return false;
+    }
+
+    public void writeToStack(ItemStack item) {
+        item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
     }
 }

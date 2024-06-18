@@ -1,5 +1,6 @@
 package pw.smto.constructionwand.wand;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -101,7 +102,7 @@ public class WandJob
                     // If the item cant be taken, undo the placement
                     if(wandSupplier.takeItemStack(snapshot.getRequiredItems()) == 0) {
                         executed.add(snapshot);
-                        wand.damage(1, player, e -> e.sendToolBreakStatus(Hand.MAIN_HAND));
+                        wand.damage(1, player, EquipmentSlot.MAINHAND);
                     }
                     else {
                         ConstructionWand.LOGGER.info("Item could not be taken. Remove block: " +

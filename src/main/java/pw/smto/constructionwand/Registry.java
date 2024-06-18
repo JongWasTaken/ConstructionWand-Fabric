@@ -6,6 +6,7 @@ import io.wispforest.owo.registration.reflect.FieldRegistrationHandler;
 import io.wispforest.owo.registration.reflect.ItemRegistryContainer;
 import net.fabricmc.fabric.impl.itemgroup.FabricItemGroupBuilderImpl;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterials;
 import net.minecraft.recipe.RecipeSerializer;
@@ -73,31 +74,16 @@ public class Registry {
         }
     }
 
-    public static class ScreenHandlers implements AutoRegistryContainer<ScreenHandlerType<?>> {
-        //public static final ScreenHandlerType<BladeOfVitalityContainer> BLADE_OF_VITALITY_CONTAINER = new ExtendedScreenHandlerType<>(BladeOfVitalityContainer::new);
-
-        @Override
-        public net.minecraft.registry.Registry<ScreenHandlerType<?>> getRegistry() {
-            return Registries.SCREEN_HANDLER;
-        }
-        @Override
-        @SuppressWarnings("unchecked")
-        public Class<ScreenHandlerType<?>> getTargetFieldType() {
-            return (Class<ScreenHandlerType<?>>) (Object) ScreenHandlerType.class;
-        }
-    }
-
     public static class Stats implements AutoRegistryContainer<Identifier> {
-        public static final Identifier USE_WAND = new Identifier(ConstructionWand.MOD_ID, "use_wand");
+        public static final Identifier USE_WAND = Identifier.of(ConstructionWand.MOD_ID, "use_wand");
 
         @Override
         public net.minecraft.registry.Registry<Identifier> getRegistry() {
             return Registries.CUSTOM_STAT;
         }
         @Override
-        @SuppressWarnings("unchecked")
         public Class<Identifier> getTargetFieldType() {
-            return (Class<Identifier>) (Object) Identifier.class;
+            return Identifier.class;
         }
     }
 
@@ -116,16 +102,15 @@ public class Registry {
 
     public static void registerAll() {
         FieldRegistrationHandler.register(Items.class, MOD_ID, false);
-        FieldRegistrationHandler.register(ScreenHandlers.class, MOD_ID, false);
         FieldRegistrationHandler.register(RecipeSerializers.class, MOD_ID, false);
         FieldRegistrationHandler.register(Stats.class, MOD_ID, false);
 
-        var tabBuilder = new FabricItemGroupBuilderImpl();
+        var tabBuilder = new ItemGroup.Builder(null, 0);
         tabBuilder.displayName(Text.literal("Construction Wand"));
         tabBuilder.icon(() -> ITEM_GROUP_ICON);
         tabBuilder.entries((displayContext, entries) -> {
             ITEM_GROUP.forEach(entries::add);
         });
-        net.minecraft.registry.Registry.register(Registries.ITEM_GROUP, new Identifier(MOD_ID, "items"), tabBuilder.build());
+        net.minecraft.registry.Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "items"), tabBuilder.build());
     }
 }

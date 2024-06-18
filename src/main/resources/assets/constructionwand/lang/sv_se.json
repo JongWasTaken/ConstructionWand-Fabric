@@ -66,5 +66,8 @@
   "constructionwand.description.core_angel": "Änglakärnan placerar ett block på den motsatta sidan av blocket (eller blockraden) som är riktad mot dig. Det maximala avståndet beror på stavens nivå. Högerklicka i luften för att placera ett block i luften. För att göra detta behöver du hålla blocket du vill placera i din sekundära hand.",
   "constructionwand.description.core_destruction": "Rivningskärnan förstör block (inte blockentiteter) på sidan som är riktad mot dig. Det maximala antalet block beror på stavens nivå. Förstörda block försvinner helt och hållet, men du kan använda ångrafunktionen om du har gjort ett misstag.",
 
-  "stat.constructionwand.use_wand": "Block placerade med stavar"
+  "stat.constructionwand.use_wand": "Block placerade med stavar",
+
+  "tag.item.constructionwand.cores": "ConstructionWand Cores",
+  "tag.item.constructionwand.wands": "ConstructionWand Wands"
 }

@@ -76,12 +76,14 @@ dependencies {
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:$rei_version"
 
 	// botania api?!
-	modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
+	//modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
 
 	// forge config api
-	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
-	include "curse.maven:forge-config-api-port-fabric-547434:4583000"
-	modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:8.0.0"
+	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.0.0"
+	include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.0.0"
+	//modApi "curse.maven:forge-config-api-port-fabric-547434:5427493"
+	//include "curse.maven:forge-config-api-port-fabric-547434:5427493"
+	//modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:8.0.2"
 }
 
 processResources {
@@ -100,7 +102,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+	it.options.release = 21
 }
 
 java {
@@ -109,8 +111,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

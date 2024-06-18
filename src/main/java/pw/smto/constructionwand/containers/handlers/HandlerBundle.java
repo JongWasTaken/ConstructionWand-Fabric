@@ -1,10 +1,13 @@
 package pw.smto.constructionwand.containers.handlers;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.DynamicRegistryManager;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 
@@ -44,24 +47,26 @@ public class HandlerBundle implements IContainerHandler
     }
 
     private Stream<ItemStack> getContents(ItemStack bundleStack) {
-        NbtCompound compoundtag = bundleStack.getNbt();
+        NbtCompound compoundtag = bundleStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if(compoundtag == null) {
             return Stream.empty();
         }
         else {
             NbtList listtag = compoundtag.getList("Items", 10);
-            return listtag.stream().map(NbtCompound.class::cast).map(ItemStack::fromNbt);
+            return listtag.stream().map(NbtCompound.class::cast).map((e) -> {
+                return ItemStack.fromNbt(DynamicRegistryManager.EMPTY, e).get();
+            });
         }
     }
 
     private void setItemList(ItemStack itemStack, List<ItemStack> itemStacks) {
-        NbtCompound rootTag = itemStack.getOrCreateNbt();
+        NbtCompound rootTag = itemStack.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         NbtList listTag = new NbtList();
         rootTag.put("Items", listTag);
 
         for(ItemStack stack : itemStacks) {
             NbtCompound itemTag = new NbtCompound();
-            stack.setNbt(itemTag);
+            stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(itemTag));
             listTag.add(itemTag);
         }
     }

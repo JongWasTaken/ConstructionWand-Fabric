@@ -36,7 +36,7 @@ public class WandUpgrades<T extends IWandUpgrade>
 
         for(int i = 0; i < listnbt.size(); i++) {
             String str = listnbt.getString(i);
-            Item item = Registries.ITEM.get(new Identifier(str));
+            Item item = Registries.ITEM.get(Identifier.of(str));
 
             T data;
             try {

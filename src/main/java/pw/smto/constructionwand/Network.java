@@ -17,9 +17,9 @@ import static pw.smto.constructionwand.ConstructionWand.MOD_ID;
 
 public class Network {
     public static class Channels {
-        public static final OwoNetChannel S2C_UNDO_BLOCKS = OwoNetChannel.create(new Identifier(MOD_ID, "undo_blocks"));
-        public static final OwoNetChannel C2S_QUERY_UNDO = OwoNetChannel.create(new Identifier(MOD_ID, "query_undo"));
-        public static final OwoNetChannel C2S_WAND_OPTION = OwoNetChannel.create(new Identifier(MOD_ID, "wand_option"));
+        public static final OwoNetChannel S2C_UNDO_BLOCKS = OwoNetChannel.create(Identifier.of(MOD_ID, "undo_blocks"));
+        public static final OwoNetChannel C2S_QUERY_UNDO = OwoNetChannel.create(Identifier.of(MOD_ID, "query_undo"));
+        public static final OwoNetChannel C2S_WAND_OPTION = OwoNetChannel.create(Identifier.of(MOD_ID, "wand_option"));
 
     }
     public static class PacketData {
@@ -50,6 +50,7 @@ public class Network {
             option.setValueString(message.value);
 
             if(message.notify1) ItemWand.optionMessage(player, option);
+            options.writeToStack(wand);
             player.getInventory().markDirty();
         });
         Channels.C2S_QUERY_UNDO.registerServerbound(PacketData.QueryUndo.class, (message, access) -> {

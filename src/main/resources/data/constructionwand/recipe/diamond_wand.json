@@ -7,13 +7,13 @@
   ],
   "key": {
     "X": {
-      "item": "minecraft:nether_star"
+      "item": "minecraft:diamond"
     },
     "#": {
       "item": "minecraft:stick"
     }
   },
   "result": {
-    "item": "constructionwand:infinity_wand"
+    "id": "constructionwand:diamond_wand"
   }
 }
