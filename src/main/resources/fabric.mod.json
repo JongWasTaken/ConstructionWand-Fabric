@@ -40,7 +40,7 @@
 		"minecraft": "~${minecraft_version}",
 		"java": ">=17",
 		"fabric-api": ">=${fabric_version}",
-		"owo-lib": "${owo_version}"
+		"owo-lib": ">=${owo_version}"
 	},
 	"suggests": {
 		"roughly-enough-items": "${rei_version}"
