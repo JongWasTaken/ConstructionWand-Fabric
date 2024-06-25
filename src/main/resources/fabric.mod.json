@@ -30,6 +30,9 @@
 		"client": [
 			"pw.smto.constructionwand.ConstructionWandClient"
 		],
+		"emi": [
+			"pw.smto.constructionwand.integrations.emi.ConstructionWandEmiPlugin"
+		],
 		"rei_client": [
 			"pw.smto.constructionwand.integrations.rei.ConstructionWandReiPlugin"
 		]
