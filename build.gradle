@@ -77,6 +77,8 @@ dependencies {
 	// EMI
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
 
+	// Bank Storage
+	modCompileOnlyApi "maven.modrinth:bank-storage:${project.bankstorage_version}"
 	// botania api?!
 	modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
 
