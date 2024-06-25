@@ -2,6 +2,7 @@ package pw.smto.constructionwand.containers;
 
 import net.fabricmc.loader.api.FabricLoader;
 import pw.smto.constructionwand.ConstructionWand;
+import pw.smto.constructionwand.containers.handlers.HandlerBankStorage;
 import pw.smto.constructionwand.containers.handlers.HandlerBotania;
 import pw.smto.constructionwand.containers.handlers.HandlerBundle;
 import pw.smto.constructionwand.containers.handlers.HandlerCapability;
@@ -13,6 +14,11 @@ public class ContainerRegistrar
         ConstructionWand.containerManager.register(new HandlerCapability());
         ConstructionWand.containerManager.register(new HandlerShulkerbox());
         ConstructionWand.containerManager.register(new HandlerBundle());
+
+        if(FabricLoader.getInstance().isModLoaded("bankstorage")) {
+            ConstructionWand.containerManager.register(new HandlerBankStorage());
+            ConstructionWand.LOGGER.info("Bank Storage integration added");
+        }
 
         if(FabricLoader.getInstance().isModLoaded("botania")) {
             ConstructionWand.containerManager.register(new HandlerBotania());
