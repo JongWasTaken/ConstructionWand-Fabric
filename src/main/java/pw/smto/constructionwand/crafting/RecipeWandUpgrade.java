@@ -61,7 +61,6 @@ public class RecipeWandUpgrade extends ShapelessRecipe
                 else if(stack.getItem() instanceof IWandUpgrade) upgrade = (IWandUpgrade) stack.getItem();
             }
         }
-        LOGGER.warn("Crafting wand upgrade: " + wand + ", " + upgrade);
         if(wand == null || upgrade == null) return ItemStack.EMPTY;
 
         ItemStack newWand = wand.copy();

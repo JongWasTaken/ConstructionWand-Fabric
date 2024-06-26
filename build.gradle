@@ -40,6 +40,7 @@ repositories {
 	}
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.architectury.dev/" }
+	maven { url = "https://mvn.devos.one/releases/" }
 }
 
 loom {
@@ -71,16 +72,24 @@ dependencies {
 	//modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
 	//modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 	// so we use REI instead
-	modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version"
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:$rei_version"
+	modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
 	// EMI
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
 
+	// MOD COMPAT
 	// Bank Storage
 	modCompileOnlyApi "maven.modrinth:bank-storage:${project.bankstorage_version}"
-	// botania api?!
-	modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
+	// botania
+	modCompileOnlyApi "vazkii.botania:Botania:${project.botania_version}"
+	// sophisticated backpacks
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:transfer:${project.porting_lib_version}"
+	modCompileOnlyApi "maven.modrinth:sophisticated-core-(unofficial-fabric-port):${project.sophisticated_core_version}"
+	modCompileOnlyApi "maven.modrinth:sophisticated-backpacks-(unoffical-fabric-port):${project.sophisticated_backpacks_version}"
+	// packed up
+	modCompileOnlyApi "maven.modrinth:supermartijn642s-core-lib:${project.supermartijn642s_core_lib_version}"
+	modCompileOnlyApi "maven.modrinth:packed-up-backpacks:${project.packed_up_version}"
 
 	// forge config api
 	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"

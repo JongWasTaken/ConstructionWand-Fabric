@@ -32,7 +32,6 @@ public class HandlerBotania implements IContainerHandler
 
     @Override
     public int useItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack, int count) {
-
         Optional<BlockProvider> provOptional = Optional.ofNullable(BotaniaFabricCapabilities.BLOCK_PROVIDER.find(inventoryStack, Unit.INSTANCE));
         if(provOptional.isEmpty()) return 0;
 
