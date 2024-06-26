@@ -8,6 +8,7 @@ import net.natte.bankstorage.container.BankItemStorage;
 import net.natte.bankstorage.item.BankItem;
 import net.natte.bankstorage.item.CachedBankStorage;
 import net.natte.bankstorage.util.Util;
+import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 
@@ -19,10 +20,18 @@ public class HandlerBankStorage implements IContainerHandler {
 
     @Override
     public int countItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
-        CachedBankStorage cachedBankStorage = CachedBankStorage.getBankStorage(inventoryStack);
-        if(cachedBankStorage == null) return 0;
-
-        return cachedBankStorage.blockItems.stream().filter(stack -> WandUtil.stackEquals(stack, itemStack)).map(ItemStack::getCount).reduce(0, Integer::sum);
+        if (player.getWorld().isClient) {
+            CachedBankStorage cachedBankStorage = CachedBankStorage.getBankStorage(inventoryStack);
+            if(cachedBankStorage == null) return 0;
+            return cachedBankStorage.blockItems.stream().filter(stack -> WandUtil.stackEquals(stack, itemStack)).map(ItemStack::getCount).reduce(0, Integer::sum);
+        } else {
+            BankItemStorage bankItemStorage = null;
+            try {
+                bankItemStorage = Util.getBankItemStorage(inventoryStack, player.getWorld());
+            } catch (Exception ignored) {}
+            if(bankItemStorage == null) return 0;
+            return bankItemStorage.getBlockItems().stream().filter(stack -> WandUtil.stackEquals(stack, itemStack)).map(ItemStack::getCount).reduce(0, Integer::sum);
+        }
     }
 
     @Override
