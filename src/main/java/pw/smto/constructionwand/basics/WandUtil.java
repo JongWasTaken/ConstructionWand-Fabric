@@ -159,7 +159,6 @@ public class WandUtil
         if(player.isCreative()) return Integer.MAX_VALUE;
 
         int total = 0;
-        ContainerManager containerManager = ConstructionWand.containerManager;
         List<ItemStack> inventory = WandUtil.getFullInv(player);
 
         for(ItemStack stack : inventory) {
@@ -169,7 +168,7 @@ public class WandUtil
                 total += stack.getCount();
             }
             else {
-                int amount = containerManager.countItems(player, new ItemStack(item), stack);
+                int amount = ConstructionWand.containerManager.countItems(player, new ItemStack(item), stack);
                 if(amount == Integer.MAX_VALUE) return Integer.MAX_VALUE;
                 total += amount;
             }

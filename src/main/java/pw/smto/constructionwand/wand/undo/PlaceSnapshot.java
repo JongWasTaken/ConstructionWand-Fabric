@@ -22,13 +22,15 @@ public class PlaceSnapshot implements ISnapshot
     private final BlockItem item;
     private final BlockState supportingBlock;
     private final boolean targetMode;
+    private final int itemCount;
 
-    public PlaceSnapshot(BlockState block, BlockPos pos, BlockItem item, BlockState supportingBlock, boolean targetMode) {
+    public PlaceSnapshot(BlockState block, BlockPos pos, BlockItem item, BlockState supportingBlock, boolean targetMode, int itemCount) {
         this.block = block;
         this.pos = pos;
         this.item = item;
         this.supportingBlock = supportingBlock;
         this.targetMode = targetMode;
+        this.itemCount = itemCount;
     }
 
     public static PlaceSnapshot get(World world, PlayerEntity player, BlockHitResult rayTraceResult,
@@ -38,7 +40,12 @@ public class PlaceSnapshot implements ISnapshot
         BlockState blockState = getPlaceBlockstate(world, player, rayTraceResult, pos, item, supportingBlock, targetMode);
         if(blockState == null) return null;
 
-        return new PlaceSnapshot(blockState, pos, item, supportingBlock, targetMode);
+        int count = 1;
+        if (blockState.getProperties().contains(Properties.LAYERS)) {
+            count = blockState.get(Properties.LAYERS);
+        }
+
+        return new PlaceSnapshot(blockState, pos, item, supportingBlock, targetMode, count);
     }
 
     @Override
@@ -53,7 +60,7 @@ public class PlaceSnapshot implements ISnapshot
 
     @Override
     public ItemStack getRequiredItems() {
-        return new ItemStack(item);
+        return new ItemStack(item, itemCount);
     }
 
     @Override
@@ -110,7 +117,7 @@ public class PlaceSnapshot implements ISnapshot
 
             for(Property property : new Property[]{
                     Properties.HORIZONTAL_FACING, Properties.FACING, Properties.HOPPER_FACING,
-                    Properties.ROTATION, Properties.AXIS, Properties.BLOCK_HALF, Properties.STAIR_SHAPE}) {
+                    Properties.ROTATION, Properties.AXIS, Properties.BLOCK_HALF, Properties.STAIR_SHAPE, Properties.LAYERS}) {
                 if(supportingBlock.getProperties().contains(property) && blockState.getProperties().contains(property)) {
                     blockState = blockState.with(property, supportingBlock.get(property));
                 }
