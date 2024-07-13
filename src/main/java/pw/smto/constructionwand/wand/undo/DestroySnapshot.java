@@ -10,6 +10,8 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.basics.WandUtil;
 
+import java.util.List;
+
 public class DestroySnapshot implements ISnapshot
 {
     private final BlockState block;
@@ -38,8 +40,8 @@ public class DestroySnapshot implements ISnapshot
     }
 
     @Override
-    public ItemStack getRequiredItems() {
-        return ItemStack.EMPTY;
+    public List<ItemStack> getRequiredItems() {
+        return List.of(ItemStack.EMPTY);
     }
 
     @Override
