@@ -127,10 +127,10 @@ public class UndoHistory
             }
             for(ISnapshot snapshot : placeSnapshots) {
                 if(snapshot.restore(world, player) && !player.isCreative()) {
-                    ItemStack stack = snapshot.getRequiredItems();
-
-                    if(!player.giveItemStack(stack)) {
-                        player.dropItem(stack, false);
+                    for (ItemStack stack : snapshot.getRequiredItems()) {
+                        if(!player.giveItemStack(stack)) {
+                            player.dropItem(stack, false);
+                        }
                     }
                 }
             }

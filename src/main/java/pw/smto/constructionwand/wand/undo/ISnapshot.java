@@ -7,13 +7,15 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public interface ISnapshot
 {
     BlockPos getPos();
 
     BlockState getBlockState();
 
-    ItemStack getRequiredItems();
+    List<ItemStack> getRequiredItems();
 
     boolean execute(World world, PlayerEntity player, BlockHitResult rayTraceResult);
 

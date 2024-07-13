@@ -101,29 +101,17 @@ public class WandUtil
         return isWhitelist == inList;
     }
 
-    public static boolean placeBlock(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable BlockItem item) {
+    public static boolean placeBlock(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable ItemStack item) {
         if(!world.setBlockState(pos, block)) {
             ConstructionWand.LOGGER.info("Block could not be placed");
             return false;
         }
 
-        /*
-        // Remove block if placeEvent is canceled
-        BlockBox snapshot = BlockSnapshot.create(world.dimension(), world, pos);
-        BlockEvent.EntityPlaceEvent placeEvent = new BlockEvent.EntityPlaceEvent(snapshot, block, player);
-        MinecraftForge.EVENT_BUS.post(placeEvent);
-        if(placeEvent.isCanceled()) {
-            world.removeBlock(pos, false);
-            return false;
-        }
-
-         */
-
         ItemStack stack;
         if(item == null) stack = new ItemStack(block.getBlock().asItem());
         else {
-            stack = new ItemStack(item);
-            player.increaseStat(Stats.USED.getOrCreateStat(item), 1);
+            stack = item;
+            player.increaseStat(Stats.USED.getOrCreateStat(item.getItem()), 1);
         }
 
         // Call OnBlockPlaced method

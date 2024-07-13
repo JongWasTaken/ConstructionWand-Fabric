@@ -15,22 +15,25 @@ import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.wand.WandItemUseContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PlaceSnapshot implements ISnapshot
 {
     private BlockState block;
     private final BlockPos pos;
-    private final BlockItem item;
+    private final ItemStack item;
+    private final ItemStack includedItem;
     private final BlockState supportingBlock;
     private final boolean targetMode;
-    private final int itemCount;
 
-    public PlaceSnapshot(BlockState block, BlockPos pos, BlockItem item, BlockState supportingBlock, boolean targetMode, int itemCount) {
+    public PlaceSnapshot(BlockState block, BlockPos pos, ItemStack item, BlockState supportingBlock, boolean targetMode, @Nullable ItemStack includedItem) {
         this.block = block;
         this.pos = pos;
         this.item = item;
         this.supportingBlock = supportingBlock;
         this.targetMode = targetMode;
-        this.itemCount = itemCount;
+        this.includedItem = includedItem;
     }
 
     public static PlaceSnapshot get(World world, PlayerEntity player, BlockHitResult rayTraceResult,
@@ -44,8 +47,23 @@ public class PlaceSnapshot implements ISnapshot
         if (blockState.getProperties().contains(Properties.LAYERS)) {
             count = blockState.get(Properties.LAYERS);
         }
+        if (blockState.getProperties().contains(Properties.SLAB_TYPE)) {
+            if (blockState.get(Properties.SLAB_TYPE) == SlabType.DOUBLE) {
+                count = count + 2;
+            }
+        }
 
-        return new PlaceSnapshot(blockState, pos, item, supportingBlock, targetMode, count);
+        // create copycats
+        ItemStack iItem = null;
+        /*
+        if (blockState.getBlock() instanceof ICTCopycatBlock) {
+            if(world.getBlockEntity(pos) instanceof ICTCopycatBlock b) {
+                iItem = b.getBlockEntity(world, pos).getConsumedItem();
+            }
+        }
+         */
+
+        return new PlaceSnapshot(blockState, pos, new ItemStack(item, count), supportingBlock, targetMode, iItem);
     }
 
     @Override
@@ -59,8 +77,13 @@ public class PlaceSnapshot implements ISnapshot
     }
 
     @Override
-    public ItemStack getRequiredItems() {
-        return new ItemStack(item, itemCount);
+    public List<ItemStack> getRequiredItems() {
+        List<ItemStack> items = new ArrayList<>();
+        items.add(item);
+        if (includedItem != null) {
+            items.add(includedItem);
+        }
+        return items;
     }
 
     @Override
@@ -68,7 +91,7 @@ public class PlaceSnapshot implements ISnapshot
         // Recalculate PlaceBlockState, because other blocks might be placed nearby
         // Not doing this may cause game crashes (StackOverflowException) when placing lots of blocks
         // with changing orientation like panes, iron bars or redstone.
-        block = getPlaceBlockstate(world, player, rayTraceResult, pos, item, supportingBlock, targetMode);
+        block = getPlaceBlockstate(world, player, rayTraceResult, pos, (BlockItem) item.getItem(), supportingBlock, targetMode);
         if(block == null) return false;
         return WandUtil.placeBlock(world, player, block, pos, item);
     }
@@ -114,20 +137,13 @@ public class PlaceSnapshot implements ISnapshot
         // Copy block properties from supporting block
         if(targetMode && supportingBlock != null) {
             // Block properties to be copied (alignment/rotation properties)
-
             for(Property property : new Property[]{
                     Properties.HORIZONTAL_FACING, Properties.FACING, Properties.HOPPER_FACING,
-                    Properties.ROTATION, Properties.AXIS, Properties.BLOCK_HALF, Properties.STAIR_SHAPE, Properties.LAYERS}) {
+                    Properties.ROTATION, Properties.AXIS, Properties.BLOCK_HALF, Properties.STAIR_SHAPE,
+                    Properties.LAYERS, Properties.SLAB_TYPE}) {
                 if(supportingBlock.getProperties().contains(property) && blockState.getProperties().contains(property)) {
                     blockState = blockState.with(property, supportingBlock.get(property));
                 }
-            }
-
-            // Dont dupe double slabs
-            if(supportingBlock.getProperties().contains(Properties.SLAB_TYPE) && blockState.getProperties().contains(Properties.SLAB_TYPE)) {
-                SlabType slabType = supportingBlock.get(Properties.SLAB_TYPE);
-                if(slabType != SlabType.DOUBLE)
-                    blockState = blockState.with(Properties.SLAB_TYPE, slabType);
             }
         }
         return blockState;
