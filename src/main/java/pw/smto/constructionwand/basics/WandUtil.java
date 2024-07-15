@@ -1,4 +1,7 @@
 package pw.smto.constructionwand.basics;
+//import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
+//import com.simibubi.create.content.decoration.copycat.CopycatBlock;
+//import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -20,7 +23,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
-import pw.smto.constructionwand.containers.ContainerManager;
+import pw.smto.constructionwand.integrations.ModCompat;
 import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.WandItemUseContext;
 
@@ -101,7 +104,7 @@ public class WandUtil
         return isWhitelist == inList;
     }
 
-    public static boolean placeBlock(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable ItemStack item) {
+    public static boolean placeBlock(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
         if(!world.setBlockState(pos, block)) {
             ConstructionWand.LOGGER.info("Block could not be placed");
             return false;
@@ -117,6 +120,19 @@ public class WandUtil
         // Call OnBlockPlaced method
         block.getBlock().onPlaced(world, pos, block, player, stack);
 
+        if (includedItem != null) {
+            // Create Copycats compat
+            if (ModCompat.CREATE) {
+                //if (block.getBlock() instanceof CopycatBlock c) {
+                //    var cEnt = c.getBlockEntity(world, pos);
+                //    if (cEnt != null) {
+                //        cEnt.setMaterial(((BlockItem)includedItem.getItem()).getBlock().getDefaultState());
+                //        cEnt.setConsumedItem(includedItem);
+                //    }
+                //}
+            }
+        }
+
         return true;
     }
 
@@ -126,7 +142,20 @@ public class WandUtil
         if(!world.canPlayerModifyAt(player, pos)) return false;
 
         if(!player.isCreative()) {
-            if(currentBlock.getHardness(world, pos) <= -1 || world.getBlockEntity(pos) != null) return false;
+            boolean hasEntity = false;
+
+            var ent = world.getBlockEntity(pos);
+
+            if (ent != null) {
+                hasEntity = true;
+                if (ModCompat.CREATE) {
+                    //if (ent instanceof CopycatBlockEntity) {
+                    //    hasEntity = false;
+                    //}
+                }
+            }
+
+            if(currentBlock.getHardness(world, pos) <= -1 || hasEntity) return false;
 
             if(block != null)
                 if(!ReplacementRegistry.matchBlocks(currentBlock.getBlock(), block.getBlock())) return false;

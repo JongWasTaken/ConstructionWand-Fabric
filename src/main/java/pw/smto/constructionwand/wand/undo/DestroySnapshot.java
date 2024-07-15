@@ -45,6 +45,11 @@ public class DestroySnapshot implements ISnapshot
     }
 
     @Override
+    public boolean shouldGiveBackIncludedItem() {
+        return true;
+    }
+
+    @Override
     public boolean execute(World world, PlayerEntity player, BlockHitResult rayTraceResult) {
         return WandUtil.removeBlock(world, player, block, pos);
     }
@@ -68,7 +73,7 @@ public class DestroySnapshot implements ISnapshot
 
     @Override
     public boolean restore(World world, PlayerEntity player) {
-        return WandUtil.placeBlock(world, player, block, pos, null);
+        return WandUtil.placeBlock(world, player, block, pos, null, null);
     }
 
     @Override

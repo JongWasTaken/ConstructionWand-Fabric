@@ -100,18 +100,26 @@ public class WandJob
                 if(player.isCreative()) executed.add(snapshot);
                 else {
                     // If the item cant be taken, undo the placement
-                    for (ItemStack stack : snapshot.getRequiredItems()) {
-                        if(wandSupplier.takeItemStack(stack) == 0) {
-                            executed.add(snapshot);
-                            // TODO: includedItem should not damage the wand
-                            wand.damage(1, player, EquipmentSlot.MAINHAND);
+                    boolean success = true;
+                    for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
+                        if(wandSupplier.takeItemStack(snapshot.getRequiredItems().get(i)) == 0) {
+                            if (i == 0) {
+                                // layered blocks would need multiple right-clicks, so each removes 1 durability
+                                wand.damage(snapshot.getRequiredItems().get(0).getCount(), player, EquipmentSlot.MAINHAND);
+                            }
                         }
                         else {
                             ConstructionWand.LOGGER.info("Item could not be taken. Remove block: " +
                                     snapshot.getBlockState().getBlock().toString());
-                            snapshot.forceRestore(world);
+                            success = false;
                             break;
                         }
+                    }
+
+                    if (success) {
+                        executed.add(snapshot);
+                    } else {
+                        snapshot.forceRestore(world);
                     }
                 }
                 player.increaseStat(Registry.Stats.USE_WAND, 1);
