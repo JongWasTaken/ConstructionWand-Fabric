@@ -17,6 +17,8 @@ public interface ISnapshot
 
     List<ItemStack> getRequiredItems();
 
+    boolean shouldGiveBackIncludedItem();
+
     boolean execute(World world, PlayerEntity player, BlockHitResult rayTraceResult);
 
     boolean canRestore(World world, PlayerEntity player);

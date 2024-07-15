@@ -11,8 +11,8 @@ base {
 }
 
 repositories {
-	maven { url 'https://maven.wispforest.io' }
-	maven { url "https://cursemaven.com" }
+	maven { url = "https://maven.wispforest.io" }
+	maven { url = "https://cursemaven.com" }
 	maven {
 		name = "Fuzs Mod Resources"
 		url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
@@ -30,7 +30,7 @@ repositories {
 		url = "https://maven.blamejared.com/"
 	}
 	maven {
-		url "https://maven.jamieswhiteshirt.com/libs-release"
+		url = "https://maven.jamieswhiteshirt.com/libs-release"
 		content {
 			includeGroup "com.jamieswhiteshirt"
 		}
@@ -38,8 +38,8 @@ repositories {
 	maven {
 		url = "https://api.modrinth.com/maven"
 	}
-	maven { url "https://maven.shedaniel.me/" }
-	maven { url "https://maven.architectury.dev/" }
+	maven { url = "https://maven.shedaniel.me/" }
+	maven { url = "https://maven.architectury.dev/" }
 	maven { url = "https://mvn.devos.one/releases/" }
 }
 
@@ -79,17 +79,30 @@ dependencies {
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
 
 	// MOD COMPAT
+	// Create Porting Lib
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:base:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:blocks:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:common:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:core:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:entity:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:transfer:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:extensions:${project.porting_lib_version}"
+	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:utility:${project.porting_lib_version}"
 	// Bank Storage
 	modCompileOnlyApi "maven.modrinth:bank-storage:${project.bankstorage_version}"
 	// botania
 	modCompileOnlyApi "vazkii.botania:Botania:${project.botania_version}"
 	// sophisticated backpacks
-	modCompileOnlyApi "io.github.fabricators_of_create.Porting-Lib:transfer:${project.porting_lib_version}"
 	modCompileOnlyApi "maven.modrinth:sophisticated-core-(unofficial-fabric-port):${project.sophisticated_core_version}"
 	modCompileOnlyApi "maven.modrinth:sophisticated-backpacks-(unoffical-fabric-port):${project.sophisticated_backpacks_version}"
 	// packed up
 	modCompileOnlyApi "maven.modrinth:supermartijn642s-core-lib:${project.supermartijn642s_core_lib_version}"
 	modCompileOnlyApi "maven.modrinth:packed-up-backpacks:${project.packed_up_version}"
+	// create copycats
+	modCompileOnlyApi "maven.modrinth:create-fabric:${project.create_version}"
+	modCompileOnlyApi "maven.modrinth:copycats:${project.create_copycats_version}"
+
+	//modCompileOnlyApi "maven.modrinth:ae2:qpG9cRjY"
 
 	// forge config api
 	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0"
@@ -120,7 +133,7 @@ java {
 	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 	// if it is present.
 	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+	//withSourcesJar()
 
 	sourceCompatibility = JavaVersion.VERSION_17
 	targetCompatibility = JavaVersion.VERSION_17
