@@ -23,6 +23,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
+import pw.smto.constructionwand.containers.ContainerManager;
 import pw.smto.constructionwand.integrations.ModCompat;
 import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.WandItemUseContext;
@@ -185,7 +186,7 @@ public class WandUtil
                 total += stack.getCount();
             }
             else {
-                int amount = ConstructionWand.containerManager.countItems(player, new ItemStack(item), stack);
+                int amount = ContainerManager.countItems(player, new ItemStack(item), stack);
                 if(amount == Integer.MAX_VALUE) return Integer.MAX_VALUE;
                 total += amount;
             }

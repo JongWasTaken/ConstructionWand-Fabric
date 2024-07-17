@@ -123,13 +123,11 @@ public class SupplierInventory implements IWandSupplier
     }
 
     private int takeItemsInvList(int count, Item item, List<ItemStack> inv, boolean container) {
-        ContainerManager containerManager = ConstructionWand.containerManager;
-
         for(ItemStack stack : inv) {
             if(count == 0) break;
 
             if(container) {
-                count = containerManager.useItems(player, new ItemStack(item), stack, count);
+                count = ContainerManager.useItems(player, new ItemStack(item), stack, count);
             }
 
             if(!container && WandUtil.stackEquals(stack, item)) {

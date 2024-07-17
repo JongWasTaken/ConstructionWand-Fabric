@@ -20,6 +20,6 @@ public class CoreDefault implements IWandCore
 
     @Override
     public Identifier getRegistryName() {
-        return ConstructionWand.loc("default");
+        return ConstructionWand.id("default");
     }
 }

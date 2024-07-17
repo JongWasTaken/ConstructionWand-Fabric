@@ -31,10 +31,10 @@
 			"pw.smto.constructionwand.ConstructionWandClient"
 		],
 		"emi": [
-			"pw.smto.constructionwand.integrations.emi.ConstructionWandEmiPlugin"
+			"pw.smto.constructionwand.integrations.recipe.ConstructionWandEmiPlugin"
 		],
 		"rei_client": [
-			"pw.smto.constructionwand.integrations.rei.ConstructionWandReiPlugin"
+			"pw.smto.constructionwand.integrations.recipe.ConstructionWandReiPlugin"
 		]
 	},
 	"accessWidener" : "constructionwand.accesswidener",

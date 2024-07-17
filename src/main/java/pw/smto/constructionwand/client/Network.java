@@ -16,11 +16,7 @@ public class Network {
         });
     }
 
-    public static void sendPacket(OwoNetChannel channel) {
-        channel.clientHandle().send(new PacketData.None());
-    }
     public static void sendPacket(OwoNetChannel channel, Record data) {
         channel.clientHandle().send(data);
     }
-
 }

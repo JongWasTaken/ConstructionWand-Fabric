@@ -14,11 +14,6 @@ public class ItemWandBasic extends ItemWand
         this.tier = tier;
     }
 
-   // @Override
-    //public int getMaxDamage() {
-    //    return ConfigServer.getWandProperties(this).getDurability();
-    //}
-
     @Override
     public int remainingDurability(ItemStack stack) {
         return stack.getMaxDamage() - stack.getDamage();
