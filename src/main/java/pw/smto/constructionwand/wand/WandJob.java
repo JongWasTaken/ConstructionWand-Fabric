@@ -22,6 +22,7 @@ import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.supplier.SupplierInventory;
 import pw.smto.constructionwand.wand.supplier.SupplierRandom;
 import pw.smto.constructionwand.wand.undo.ISnapshot;
+import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +160,7 @@ public class WandJob
             world.playSound(null, player.getBlockPos(), sound.getPlaceSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
 
             // Add to job history for undo
-            ConstructionWand.undoHistory.add(player, world, placeSnapshots);
+            UndoHistory.add(player, world, placeSnapshots);
         }
 
         return !placeSnapshots.isEmpty();

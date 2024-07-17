@@ -1,4 +1,4 @@
-package pw.smto.constructionwand.integrations.emi;
+package pw.smto.constructionwand.integrations.recipe;
 
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;

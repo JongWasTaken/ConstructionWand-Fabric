@@ -1,16 +1,13 @@
-package pw.smto.constructionwand.containers.handlers;
+package pw.smto.constructionwand.integrations.container;
 
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleSlotStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.p3pp3rf1y.porting_lib.transfer.items.SCItemStackHandlerSlot;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackItem;
 import net.p3pp3rf1y.sophisticatedbackpacks.common.BackpackWrapperLookup;
 import pw.smto.constructionwand.api.IContainerHandler;
-import pw.smto.constructionwand.basics.WandUtil;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

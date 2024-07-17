@@ -7,6 +7,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandCore;
 
@@ -18,13 +19,15 @@ public abstract class ItemCore extends Item implements IWandCore
         super(properties);
     }
 
-    public void appendHoverText(@NotNull ItemStack itemstack, World worldIn, @NotNull List<Text> lines, @NotNull TooltipContext extraInfo) {
-        if (!worldIn.isClient) return;
-        lines.add(
+    @Override
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
+        if (world == null) return;
+        if (!world.isClient) return;
+        tooltip.add(
                 Text.translatable(ConstructionWand.MOD_ID + ".option.cores." + getRegistryName().toString() + ".desc")
                         .formatted(Formatting.GRAY)
         );
-        lines.add(
+        tooltip.add(
                 Text.translatable(ConstructionWand.MOD_ID + ".tooltip.core_tip").formatted(Formatting.AQUA)
         );
     }

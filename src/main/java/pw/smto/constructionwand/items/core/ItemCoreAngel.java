@@ -24,6 +24,6 @@ public class ItemCoreAngel extends ItemCore
 
     @Override
     public Identifier getRegistryName() {
-        return ConstructionWand.loc("core_angel");
+        return ConstructionWand.id("core_angel");
     }
 }

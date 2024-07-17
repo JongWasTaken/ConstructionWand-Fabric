@@ -1,4 +1,4 @@
-package pw.smto.constructionwand.integrations.rei;
+package pw.smto.constructionwand.integrations.recipe;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
@@ -18,7 +18,6 @@ import pw.smto.constructionwand.basics.ConfigServer;
 
 public class ConstructionWandReiPlugin implements REIClientPlugin
 {
-    //private static final Identifier pluginId = new Identifier(ConstructionWand.MOD_ID, ConstructionWand.MOD_ID);
     private static final String baseKey = ConstructionWand.MOD_ID + ".description.";
     private static final String baseKeyItem = "item." + ConstructionWand.MOD_ID + ".";
 

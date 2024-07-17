@@ -25,14 +25,14 @@ import pw.smto.constructionwand.api.IWandCore;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
-import pw.smto.constructionwand.data.ICustomItemModel;
 import pw.smto.constructionwand.wand.WandJob;
+import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.List;
 
-import static pw.smto.constructionwand.ConstructionWand.loc;
+import static pw.smto.constructionwand.ConstructionWand.id;
 
-public abstract class ItemWand extends Item implements ICustomItemModel
+public abstract class ItemWand extends Item
 {
     public ItemWand(Item.Settings properties) {
         super(properties);
@@ -49,8 +49,8 @@ public abstract class ItemWand extends Item implements ICustomItemModel
 
         ItemStack stack = player.getStackInHand(hand);
 
-        if(player.isSneaking() && ConstructionWand.undoHistory.isUndoActive(player)) {
-            return ConstructionWand.undoHistory.undo(player, world, context.getBlockPos()) ? ActionResult.SUCCESS : ActionResult.FAIL;
+        if(player.isSneaking() && UndoHistory.isUndoActive(player)) {
+            return UndoHistory.undo(player, world, context.getBlockPos()) ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
         else {
             WandJob job = getWandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
@@ -139,21 +139,5 @@ public abstract class ItemWand extends Item implements ICustomItemModel
                         .append(Text.literal(" - ").formatted(Formatting.GRAY))
                         .append(Text.translatable(option.getDescTranslation()).formatted(Formatting.WHITE))
                 , true);
-    }
-
-    @Override
-    public void generateCustomItemModel(net.minecraft.data.client.ItemModelGenerator generator, String name) {
-        Models.HANDHELD.upload(loc(name + "_core"), TextureMap.layered(loc("item/" + name),loc("item/overlay_core")), generator.writer);
-        //generator.withExistingParent(name + "_core", "item/handheld")
-        //        .texture("layer0", generator.modLoc("item/" + name))
-        //        .texture("layer1", generator.modLoc("item/overlay_core"));
-
-        //Models.HANDHELD.upload(loc(name), TextureMap.texture(loc("item/" + name)).put(TextureKey.of("using_core"),"1") , generator.writer);
-        //generator.withExistingParent(name, "item/handheld")
-       //         .texture("layer0", generator.modLoc("item/" + name))
-       //         .override()
-       //         .predicate(generator.modLoc("using_core"), 1)
-        //        .model(wandWithCore).end();
-
     }
 }

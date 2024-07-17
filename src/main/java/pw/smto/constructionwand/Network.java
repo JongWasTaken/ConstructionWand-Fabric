@@ -10,6 +10,7 @@ import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
+import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.List;
 
@@ -23,7 +24,6 @@ public class Network {
 
     }
     public static class PacketData {
-        public record None() {}
         public record UndoBlocks(List<BlockPos> undoBlocks) {}
         public record WandOption(String key, String value, boolean notify1) {
             public static WandOption of(IOption<?> option, boolean notify) {
@@ -58,20 +58,11 @@ public class Network {
             ServerPlayerEntity player = access.player();
             if(player == null) return;
 
-            ConstructionWand.undoHistory.updateClient(player, message.undoPressed);
+            UndoHistory.updateClient(player, message.undoPressed);
         });
     }
 
-    public static void sendPacket(PlayerEntity target, OwoNetChannel channel) {
-        channel.serverHandle((ServerPlayerEntity)target).send(new PacketData.None());
-    }
-    public static void sendPacket(ServerPlayerEntity target, OwoNetChannel channel) {
-        channel.serverHandle(target).send(new PacketData.None());
-    }
     public static void sendPacket(PlayerEntity target, OwoNetChannel channel, Record data) {
-        channel.serverHandle((ServerPlayerEntity)target).send(data);
-    }
-    public static void sendPacket(ServerPlayerEntity target, OwoNetChannel channel, Record data) {
         channel.serverHandle(target).send(data);
     }
 }

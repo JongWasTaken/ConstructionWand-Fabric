@@ -23,6 +23,6 @@ public class ItemCoreDestruction extends ItemCore
 
     @Override
     public Identifier getRegistryName() {
-        return ConstructionWand.loc("core_destruction");
+        return ConstructionWand.id("core_destruction");
     }
 }

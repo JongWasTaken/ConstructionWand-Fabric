@@ -1,18 +1,11 @@
-package pw.smto.constructionwand.containers.handlers;
+package pw.smto.constructionwand.integrations.container;
 
 import com.supermartijn642.packedup.BackpackInventory;
 import com.supermartijn642.packedup.BackpackItem;
 import com.supermartijn642.packedup.BackpackStorageManager;
-import com.supermartijn642.packedup.PackedUp;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.natte.bankstorage.container.BankItemStorage;
-import net.natte.bankstorage.item.BankItem;
-import net.natte.bankstorage.item.CachedBankStorage;
-import net.natte.bankstorage.packet.NetworkUtil;
-import net.natte.bankstorage.util.Util;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 

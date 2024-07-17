@@ -19,7 +19,7 @@ public class ConstructionWandClient implements ClientModInitializer {
     public void onInitializeClient() {
         for(Item item : WANDS) {
             ModelPredicateProviderRegistry.register(
-                    item, ConstructionWand.loc("using_core"),
+                    item, ConstructionWand.id("using_core"),
                     (stack, world, entity, seed) -> {
                         if (entity == null || !(stack.getItem() instanceof ItemWand)) return 0;
                         return new WandOptions(stack).cores.get().getColor() > -1 ? 1 : 0;

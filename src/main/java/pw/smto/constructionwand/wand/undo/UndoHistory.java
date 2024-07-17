@@ -1,7 +1,6 @@
 package pw.smto.constructionwand.wand.undo;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -15,27 +14,23 @@ import java.util.stream.Collectors;
 
 public class UndoHistory
 {
-    private final HashMap<UUID, PlayerEntityEntry> history;
+    private static final HashMap<UUID, PlayerEntityEntry> history = new HashMap<>();
 
-    public UndoHistory() {
-        history = new HashMap<>();
-    }
-
-    private PlayerEntityEntry getEntryFromPlayerEntity(PlayerEntity player) {
+    private static PlayerEntityEntry getEntryFromPlayerEntity(PlayerEntity player) {
         return history.computeIfAbsent(player.getUuid(), k -> new PlayerEntityEntry());
     }
 
-    public void add(PlayerEntity player, World world, List<ISnapshot> placeSnapshots) {
+    public static void add(PlayerEntity player, World world, List<ISnapshot> placeSnapshots) {
         LinkedList<HistoryEntry> list = getEntryFromPlayerEntity(player).entries;
         list.add(new HistoryEntry(placeSnapshots, world));
         while(list.size() > ConfigServer.UNDO_HISTORY.get()) list.removeFirst();
     }
 
-    public void removePlayerEntity(PlayerEntity player) {
+    public static void removePlayerEntity(PlayerEntity player) {
         history.remove(player.getUuid());
     }
 
-    public void updateClient(PlayerEntity player, boolean ctrlDown) {
+    public static void updateClient(PlayerEntity player, boolean ctrlDown) {
         World world = player.getWorld();
         if(world.isClient) return;
 
@@ -59,11 +54,11 @@ public class UndoHistory
         Network.sendPacket(player, Network.Channels.S2C_UNDO_BLOCKS, packet);
     }
 
-    public boolean isUndoActive(PlayerEntity player) {
+    public static boolean isUndoActive(PlayerEntity player) {
         return getEntryFromPlayerEntity(player).undoActive;
     }
 
-    public boolean undo(PlayerEntity player, World world, BlockPos pos) {
+    public static boolean undo(PlayerEntity player, World world, BlockPos pos) {
         // If CTRL key is not pressed, return
         PlayerEntityEntry playerEntry = getEntryFromPlayerEntity(player);
         if(!playerEntry.undoActive) return false;
@@ -95,54 +90,46 @@ public class UndoHistory
         }
     }
 
-    private static class HistoryEntry
-    {
-        public final List<ISnapshot> placeSnapshots;
-        public final World world;
-
-        public HistoryEntry(List<ISnapshot> placeSnapshots, World world) {
-            this.placeSnapshots = placeSnapshots;
-            this.world = world;
-        }
+    private record HistoryEntry(List<ISnapshot> placeSnapshots, World world) {
 
         public Set<BlockPos> getBlockPositions() {
-            return placeSnapshots.stream().map(ISnapshot::getPos).collect(Collectors.toSet());
-        }
-
-        public boolean withinRange(BlockPos pos) {
-            Set<BlockPos> positions = getBlockPositions();
-
-            if(positions.contains(pos)) return true;
-
-            for(BlockPos p : positions) {
-                if(pos.isWithinDistance(p, 3)) return true;
+                return placeSnapshots.stream().map(ISnapshot::getPos).collect(Collectors.toSet());
             }
-            return false;
-        }
 
-        public boolean undo(PlayerEntity player) {
-            // Check first if all snapshots can be restored
-            for(ISnapshot snapshot : placeSnapshots) {
-                if(!snapshot.canRestore(world, player)) return false;
+            public boolean withinRange(BlockPos pos) {
+                Set<BlockPos> positions = getBlockPositions();
+
+                if (positions.contains(pos)) return true;
+
+                for (BlockPos p : positions) {
+                    if (pos.isWithinDistance(p, 3)) return true;
+                }
+                return false;
             }
-            for(ISnapshot snapshot : placeSnapshots) {
-                if(snapshot.restore(world, player) && !player.isCreative()) {
-                    for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
-                        if (i == 0 || snapshot.shouldGiveBackIncludedItem()) {
-                            if(!player.giveItemStack(snapshot.getRequiredItems().get(i))) {
-                                player.dropItem(snapshot.getRequiredItems().get(i), false);
+
+            public boolean undo(PlayerEntity player) {
+                // Check first if all snapshots can be restored
+                for (ISnapshot snapshot : placeSnapshots) {
+                    if (!snapshot.canRestore(world, player)) return false;
+                }
+                for (ISnapshot snapshot : placeSnapshots) {
+                    if (snapshot.restore(world, player) && !player.isCreative()) {
+                        for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
+                            if (i == 0 || snapshot.shouldGiveBackIncludedItem()) {
+                                if (!player.giveItemStack(snapshot.getRequiredItems().get(i))) {
+                                    player.dropItem(snapshot.getRequiredItems().get(i), false);
+                                }
                             }
                         }
                     }
                 }
+                player.getInventory().markDirty();
+
+                // Play teleport sound
+                SoundEvent sound = SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT;
+                world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+                return true;
             }
-            player.getInventory().markDirty();
-
-            // Play teleport sound
-            SoundEvent sound = SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT;
-            world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS, 1.0F, 1.0F);
-
-            return true;
         }
-    }
 }
