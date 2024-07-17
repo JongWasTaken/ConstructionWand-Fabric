@@ -1,5 +1,4 @@
 package pw.smto.constructionwand.basics;
-import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
 import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
