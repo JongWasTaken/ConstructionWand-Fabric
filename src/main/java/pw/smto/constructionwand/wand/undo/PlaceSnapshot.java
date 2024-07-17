@@ -122,7 +122,7 @@ public class PlaceSnapshot implements ISnapshot
 
     @Override
     public void forceRestore(World world) {
-        world.removeBlock(pos, false);
+        world.removeBlock(pos, true);
     }
 
     /**
