@@ -90,43 +90,66 @@ public class WandJob
     }
 
     public boolean doIt() {
+        // Rewrote this whole thing:
+        // 1. First try to remove all items from inventory
+        //    -> if it fails, return any taken items
+        // 2.Execute the snapshot
+        //    -> if it fails, return all taken items
+        // 3. Finally, damage the wand for the count of the first stack
+        // 4. Increase stat
+        // Hopefully this prevents any duping issues.
+
         ArrayList<ISnapshot> executed = new ArrayList<>();
 
         for(ISnapshot snapshot : placeSnapshots) {
             if(wand.isEmpty() || wandItem.remainingDurability(wand) == 0) break;
 
-            if(snapshot.execute(world, player, rayTraceResult)) {
-                if(player.isCreative()) executed.add(snapshot);
-                else {
-                    // If the item cant be taken, undo the placement
-                    boolean success = true;
-                    for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
-                        if(wandSupplier.takeItemStack(snapshot.getRequiredItems().get(i)) == 0) {
-                            if (i == 0) {
-                                wand.damage(
-                                        // layered blocks would need multiple right-clicks, so each removes 1 durability
-                                        snapshot.getRequiredItems().get(0).getCount(),
-                                        player,
-                                        e -> e.sendToolBreakStatus(Hand.MAIN_HAND)
-                                );
-                            }
-                        }
-                        else {
-                            ConstructionWand.LOGGER.info("Item could not be taken. Remove block: " +
-                                    snapshot.getBlockState().getBlock().toString());
-                            success = false;
-                            break;
-                        }
+            // First try to remove all items from inventory
+            List<ItemStack> taken = new ArrayList<>();
+            if (!player.isCreative()) {
+                boolean success = true;
+                for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
+                    if(wandSupplier.takeItemStack(snapshot.getRequiredItems().get(i)) == 0) {
+                        taken.add(snapshot.getRequiredItems().get(i));
                     }
-
-                    if (success) {
-                        executed.add(snapshot);
-                    } else {
-                        snapshot.forceRestore(world);
+                    else {
+                        ConstructionWand.LOGGER.info("Item could not be taken!");
+                        success = false;
+                        break;
                     }
                 }
-                player.increaseStat(Registry.Stats.USE_WAND, 1);
+
+                if (!success) {
+                    for (ItemStack item : taken) {
+                        // if it fails, return any taken items
+                        if(!player.giveItemStack(item)) {
+                            player.dropItem(item, false);
+                        }
+                    }
+                    continue;
+                }
             }
+
+            if(snapshot.execute(world, player, rayTraceResult)) {
+                executed.add(snapshot);
+                if (!player.isCreative()) {
+                    wand.damage(
+                            // layered blocks would need multiple right-clicks, so each removes 1 durability
+                            snapshot.getRequiredItems().get(0).getCount(),
+                            player,
+                            e -> e.sendToolBreakStatus(Hand.MAIN_HAND)
+                    );
+                }
+            } else {
+                snapshot.forceRestore(world);
+                for (ItemStack item : taken) {
+                    // if it fails, return any taken items
+                    if(!player.giveItemStack(item)) {
+                        player.dropItem(item, false);
+                    }
+                }
+            }
+            player.increaseStat(Registry.Stats.USE_WAND, 1);
         }
         placeSnapshots = executed;
 
