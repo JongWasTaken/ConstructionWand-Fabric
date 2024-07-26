@@ -39,7 +39,7 @@ public class ConstructionWandEmiPlugin implements EmiPlugin {
                     List.of(Text.translatable(baseKey + "wand",
                             Text.translatable(baseKeyItem + Registries.ITEM.getId(wand).getPath()),
                             wandProperties.getLimit(), durabilityText, optkeyText, wandModeText, wandGuiText)),
-                    new Identifier(ConstructionWand.MOD_ID, Registries.ITEM.getId(wand).getPath() + "_info")
+                    Identifier.of(ConstructionWand.MOD_ID, Registries.ITEM.getId(wand).getPath() + "_info")
             ));
         }
 
@@ -49,7 +49,7 @@ public class ConstructionWandEmiPlugin implements EmiPlugin {
                     List.of(Text.translatable(baseKey + Registries.ITEM.getId(core).getPath())
                             .append("\n\n")
                             .append(Text.translatable(baseKey + "core", wandModeText))),
-                    new Identifier(ConstructionWand.MOD_ID, Registries.ITEM.getId(core).getPath() + "_info")
+                    Identifier.of(ConstructionWand.MOD_ID, Registries.ITEM.getId(core).getPath() + "_info")
             ));
         }
     }
