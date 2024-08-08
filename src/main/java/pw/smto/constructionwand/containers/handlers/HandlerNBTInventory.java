@@ -12,24 +12,20 @@ import net.minecraft.registry.DynamicRegistryManager;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 
-public class HandlerCapability implements IContainerHandler
+public class HandlerNBTInventory implements IContainerHandler
 {
     @Override
     public boolean matches(PlayerEntity player, ItemStack target, ItemStack current) {
-        // this is almost cavemanish compared to forge but its a best-effort type of thing
         NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
-        if (items.size() != 0) {
-            return true;
-        }
-        return false;
+        return !items.isEmpty();
     }
 
     @Override
     public int countItems(PlayerEntity player, ItemStack target, ItemStack current) {
         NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
-        if (items.size() != 0) {
+        if (!items.isEmpty()) {
             var inv = new SimpleInventory();
             inv.readNbtList(items, DynamicRegistryManager.EMPTY);
             int total = 0;
@@ -48,7 +44,7 @@ public class HandlerCapability implements IContainerHandler
     public int useItems(PlayerEntity player, ItemStack target, ItemStack current, int count) {
         NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
-        if (items.size() != 0) {
+        if (!items.isEmpty()) {
             var inv = new SimpleInventory();
             inv.readNbtList(items, DynamicRegistryManager.EMPTY);
 

@@ -3,9 +3,9 @@ package pw.smto.constructionwand.containers;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import pw.smto.constructionwand.api.IContainerHandler;
-import pw.smto.constructionwand.containers.handlers.HandlerBundle;
-import pw.smto.constructionwand.containers.handlers.HandlerCapability;
-import pw.smto.constructionwand.containers.handlers.HandlerShulkerbox;
+import pw.smto.constructionwand.containers.handlers.HandlerBundleComponent;
+import pw.smto.constructionwand.containers.handlers.HandlerContainerComponent;
+import pw.smto.constructionwand.containers.handlers.HandlerNBTInventory;
 import pw.smto.constructionwand.integrations.ModCompat;
 
 import java.util.ArrayList;
@@ -42,9 +42,9 @@ public class ContainerManager
     public static void init() {
         if (initialized) return;
 
-        ContainerManager.register(new HandlerCapability());
-        ContainerManager.register(new HandlerShulkerbox());
-        ContainerManager.register(new HandlerBundle());
+        ContainerManager.register(new HandlerContainerComponent());
+        ContainerManager.register(new HandlerNBTInventory());
+        ContainerManager.register(new HandlerBundleComponent());
 
         ModCompat.registerModContainerHandlers();
 
