@@ -2,10 +2,7 @@ package pw.smto.constructionwand.items.wand;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.data.client.Models;
-import net.minecraft.data.client.TextureMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,8 +26,6 @@ import pw.smto.constructionwand.wand.WandJob;
 import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.List;
-
-import static pw.smto.constructionwand.ConstructionWand.id;
 
 public abstract class ItemWand extends Item
 {

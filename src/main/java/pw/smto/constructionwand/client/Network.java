@@ -5,8 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import java.util.Set;
-
-import static pw.smto.constructionwand.Network.PacketData;
 public class Network {
     @Environment(EnvType.CLIENT)
     public static void init() {

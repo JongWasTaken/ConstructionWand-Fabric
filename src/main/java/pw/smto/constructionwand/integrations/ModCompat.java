@@ -1,8 +1,6 @@
 package pw.smto.constructionwand.integrations;
 
 import net.fabricmc.loader.api.FabricLoader;
-import pw.smto.constructionwand.ConstructionWand;
-import pw.smto.constructionwand.containers.ContainerManager;
 
 public class ModCompat {
     private static boolean checked = false;

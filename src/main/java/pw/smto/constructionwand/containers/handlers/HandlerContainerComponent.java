@@ -2,16 +2,9 @@ package pw.smto.constructionwand.containers.handlers;
 
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.collection.DefaultedList;
-import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 

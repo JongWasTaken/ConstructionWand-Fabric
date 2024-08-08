@@ -1,12 +1,12 @@
 package pw.smto.constructionwand.wand.undo;
 
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.hit.BlockHitResult;
