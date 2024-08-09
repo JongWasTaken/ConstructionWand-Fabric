@@ -13,7 +13,7 @@ Due to being a Polymer port, certain features had to be altered:
 [![https://modrinth.com/mod/fabric-api](https://img.shields.io/badge/Requires_Fabric_API-white?style=for-the-badge&logo=modrinth&logoColor=black)](https://modrinth.com/mod/fabric-api)
   
 [Modrinth](https://modrinth.com/mod/construction-wand-polymer)  
-[CurseForge]()
+[CurseForge](https://legacy.curseforge.com/minecraft/mc-mods/construction-wand-polymer)
 
 ## License
 Credits go to [Theta-Dev](https://github.com/Theta-Dev/) for creating the original mod.
