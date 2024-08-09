@@ -26,7 +26,7 @@ import static pw.smto.constructionwand.ConstructionWand.MOD_ID;
 
 public class Network {
 
-    public static class Channels {
+    public static class Payloads {
         public record S2CHandshake(boolean value) implements CustomPayload {
             public static final CustomPayload.Id<S2CHandshake> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "s2c_handshake"));
             public static final PacketCodec<RegistryByteBuf, S2CHandshake> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, S2CHandshake::value, S2CHandshake::new);
@@ -37,9 +37,9 @@ public class Network {
             }
         }
 
-        public record S2CHandshakeCallback(boolean value) implements CustomPayload {
-            public static final CustomPayload.Id<S2CHandshakeCallback> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "s2c_handshake_callback"));
-            public static final PacketCodec<RegistryByteBuf, S2CHandshakeCallback> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, S2CHandshakeCallback::value, S2CHandshakeCallback::new);
+        public record C2SHandshakeCallback(boolean value) implements CustomPayload {
+            public static final CustomPayload.Id<C2SHandshakeCallback> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "c2s_handshake_callback"));
+            public static final PacketCodec<RegistryByteBuf, C2SHandshakeCallback> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, C2SHandshakeCallback::value, C2SHandshakeCallback::new);
 
             @Override
             public Id<? extends CustomPayload> getId() {
@@ -47,8 +47,18 @@ public class Network {
             }
         }
 
-        public record UndoBlocksPayload(List<BlockPos> blockPosList) implements CustomPayload {
-            public static final CustomPayload.Id<UndoBlocksPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "undo_blocks"));
+        public record C2SWandUpgradeRequest(boolean value) implements CustomPayload {
+            public static final CustomPayload.Id<C2SWandUpgradeRequest> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "c2s_wand_upgrade_request"));
+            public static final PacketCodec<RegistryByteBuf, C2SWandUpgradeRequest> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, C2SWandUpgradeRequest::value, C2SWandUpgradeRequest::new);
+
+            @Override
+            public Id<? extends CustomPayload> getId() {
+                return ID;
+            }
+        }
+
+        public record S2CUndoBlocksPayload(List<BlockPos> blockPosList) implements CustomPayload {
+            public static final CustomPayload.Id<S2CUndoBlocksPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "undo_blocks"));
             public static final PacketCodec<ByteBuf, List<BlockPos>> PACKET_CODEC = new PacketCodec<ByteBuf, List<BlockPos>>() {
                 public List<BlockPos> decode(ByteBuf byteBuf) {
                     if (byteBuf.readableBytes() <= 0) return new ArrayList<>();
@@ -66,7 +76,7 @@ public class Network {
                     }
                 }
             };
-            public static final PacketCodec<RegistryByteBuf, UndoBlocksPayload> CODEC = PacketCodec.tuple(PACKET_CODEC, UndoBlocksPayload::blockPosList, UndoBlocksPayload::new);
+            public static final PacketCodec<RegistryByteBuf, S2CUndoBlocksPayload> CODEC = PacketCodec.tuple(PACKET_CODEC, S2CUndoBlocksPayload::blockPosList, S2CUndoBlocksPayload::new);
 
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
@@ -74,9 +84,9 @@ public class Network {
             }
         }
 
-        public record QueryUndoPayload(boolean undoPressed) implements CustomPayload {
-            public static final CustomPayload.Id<QueryUndoPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "query_undo"));
-            public static final PacketCodec<RegistryByteBuf, QueryUndoPayload> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, QueryUndoPayload::undoPressed, QueryUndoPayload::new);
+        public record C2SQueryUndoPayload(boolean undoPressed) implements CustomPayload {
+            public static final CustomPayload.Id<C2SQueryUndoPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "query_undo"));
+            public static final PacketCodec<RegistryByteBuf, C2SQueryUndoPayload> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, C2SQueryUndoPayload::undoPressed, C2SQueryUndoPayload::new);
 
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
@@ -84,37 +94,48 @@ public class Network {
             }
         }
 
-        public record WandOptionPayload(String key, String value, boolean notify1) implements CustomPayload {
-            public static final CustomPayload.Id<WandOptionPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "wand_option"));
-            public static final PacketCodec<RegistryByteBuf, WandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, WandOptionPayload::key, PacketCodecs.STRING, WandOptionPayload::value, PacketCodecs.BOOL, WandOptionPayload::notify1, WandOptionPayload::new);
+        public record C2SWandOptionPayload(String key, String value, boolean notify1) implements CustomPayload {
+            public static final CustomPayload.Id<C2SWandOptionPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "wand_option"));
+            public static final PacketCodec<RegistryByteBuf, C2SWandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, C2SWandOptionPayload::key, PacketCodecs.STRING, C2SWandOptionPayload::value, PacketCodecs.BOOL, C2SWandOptionPayload::notify1, C2SWandOptionPayload::new);
 
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
                 return ID;
             }
 
-            public static WandOptionPayload of(IOption<?> option, boolean notify) {
-                return new WandOptionPayload(option.getKey(), option.getValueString(), notify);
+            public static C2SWandOptionPayload of(IOption<?> option, boolean notify) {
+                return new C2SWandOptionPayload(option.getKey(), option.getValueString(), notify);
             }
         }
     }
 
     public static void init() {
-        PayloadTypeRegistry.playS2C().register(Channels.S2CHandshake.ID, Channels.S2CHandshake.CODEC);
-        PayloadTypeRegistry.playC2S().register(Channels.S2CHandshakeCallback.ID, Channels.S2CHandshakeCallback.CODEC);
-        PayloadTypeRegistry.playS2C().register(Channels.UndoBlocksPayload.ID, Channels.UndoBlocksPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(Channels.QueryUndoPayload.ID, Channels.QueryUndoPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(Channels.WandOptionPayload.ID, Channels.WandOptionPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(Payloads.S2CHandshake.ID, Payloads.S2CHandshake.CODEC);
+        PayloadTypeRegistry.playS2C().register(Payloads.S2CUndoBlocksPayload.ID, Payloads.S2CUndoBlocksPayload.CODEC);
 
-        ServerPlayNetworking.registerGlobalReceiver(Channels.S2CHandshakeCallback.ID, (payload, context) -> {
+        PayloadTypeRegistry.playC2S().register(Payloads.C2SHandshakeCallback.ID, Payloads.C2SHandshakeCallback.CODEC);
+        PayloadTypeRegistry.playC2S().register(Payloads.C2SWandUpgradeRequest.ID, Payloads.C2SWandUpgradeRequest.CODEC);
+        PayloadTypeRegistry.playC2S().register(Payloads.C2SQueryUndoPayload.ID, Payloads.C2SQueryUndoPayload.CODEC);
+        PayloadTypeRegistry.playC2S().register(Payloads.C2SWandOptionPayload.ID, Payloads.C2SWandOptionPayload.CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SHandshakeCallback.ID, (payload, context) -> {
             context.server().execute(() -> {
-                ConstructionWand.LOGGER.warn("Enabling packets for player: " + context.player().getDisplayName().getString());
+                ConstructionWand.LOGGER.warn("Enabling client-side enhancements for player: " + context.player().getDisplayName().getString());
                 PlayerInstance.getEntryFromPlayerEntity(context.player()).hasClientMod = true;
                 context.player().getInventory().markDirty();
             });
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(Channels.QueryUndoPayload.ID, (payload, context) -> {
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SWandUpgradeRequest.ID, (payload, context) -> {
+            context.server().execute(() -> {
+                ItemStack stack = context.player().getMainHandStack();
+                if (!(stack.getItem() instanceof ItemWand)) return;
+                WandUtil.upgradeWand(context.player(), stack, null);
+                context.player().getInventory().markDirty();
+            });
+        });
+
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SQueryUndoPayload.ID, (payload, context) -> {
             context.server().execute(() -> {
                 ServerPlayerEntity player = context.player();
                 if(player == null) return;
@@ -122,7 +143,7 @@ public class Network {
             });
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(Channels.WandOptionPayload.ID, (payload, context) -> {
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SWandOptionPayload.ID, (payload, context) -> {
             context.server().execute(() -> {
                 ServerPlayerEntity player = context.player();
                 if(player == null) return;

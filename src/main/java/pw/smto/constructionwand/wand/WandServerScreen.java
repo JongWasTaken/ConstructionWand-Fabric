@@ -12,6 +12,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import pw.smto.constructionwand.basics.ConfigServer;
+import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.core.ItemCore;
@@ -37,7 +38,7 @@ public class WandServerScreen extends SimpleGui {
         }
         this.setSlot(7, GuiElementBuilder.from(Items.MAGMA_BLOCK.getDefaultStack())
                 .hideDefaultTooltip()
-                .setName(Text.literal("Reset Usage Counter").formatted(Formatting.AQUA))
+                .setName(Text.translatable("constructionwand.option.used").formatted(Formatting.AQUA))
                 .addLoreLine(Text.translatable("constructionwand.option.used.desc").formatted(Formatting.GRAY))
                 .setCallback((int index, ClickType type, SlotActionType action) -> {
                     options.used.set(0);
@@ -47,24 +48,11 @@ public class WandServerScreen extends SimpleGui {
         );
         this.setSlot(8, GuiElementBuilder.from(Items.DIAMOND.getDefaultStack())
                 .hideDefaultTooltip()
-                .setName(Text.literal("Upgrade Wand").formatted(Formatting.AQUA))
-                .addLoreLine(Text.literal("Click here to add cores from your inventory to the wand.").formatted(Formatting.GRAY))
+                .setName(Text.translatable("constructionwand.option.upgrade").formatted(Formatting.AQUA))
+                .addLoreLine(Text.translatable("constructionwand.option.upgrade.desc").formatted(Formatting.GRAY))
                 .setCallback((int index, ClickType type, SlotActionType action) -> {
-                    var inv = player.getInventory();
-                    boolean upgraded = false;
-                    for (int i = 0; i < inv.size(); i++) {
-                        var stack = inv.getStack(i);
-                        if (stack.getItem() instanceof ItemCore core) {
-                            if (!options.hasUpgrade(core) && ConfigServer.getWandProperties(wand.getItem()).isUpgradeable()) {
-                                upgraded = true;
-                                player.sendMessage(Text.translatable(core.getTranslationKey()).formatted(Formatting.AQUA).append(Text.literal(" has been added to your wand.").formatted(Formatting.GRAY)));
-                                options.addUpgrade(core);
-                                stack.decrement(1);
-                            }
-                        }
-                    }
+                    WandUtil.upgradeWand(player, wand, options);
                     this.close();
-                    if (!upgraded) player.sendMessage(Text.literal("No cores were added to your wand.").formatted(Formatting.RED));
                 })
                 .build()
         );

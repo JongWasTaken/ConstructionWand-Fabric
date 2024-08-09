@@ -46,7 +46,7 @@ public class ConstructionWand implements ModInitializer
             ContainerManager.init();
         });
         ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
-            sender.sendPacket(new Network.Channels.S2CHandshake(true));
+            sender.sendPacket(new Network.Payloads.S2CHandshake(true));
         });
         ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer server) -> {
             PlayerInstance.removePlayerEntity(handler.player);

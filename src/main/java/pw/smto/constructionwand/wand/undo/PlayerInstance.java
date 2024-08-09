@@ -49,7 +49,7 @@ public class PlayerInstance
             if(entry == null || !entry.world.equals(world)) positions = Collections.emptySet();
             else positions = entry.getBlockPositions();
         }
-        Network.sendPacket(player, new Network.Channels.UndoBlocksPayload(positions.stream().toList()));
+        Network.sendPacket(player, new Network.Payloads.S2CUndoBlocksPayload(positions.stream().toList()));
     }
 
     public static boolean isUndoActive(PlayerEntity player) {

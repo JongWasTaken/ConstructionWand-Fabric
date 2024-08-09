@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
+import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.OptionInt;
 import pw.smto.constructionwand.basics.option.WandOptions;
@@ -44,10 +45,22 @@ public class ScreenWand extends Screen {
         createButton(0, 0, wandOptions.cores);
         createButton(0, 1, wandOptions.lock);
         createButton(0, 2, wandOptions.direction);
+        createButton(0, 3, wandOptions.used);
         createButton(1, 0, wandOptions.replace);
         createButton(1, 1, wandOptions.match);
         createButton(1, 2, wandOptions.random);
-        createButton(0.5d, 3, wandOptions.used);
+
+        ButtonWidget button = ButtonWidget.builder(Text.translatable("constructionwand.option.upgrade"), (bt) -> {
+                    //WandUtil.upgradeWand(MinecraftClient.getInstance().player, wand, wandOptions);
+                    pw.smto.constructionwand.client.Network.sendPacket(new pw.smto.constructionwand.Network.Payloads.C2SWandUpgradeRequest(true));
+                })
+                .position(getX(1), getY(3))
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .tooltip(Tooltip.of(Text.translatable("constructionwand.option.upgrade.desc")))
+                .narrationSupplier(x -> Text.translatable("constructionwand.option.upgrade"))
+                .build();
+        button.active = true;
+        buttons.add(addDrawable(button));
     }
 
     @Override
@@ -94,7 +107,7 @@ public class ScreenWand extends Screen {
 
     private void clickButton(ButtonWidget button, IOption<?> option) {
         if (option instanceof OptionInt o) o.set(0); else option.next();
-        Network.sendPacket(pw.smto.constructionwand.Network.Channels.WandOptionPayload.of(option, false));
+        Network.sendPacket(pw.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(option, false));
         button.setMessage(getButtonLabel(option));
         button.setTooltip(getButtonTooltip(option));
     }

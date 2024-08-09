@@ -1,7 +1,4 @@
 package pw.smto.constructionwand.basics;
-//import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
-//import com.simibubi.create.content.decoration.copycat.CopycatBlock;
-//import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
@@ -14,6 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
@@ -28,6 +27,7 @@ import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.containers.ContainerManager;
 import pw.smto.constructionwand.integrations.ModCompat;
+import pw.smto.constructionwand.items.core.ItemCore;
 import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.WandItemUseContext;
 
@@ -37,6 +37,25 @@ import java.util.function.Predicate;
 
 public class WandUtil
 {
+    public static void upgradeWand(PlayerEntity player, ItemStack wand, @Nullable WandOptions options) {
+        if (options == null) options = new WandOptions(wand);
+        var inv = player.getInventory();
+        boolean upgraded = false;
+        for (int i = 0; i < inv.size(); i++) {
+            var stack = inv.getStack(i);
+            if (stack.getItem() instanceof ItemCore core) {
+                if (!options.hasUpgrade(core) && ConfigServer.getWandProperties(wand.getItem()).isUpgradeable()) {
+                    upgraded = true;
+                    player.sendMessage(Text.translatable(core.getTranslationKey()).formatted(Formatting.AQUA).append(Text.literal(" has been added to your wand.").formatted(Formatting.GRAY)));
+                    options.addUpgrade(core);
+                    stack.decrement(1);
+                }
+            }
+        }
+        if (!upgraded) player.sendMessage(Text.literal("No cores were added to your wand.").formatted(Formatting.RED));
+        options.writeToStack(wand);
+    }
+
     public static ItemStack convertPolymerStack(ItemStack stack) {
         if (stack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
             var nbt = stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();
