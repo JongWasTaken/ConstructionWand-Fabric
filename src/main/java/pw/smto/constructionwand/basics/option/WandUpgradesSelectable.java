@@ -1,13 +1,19 @@
 package pw.smto.constructionwand.basics.option;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
+import pw.smto.constructionwand.Registry;
+import pw.smto.constructionwand.api.IWandCore;
 import pw.smto.constructionwand.api.IWandUpgrade;
+import pw.smto.constructionwand.items.core.ItemCoreAngel;
+import pw.smto.constructionwand.items.core.ItemCoreDestruction;
 
-public class WandUpgradesSelectable<T extends IWandUpgrade> extends WandUpgrades<T> implements IOption<T>
+public class WandUpgradesSelectable extends WandUpgrades<pw.smto.constructionwand.api.IWandCore> implements IOption<pw.smto.constructionwand.api.IWandCore>
 {
     private byte selector;
 
-    public WandUpgradesSelectable(NbtCompound tag, String key, T dval) {
+    public WandUpgradesSelectable(NbtCompound tag, String key, pw.smto.constructionwand.api.IWandCore dval) {
         super(tag, key, dval);
     }
 
@@ -38,22 +44,23 @@ public class WandUpgradesSelectable<T extends IWandUpgrade> extends WandUpgrades
     }
 
     @Override
-    public void set(T val) {
+    public void set(pw.smto.constructionwand.api.IWandCore val) {
         selector = (byte) upgrades.indexOf(val);
         fixSelector();
         serializeSelector();
     }
 
     @Override
-    public T get() {
+    public pw.smto.constructionwand.api.IWandCore get() {
         fixSelector();
         return upgrades.get(selector);
     }
 
     @Override
-    public T next(boolean dir) {
-        selector++;
-        fixSelector();
+    public pw.smto.constructionwand.api.IWandCore next(boolean dir) {
+        if (dir) selector--; else selector++;
+        if (selector < 0) selector = (byte) (upgrades.size() - 1);
+        if (selector >= upgrades.size()) selector = 0;
         serializeSelector();
         return get();
     }

@@ -7,9 +7,14 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import pw.smto.constructionwand.basics.ConfigClient;
@@ -30,7 +35,7 @@ public class ClientEvents
             boolean optState = isOptKeyDown();
             if(optPressed != optState) {
                 optPressed = optState;
-                Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_QUERY_UNDO, new pw.smto.constructionwand.Network.PacketData.QueryUndo(optPressed));
+                Network.sendPacket(new pw.smto.constructionwand.Network.Channels.QueryUndoPayload(optPressed));
             }
         });
 
@@ -43,12 +48,13 @@ public class ClientEvents
                 if(client.player == null || !modeKeyCombDown(client.player)) return;
                 var target = MinecraftClient.getInstance().crosshairTarget;
                 if (target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                    ItemStack wand = client.player.getStackInHand(client.player.getActiveHand());
+                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
                     if(!(wand.getItem() instanceof ItemWand)) return;
 
                     WandOptions wandOptions = new WandOptions(wand);
                     wandOptions.cores.next();
-                    Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_WAND_OPTION, pw.smto.constructionwand.Network.PacketData.WandOption.of(wandOptions.cores, true));
+
+                    Network.sendPacket(pw.smto.constructionwand.Network.Channels.WandOptionPayload.of(wandOptions.cores, true));
                     lastClickTime = client.world.getTime();
                 }
             }
@@ -59,7 +65,7 @@ public class ClientEvents
             if(!world.isClient) return TypedActionResult.pass(player.getStackInHand(hand));
             var target = MinecraftClient.getInstance().crosshairTarget;
             if (guiKeyCombDown(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                ItemStack wand = player.getStackInHand(player.getActiveHand());
+                ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
                 if(!(wand.getItem() instanceof ItemWand)) return TypedActionResult.pass(wand);
                 MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
                 return TypedActionResult.fail(wand);
@@ -78,8 +84,7 @@ public class ClientEvents
 
         WandOptions wandOptions = new WandOptions(wand);
         wandOptions.lock.next(scrollDelta < 0);
-        Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_WAND_OPTION, pw.smto.constructionwand.Network.PacketData.WandOption.of(wandOptions.lock, true));
-
+        Network.sendPacket(pw.smto.constructionwand.Network.Channels.WandOptionPayload.of(wandOptions.lock, true));
         return true;
     }
 

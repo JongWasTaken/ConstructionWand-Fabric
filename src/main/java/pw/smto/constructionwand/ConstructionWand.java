@@ -1,8 +1,10 @@
 package pw.smto.constructionwand;
 
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import fuzs.forgeconfigapiport.fabric.api.forge.v4.ForgeConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -15,7 +17,7 @@ import pw.smto.constructionwand.basics.ConfigServer;
 import pw.smto.constructionwand.basics.ReplacementRegistry;
 import pw.smto.constructionwand.containers.ContainerManager;
 import pw.smto.constructionwand.integrations.ModCompat;
-import pw.smto.constructionwand.wand.undo.UndoHistory;
+import pw.smto.constructionwand.wand.undo.PlayerInstance;
 
 public class ConstructionWand implements ModInitializer
 {
@@ -31,6 +33,8 @@ public class ConstructionWand implements ModInitializer
     @Override
     public void onInitialize() {
         LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
+        PolymerResourcePackUtils.addModAssets(MOD_ID);
+        PolymerResourcePackUtils.markAsRequired();
         Registry.registerAll();
         ConfigServer.init();
         ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.SERVER, ConfigServer.SPEC);
@@ -41,8 +45,11 @@ public class ConstructionWand implements ModInitializer
             ModCompat.checkForMods();
             ContainerManager.init();
         });
+        ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
+            sender.sendPacket(new Network.Channels.S2CHandshake(true));
+        });
         ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer server) -> {
-            UndoHistory.removePlayerEntity(handler.player);
+            PlayerInstance.removePlayerEntity(handler.player);
         });
     }
 }

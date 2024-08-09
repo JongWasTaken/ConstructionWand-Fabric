@@ -8,7 +8,7 @@ import pw.smto.constructionwand.wand.action.ActionDestruction;
 public class ItemCoreDestruction extends ItemCore
 {
     public ItemCoreDestruction(Settings properties) {
-        super(properties);
+        super(properties, ConstructionWand.id("core_destruction"));
     }
 
     @Override

@@ -12,11 +12,11 @@ import pw.smto.constructionwand.basics.ConfigServer;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class UndoHistory
+public class PlayerInstance
 {
     private static final HashMap<UUID, PlayerEntityEntry> history = new HashMap<>();
 
-    private static PlayerEntityEntry getEntryFromPlayerEntity(PlayerEntity player) {
+    public static PlayerEntityEntry getEntryFromPlayerEntity(PlayerEntity player) {
         return history.computeIfAbsent(player.getUuid(), k -> new PlayerEntityEntry());
     }
 
@@ -49,19 +49,19 @@ public class UndoHistory
             if(entry == null || !entry.world.equals(world)) positions = Collections.emptySet();
             else positions = entry.getBlockPositions();
         }
-
-        var packet = new Network.PacketData.UndoBlocks(positions.stream().toList());
-        Network.sendPacket(player, Network.Channels.S2C_UNDO_BLOCKS, packet);
+        Network.sendPacket(player, new Network.Channels.UndoBlocksPayload(positions.stream().toList()));
     }
 
     public static boolean isUndoActive(PlayerEntity player) {
-        return getEntryFromPlayerEntity(player).undoActive;
+        var entry = getEntryFromPlayerEntity(player);
+        if (entry.hasClientMod) return getEntryFromPlayerEntity(player).undoActive;
+        return player.isSneaking();
     }
 
     public static boolean undo(PlayerEntity player, World world, BlockPos pos) {
         // If CTRL key is not pressed, return
         PlayerEntityEntry playerEntry = getEntryFromPlayerEntity(player);
-        if(!playerEntry.undoActive) return false;
+        //if(!playerEntry.undoActive) return false;
 
         // Get the most recent entry for undo
         LinkedList<HistoryEntry> historyEntries = playerEntry.entries;
@@ -79,14 +79,18 @@ public class UndoHistory
         return false;
     }
 
-    private static class PlayerEntityEntry
+    public static class PlayerEntityEntry
     {
         public final LinkedList<HistoryEntry> entries;
         public boolean undoActive;
+        public boolean hasClientMod;
+        public boolean blockServerWandScreen = false;
 
         public PlayerEntityEntry() {
             entries = new LinkedList<>();
             undoActive = false;
+            hasClientMod = false;
+            blockServerWandScreen = false;
         }
     }
 

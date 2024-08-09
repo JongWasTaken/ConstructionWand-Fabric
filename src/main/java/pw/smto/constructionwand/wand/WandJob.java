@@ -17,12 +17,13 @@ import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.api.IWandSupplier;
 import pw.smto.constructionwand.basics.ConfigServer;
+import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.supplier.SupplierInventory;
 import pw.smto.constructionwand.wand.supplier.SupplierRandom;
 import pw.smto.constructionwand.wand.undo.ISnapshot;
-import pw.smto.constructionwand.wand.undo.UndoHistory;
+import pw.smto.constructionwand.wand.undo.PlayerInstance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +147,7 @@ public class WandJob
                     }
                 }
             }
-            player.increaseStat(Registry.Stats.USE_WAND, 1);
+            WandUtil.increaseUseStat(player);
         }
         placeSnapshots = executed;
 
@@ -156,7 +157,7 @@ public class WandJob
             world.playSound(null, player.getBlockPos(), sound.getPlaceSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
 
             // Add to job history for undo
-            UndoHistory.add(player, world, placeSnapshots);
+            PlayerInstance.add(player, world, placeSnapshots);
         }
 
         return !placeSnapshots.isEmpty();

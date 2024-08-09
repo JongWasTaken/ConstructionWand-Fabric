@@ -57,6 +57,8 @@
   "constructionwand.option.random.no": "§cランダム設置しない",
   "constructionwand.option.random.no.desc": "ランダム設置を行いません。",
 
+  "constructionwand.option.used": "使用: ",
+
   "constructionwand.description.wand": "%1$sは、向かっている面に%2$dブロック設置でき、%3$s使用できます。\n\n%5$を押しながらホイールスクロールすると設置方向(水平、垂直、南北、東西、無制限)を変更できます。\n\n%6$s§9を押しながら使用§0でオプション画面を開きます。\n\n§5§n取消§0§r\nブロックの方を向きながら§9スニークしながら§0%4$sを押し続けると、最後に設置したブロックが緑の境界線ととともに表示されます。§9スニークしながら§0%4$s§9を押して使用ボタンを押す§0と、処理を取り消すことができ、すべてのブロックはインベントリに戻ります。破壊の杖を使用していた場合もブロックはもとに戻ります。\n\n§5§コンテナ§0§r\nシュルカーボックス、バンドル、その他のModで追加されたコンテナは杖で建築を行った際に資材を供給できます。\n\n§5§nオフハンド優先§0§r\nオフハンドにブロックを持っている場合、設置されているブロックよりそちらが優先されます。",
   "constructionwand.description.durability.limited": "残り%dブロック",
   "constructionwand.description.durability.unlimited": "無制限に",

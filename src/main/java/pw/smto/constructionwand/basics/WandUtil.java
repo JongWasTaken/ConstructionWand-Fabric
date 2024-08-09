@@ -3,6 +3,8 @@ package pw.smto.constructionwand.basics;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,6 +25,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
+import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.containers.ContainerManager;
 import pw.smto.constructionwand.integrations.ModCompat;
 import pw.smto.constructionwand.items.wand.ItemWand;
@@ -34,6 +37,30 @@ import java.util.function.Predicate;
 
 public class WandUtil
 {
+    public static ItemStack convertPolymerStack(ItemStack stack) {
+        if (stack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
+            var nbt = stack.get(DataComponentTypes.CUSTOM_DATA).copyNbt();
+            if (nbt.contains("$polymer:stack")) {
+                nbt = nbt.getCompound("$polymer:stack");
+                if (nbt.contains("id")) {
+                    Identifier id = Identifier.tryParse(nbt.getString("id"));
+                    if (id != null) {
+                        Item item = Registries.ITEM.get(id);
+                        if (item != null) {
+                            ItemStack newStack = item.getDefaultStack();
+                            try {
+                                nbt = nbt.getCompound("components").getCompound("minecraft:custom_data");
+                            } catch (Exception ignored) {}
+                            newStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+                            return newStack;
+                        }
+                    }
+                }
+            }
+        }
+        return stack;
+    }
+
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
         return ItemStack.areItemsEqual(stackA, stackB);
     }
@@ -44,13 +71,24 @@ public class WandUtil
     }
 
     public static ItemStack holdingWand(PlayerEntity player) {
-        if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof ItemWand) {
-            return player.getStackInHand(Hand.MAIN_HAND);
+        if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY) {
+            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
+            if (stack.getItem() instanceof ItemWand) return stack;
         }
-        else if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.OFF_HAND).getItem() instanceof ItemWand) {
-            return player.getStackInHand(Hand.OFF_HAND);
+        if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY) {
+            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
+            if (stack.getItem() instanceof ItemWand) return stack;
         }
         return null;
+    }
+
+    public static void increaseUseStat(PlayerEntity player) {
+        ItemStack wand = holdingWand(player);
+        if (wand != null) {
+            var options = new WandOptions(wand);
+            options.used.next();
+            options.writeToStack(wand);
+        }
     }
 
     public static BlockPos posFromVec(Vec3d vec) {

@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "constructionwand",
 	"version": "${version}",
-	"name": "Construction Wand (Fabric)",
-	"description": "Construction Wands make building easier!\n\nWith a Construction Wand you can place multiple blocks (up to 1024) at once, extending your build on the side you're\nfacing. If that's not enough: you can upgrade your wand with additional cores, allowing you to place a block\nbehind the block you are facing, conjure blocks in mid air or destroy lots of blocks very fast.\n\nThis is a fabric port of Theta-Dev's original minecraft mod. May the odds continue to be in your favor.",
+	"name": "Construction Wand (Polymer)",
+	"description": "Construction Wands make building easier!\n\nWith a Construction Wand you can place multiple blocks (up to 1024) at once, extending your build on the side you're\nfacing. If that's not enough: you can upgrade your wand with additional cores, allowing you to place a block\nbehind the block you are facing, conjure blocks in mid air or destroy lots of blocks very fast.\n\nThis is a polymer port of Theta-Dev's original minecraft mod. May the odds continue to be in your favor.",
 	"authors": [
 		"JongWasTaken",
 		"Theta-Dev"
@@ -29,12 +29,6 @@
 		],
 		"client": [
 			"pw.smto.constructionwand.ConstructionWandClient"
-		],
-		"emi": [
-			"pw.smto.constructionwand.integrations.recipe.ConstructionWandEmiPlugin"
-		],
-		"rei_client": [
-			"pw.smto.constructionwand.integrations.recipe.ConstructionWandReiPlugin"
 		]
 	},
 	"accessWidener" : "constructionwand.accesswidener",
@@ -42,10 +36,6 @@
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~${minecraft_version}",
 		"java": ">=17",
-		"fabric-api": ">=${fabric_version}",
-		"owo-lib": ">=${owo_version}"
-	},
-	"suggests": {
-		"roughly-enough-items": "${rei_version}"
+		"fabric-api": ">=${fabric_version}"
 	}
 }

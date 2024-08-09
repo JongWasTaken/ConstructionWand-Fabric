@@ -5,6 +5,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +31,7 @@ public class RenderBlockPreview
 
         ItemStack wand = WandUtil.holdingWand(player);
         if(wand == null) return true;
-
+        //if(wand.getItem() == Items.STICK) return true;
 
         if(!(player.isSneaking() && ClientEvents.isOptKeyDown())) {
             // Use cached wandJob for previews of the same target pos/dir

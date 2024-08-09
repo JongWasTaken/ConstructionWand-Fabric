@@ -1,5 +1,7 @@
 package pw.smto.constructionwand.basics.option;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import pw.smto.constructionwand.ConstructionWand;
 
 public interface IOption<T>
@@ -12,6 +14,10 @@ public interface IOption<T>
 
     default String getKeyTranslation() {
         return ConstructionWand.MOD_ID + ".option." + getKey();
+    }
+
+    default boolean hasTranslation() {
+        return true;
     }
 
     default String getValueTranslation() {

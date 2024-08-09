@@ -9,7 +9,7 @@ import pw.smto.constructionwand.wand.action.ActionAngel;
 public class ItemCoreAngel extends ItemCore
 {
     public ItemCoreAngel(Item.Settings properties) {
-        super(properties);
+        super(properties, ConstructionWand.id("core_angel"));
     }
 
     @Override

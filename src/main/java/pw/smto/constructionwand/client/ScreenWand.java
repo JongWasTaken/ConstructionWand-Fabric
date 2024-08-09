@@ -10,6 +10,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 import pw.smto.constructionwand.basics.option.IOption;
+import pw.smto.constructionwand.basics.option.OptionInt;
 import pw.smto.constructionwand.basics.option.WandOptions;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ScreenWand extends Screen {
         createButton(1, 0, wandOptions.replace);
         createButton(1, 1, wandOptions.match);
         createButton(1, 2, wandOptions.random);
+        createButton(0.5d, 3, wandOptions.used);
     }
 
     @Override
@@ -79,7 +81,7 @@ public class ScreenWand extends Screen {
         }
     }
 
-    private void createButton(int cx, int cy, IOption<?> option) {
+    private void createButton(double cx, double cy, IOption<?> option) {
         ButtonWidget button = ButtonWidget.builder(getButtonLabel(option), (bt) -> clickButton(bt, option))
                 .position(getX(cx), getY(cy))
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -91,18 +93,18 @@ public class ScreenWand extends Screen {
     }
 
     private void clickButton(ButtonWidget button, IOption<?> option) {
-        option.next();
-        Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_WAND_OPTION, pw.smto.constructionwand.Network.PacketData.WandOption.of(option, false));
+        if (option instanceof OptionInt o) o.set(0); else option.next();
+        Network.sendPacket(pw.smto.constructionwand.Network.Channels.WandOptionPayload.of(option, false));
         button.setMessage(getButtonLabel(option));
         button.setTooltip(getButtonTooltip(option));
     }
 
-    private int getX(int n) {
-        return width / 2 - FIELD_WIDTH / 2 + n * (BUTTON_WIDTH + SPACING_WIDTH);
+    private int getX(double n) {
+        return (int) ((double) width / 2 - (double) FIELD_WIDTH / 2 + n * (BUTTON_WIDTH + SPACING_WIDTH));
     }
 
-    private int getY(int n) {
-        return height / 2 - FIELD_HEIGHT / 2 + n * (BUTTON_HEIGHT + SPACING_HEIGHT);
+    private int getY(double n) {
+        return (int) ((double) height / 2 - (double) FIELD_HEIGHT / 2 + n * (BUTTON_HEIGHT + SPACING_HEIGHT));
     }
 
     private Text getButtonLabel(IOption<?> option) {

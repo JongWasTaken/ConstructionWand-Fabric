@@ -40,6 +40,7 @@ repositories {
 	}
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.architectury.dev/" }
+	maven { url 'https://maven.nucleoid.xyz' }
 }
 
 loom {
@@ -63,8 +64,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// owo
-	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-	include "io.wispforest:owo-sentinel:${project.owo_version}"
+	//modImplementation "io.wispforest:owo-lib:${project.owo_version}"
+	//include "io.wispforest:owo-sentinel:${project.owo_version}"
 
 	// JEI sucks, it does not remap to yarn
 	//modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
@@ -86,6 +87,10 @@ dependencies {
 	//modApi "curse.maven:forge-config-api-port-fabric-547434:5427493"
 	//include "curse.maven:forge-config-api-port-fabric-547434:5427493"
 	//modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:8.0.2"
+
+	modImplementation include("eu.pb4:polymer-core:${project.polymer_version}")
+	modImplementation include("eu.pb4:polymer-resource-pack:${project.polymer_version}")
+	modImplementation include("eu.pb4:sgui:${project.sgui_version}")
 }
 
 processResources {
