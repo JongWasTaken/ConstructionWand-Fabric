@@ -1,5 +1,6 @@
 package pw.smto.constructionwand;
 
+import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ToolMaterials;
@@ -49,7 +50,7 @@ public class Registry {
         net.minecraft.registry.Registry.register(Registries.ITEM, Items.CORE_ANGEL.identifier, Items.CORE_ANGEL);
         net.minecraft.registry.Registry.register(Registries.ITEM, Items.CORE_DESTRUCTION.identifier, Items.CORE_DESTRUCTION);
 
-        var tabBuilder = new ItemGroup.Builder(null, 0);
+        var tabBuilder = PolymerItemGroupUtils.builder();
         tabBuilder.displayName(Text.literal("Construction Wand"));
         tabBuilder.icon(Items.INFINITY_WAND::getDefaultStack);
         tabBuilder.entries((displayContext, entries) -> {
@@ -60,6 +61,7 @@ public class Registry {
             entries.add(Items.CORE_ANGEL.getDefaultStack());
             entries.add(Items.CORE_DESTRUCTION.getDefaultStack());
         });
-        net.minecraft.registry.Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "items"), tabBuilder.build());
+        PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of(MOD_ID, "items"), tabBuilder.build());
+        //net.minecraft.registry.Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "items"), tabBuilder.build());
     }
 }
