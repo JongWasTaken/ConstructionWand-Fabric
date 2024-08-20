@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'fabric-loom' version '1.7-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -77,13 +77,14 @@ dependencies {
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:$rei_version"
 	// EMI
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
+	modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"	
 
 	// botania api?!
 	//modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
 
 	// forge config api
-	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.0.0"
-	include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.0.0"
+	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.0"
+	include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.0"
 	//modApi "curse.maven:forge-config-api-port-fabric-547434:5427493"
 	//include "curse.maven:forge-config-api-port-fabric-547434:5427493"
 	//modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:8.0.2"
