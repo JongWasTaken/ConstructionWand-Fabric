@@ -1,20 +1,17 @@
 package pw.smto.constructionwand.client;
 
-import io.wispforest.owo.network.OwoNetChannel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 import java.util.Set;
 public class Network {
     @Environment(EnvType.CLIENT)
     public static void init() {
-        pw.smto.constructionwand.Network.Channels.S2C_UNDO_BLOCKS.registerClientbound(pw.smto.constructionwand.Network.PacketData.UndoBlocks.class, (message, access) -> {
-            if (access.runtime() == null) return;
-            RenderBlockPreview.undoBlocks = Set.copyOf(message.undoBlocks());
+        ClientPlayNetworking.registerGlobalReceiver(pw.smto.constructionwand.Network.Payloads.S2CUndoBlocksPayload.ID, (payload, context) -> {
+            context.client().execute(() -> {
+                RenderBlockPreview.undoBlocks = Set.copyOf(payload.blockPosList());
+            });
         });
-    }
-
-    public static void sendPacket(OwoNetChannel channel, Record data) {
-        channel.clientHandle().send(data);
     }
 }

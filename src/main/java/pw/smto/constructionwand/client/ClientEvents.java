@@ -3,6 +3,7 @@ package pw.smto.constructionwand.client;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.MinecraftClient;
@@ -30,7 +31,7 @@ public class ClientEvents
             boolean optState = isOptKeyDown();
             if(optPressed != optState) {
                 optPressed = optState;
-                Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_QUERY_UNDO, new pw.smto.constructionwand.Network.PacketData.QueryUndo(optPressed));
+                ClientPlayNetworking.send(new pw.smto.constructionwand.Network.Payloads.C2SQueryUndoPayload(optPressed));
             }
         });
 
@@ -48,7 +49,7 @@ public class ClientEvents
 
                     WandOptions wandOptions = new WandOptions(wand);
                     wandOptions.cores.next();
-                    Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_WAND_OPTION, pw.smto.constructionwand.Network.PacketData.WandOption.of(wandOptions.cores, true));
+                    ClientPlayNetworking.send(pw.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.cores, true));
                     lastClickTime = client.world.getTime();
                 }
             }
@@ -78,7 +79,7 @@ public class ClientEvents
 
         WandOptions wandOptions = new WandOptions(wand);
         wandOptions.lock.next(scrollDelta < 0);
-        Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_WAND_OPTION, pw.smto.constructionwand.Network.PacketData.WandOption.of(wandOptions.lock, true));
+        ClientPlayNetworking.send(pw.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.lock, true));
 
         return true;
     }

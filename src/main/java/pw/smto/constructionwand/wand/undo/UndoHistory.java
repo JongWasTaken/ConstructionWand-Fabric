@@ -1,6 +1,8 @@
 package pw.smto.constructionwand.wand.undo;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -50,8 +52,7 @@ public class UndoHistory
             else positions = entry.getBlockPositions();
         }
 
-        var packet = new Network.PacketData.UndoBlocks(positions.stream().toList());
-        Network.sendPacket(player, Network.Channels.S2C_UNDO_BLOCKS, packet);
+        ServerPlayNetworking.send((ServerPlayerEntity) player, new Network.Payloads.S2CUndoBlocksPayload(positions.stream().toList()));
     }
 
     public static boolean isUndoActive(PlayerEntity player) {

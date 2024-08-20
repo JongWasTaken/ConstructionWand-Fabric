@@ -14,7 +14,6 @@ Credits go to [Theta-Dev](https://github.com/Theta-Dev/) for creating the origin
 
 This project makes use of the following third-party libraries:
 
-- [owo-lib](https://modrinth.com/mod/owo-lib) (MIT License), to make registration and networking easy
 - [forge-config-api-port](https://modrinth.com/mod/forge-config-api-port) (MPLv2 License), to keep config compatibility between both loaders (for now)
 - [Botania](https://github.com/VazkiiMods/Botania) (Custom License), for its API
 - [REI](https://github.com/shedaniel/RoughlyEnoughItems) (MIT License), for its API

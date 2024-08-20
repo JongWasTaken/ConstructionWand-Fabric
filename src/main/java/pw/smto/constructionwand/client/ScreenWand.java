@@ -1,5 +1,6 @@
 package pw.smto.constructionwand.client;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -92,7 +93,7 @@ public class ScreenWand extends Screen {
 
     private void clickButton(ButtonWidget button, IOption<?> option) {
         option.next();
-        Network.sendPacket(pw.smto.constructionwand.Network.Channels.C2S_WAND_OPTION, pw.smto.constructionwand.Network.PacketData.WandOption.of(option, false));
+        ClientPlayNetworking.send(pw.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(option, true));
         button.setMessage(getButtonLabel(option));
         button.setTooltip(getButtonTooltip(option));
     }

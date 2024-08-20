@@ -1,5 +1,6 @@
 package pw.smto.constructionwand.items.core;
 
+import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandAction;
@@ -7,8 +8,8 @@ import pw.smto.constructionwand.wand.action.ActionDestruction;
 
 public class ItemCoreDestruction extends ItemCore
 {
-    public ItemCoreDestruction(Settings properties) {
-        super(properties);
+    public ItemCoreDestruction() {
+        super(new Item.Settings().maxCount(1));
     }
 
     @Override

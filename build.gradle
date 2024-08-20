@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = project.mod_version
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 base {
@@ -62,10 +62,6 @@ dependencies {
 	// fabric api
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// owo
-	modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-	include "io.wispforest:owo-sentinel:${project.owo_version}"
-
 	// JEI sucks, it does not remap to yarn
 	//modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
 	//modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
@@ -97,7 +93,6 @@ processResources {
 				"loader_version", loader_version,
 				"minecraft_version", minecraft_version,
 				"fabric_version", fabric_version.toString().split("\\+")[0],
-				"owo_version", owo_version.toString().split("\\+")[0],
 				"rei_version", rei_version
 		))
 	}

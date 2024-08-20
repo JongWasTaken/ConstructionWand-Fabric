@@ -8,8 +8,8 @@ import pw.smto.constructionwand.wand.action.ActionAngel;
 
 public class ItemCoreAngel extends ItemCore
 {
-    public ItemCoreAngel(Item.Settings properties) {
-        super(properties);
+    public ItemCoreAngel() {
+        super(new Item.Settings().maxCount(1));
     }
 
     @Override
