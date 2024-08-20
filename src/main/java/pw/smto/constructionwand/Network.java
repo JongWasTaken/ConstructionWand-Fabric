@@ -120,7 +120,7 @@ public class Network {
 
         ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SHandshakeCallback.ID, (payload, context) -> {
             context.server().execute(() -> {
-                ConstructionWand.LOGGER.warn("Enabling client-side enhancements for player: " + context.player().getDisplayName().getString());
+                ConstructionWand.LOGGER.info("Enabling client-side enhancements for player: " + context.player().getDisplayName().getString());
                 PlayerInstance.getEntryFromPlayerEntity(context.player()).hasClientMod = true;
                 context.player().getInventory().markDirty();
             });

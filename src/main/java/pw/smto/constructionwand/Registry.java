@@ -62,6 +62,5 @@ public class Registry {
             entries.add(Items.CORE_DESTRUCTION.getDefaultStack());
         });
         PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of(MOD_ID, "items"), tabBuilder.build());
-        //net.minecraft.registry.Registry.register(Registries.ITEM_GROUP, Identifier.of(MOD_ID, "items"), tabBuilder.build());
     }
 }

@@ -30,19 +30,18 @@ public class HandlerContainerComponent implements IContainerHandler
 
     @Override
     public int countItems(PlayerEntity player, ItemStack target, ItemStack current) {
+        int total = 0;
         ContainerComponent container = current.getOrDefault(DataComponentTypes.CONTAINER, ContainerComponent.DEFAULT);
         var items = DefaultedList.ofSize((int) container.stream().count(), ItemStack.EMPTY);
         container.copyTo(items);
         if (!items.isEmpty()) {
-            int total = 0;
             for (ItemStack containerStack : items) {
                 if (WandUtil.stackEquals(target, containerStack)) {
                     total += Math.max(0, containerStack.getCount());
                 }
             }
-            return total;
         }
-        return 0;
+        return total;
     }
 
     @Override

@@ -38,7 +38,10 @@ public class WandServerScreen extends SimpleGui {
         }
         this.setSlot(7, GuiElementBuilder.from(Items.MAGMA_BLOCK.getDefaultStack())
                 .hideDefaultTooltip()
-                .setName(Text.translatable("constructionwand.option.used").formatted(Formatting.AQUA))
+                .setName(
+                        Text.translatable("constructionwand.option.used").formatted(Formatting.AQUA)
+                                .append(Text.literal(options.used.getValueString()).formatted(Formatting.GRAY))
+                )
                 .addLoreLine(Text.translatable("constructionwand.option.used.desc").formatted(Formatting.GRAY))
                 .setCallback((int index, ClickType type, SlotActionType action) -> {
                     options.used.set(0);

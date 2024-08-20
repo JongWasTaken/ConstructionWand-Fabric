@@ -19,19 +19,19 @@ public class ContainerManager
         return handlers.add(handler);
     }
 
-    public static int countItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
+    public static int countItems(PlayerEntity player, ItemStack target, ItemStack current) {
         for(IContainerHandler handler : handlers) {
-            if(handler.matches(player, itemStack, inventoryStack)) {
-                return handler.countItems(player, itemStack, inventoryStack);
+            if(handler.matches(player, target, current)) {
+                return handler.countItems(player, target, current);
             }
         }
         return 0;
     }
 
-    public static int useItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack, int count) {
+    public static int useItems(PlayerEntity player, ItemStack target, ItemStack current, int count) {
         for(IContainerHandler handler : handlers) {
-            if(handler.matches(player, itemStack, inventoryStack)) {
-                return handler.useItems(player, itemStack, inventoryStack, count);
+            if(handler.matches(player, target, current)) {
+                return handler.useItems(player, target, current, count);
             }
         }
         return count;
