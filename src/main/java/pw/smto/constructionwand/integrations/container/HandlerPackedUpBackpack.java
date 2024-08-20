@@ -6,6 +6,7 @@ import com.supermartijn642.packedup.BackpackStorageManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 
@@ -21,10 +22,15 @@ public class HandlerPackedUpBackpack implements IContainerHandler {
         if(!compound.contains("packedup:invIndex") || BackpackStorageManager.getInventory(compound.getInt("packedup:invIndex")) == null){
             return 0;
         }
-        int inventoryIndex = compound.getInt("packedup:invIndex");
-        BackpackInventory inventory = BackpackStorageManager.getInventory(inventoryIndex);
-        if (inventory == null) return 0;
-        return inventory.getStacks().stream().filter(stack -> WandUtil.stackEquals(stack, itemStack)).map(ItemStack::getCount).reduce(0, Integer::sum);
+        try {
+            int inventoryIndex = compound.getInt("packedup:invIndex");
+            BackpackInventory inventory = BackpackStorageManager.getInventory(inventoryIndex);
+            if (inventory == null) return 0;
+            return inventory.getStacks().stream().filter(stack -> WandUtil.stackEquals(stack, itemStack)).map(ItemStack::getCount).reduce(0, Integer::sum);
+        } catch (Exception ignored) {
+            ConstructionWand.LOGGER.error("Failed to count items in \"Packed up!\" backpack of player {}!", player.getGameProfile().getName());
+            return 0;
+        }
     }
 
     @Override
@@ -33,18 +39,22 @@ public class HandlerPackedUpBackpack implements IContainerHandler {
         if(!compound.contains("packedup:invIndex") || BackpackStorageManager.getInventory(compound.getInt("packedup:invIndex")) == null){
             return 0;
         }
-        int inventoryIndex = compound.getInt("packedup:invIndex");
-        BackpackInventory inventory = BackpackStorageManager.getInventory(inventoryIndex);
-        if (inventory == null) return 0;
-        for(int i = 0; i < inventory.getStacks().size(); i++) {
-            ItemStack handlerStack = inventory.getStacks().get(i);
-            if(WandUtil.stackEquals(itemStack, handlerStack)) {
-                ItemStack extracted = inventory.extractItem(i, count);
-                count -= extracted.getCount();
-                if(count <= 0) break;
+        try {
+            int inventoryIndex = compound.getInt("packedup:invIndex");
+            BackpackInventory inventory = BackpackStorageManager.getInventory(inventoryIndex);
+            if (inventory == null) return 0;
+            for(int i = 0; i < inventory.getStacks().size(); i++) {
+                ItemStack handlerStack = inventory.getStacks().get(i);
+                if(WandUtil.stackEquals(itemStack, handlerStack)) {
+                    ItemStack extracted = inventory.extractItem(i, count);
+                    count -= extracted.getCount();
+                    if(count <= 0) break;
+                }
             }
+            BackpackStorageManager.save();
+        } catch (Exception ignored) {
+            ConstructionWand.LOGGER.error("Failed to extract items from \"Packed up!\" backpack of player {}!", player.getGameProfile().getName());
         }
-        BackpackStorageManager.save();
         return count;
     }
 }

@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.p3pp3rf1y.porting_lib.transfer.items.SCItemStackHandlerSlot;
 import net.p3pp3rf1y.sophisticatedbackpacks.backpack.BackpackItem;
 import net.p3pp3rf1y.sophisticatedbackpacks.common.BackpackWrapperLookup;
+import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IContainerHandler;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,20 +21,15 @@ public class HandlerSophisticatedBackpack implements IContainerHandler {
     @Override
     public int countItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
         AtomicInteger count = new AtomicInteger(0);
-        BackpackWrapperLookup.get(inventoryStack).ifPresent(backpack -> {
-            for (SCItemStackHandlerSlot storageViews : backpack.getInventoryHandler().getSlotsContaining(itemStack.getItem())) {
-                count.addAndGet((int)storageViews.getAmount());
-            }
-        });
-        /*
-                        BackpackWrapperLookup.get(inventoryStack).ifPresent(backpack -> {
-            backpack.getInventoryHandler().getSlots().forEach(slot -> {
-                if (WandUtil.stackEquals(slot.getResource().toStack(), itemStack)) {
-                    count.addAndGet((int) slot.getAmount());
+        try {
+            BackpackWrapperLookup.get(inventoryStack).ifPresent(backpack -> {
+                for (SCItemStackHandlerSlot storageViews : backpack.getInventoryHandler().getSlotsContaining(itemStack.getItem())) {
+                    count.addAndGet((int)storageViews.getAmount());
                 }
             });
-        });
-         */
+        } catch (Exception ignored) {
+            ConstructionWand.LOGGER.error("Failed to count items in sophisticated backpack of player {}!", player.getGameProfile().getName());
+        }
         return count.get();
     }
 
@@ -49,7 +45,9 @@ public class HandlerSophisticatedBackpack implements IContainerHandler {
                 }
             });
             outerTransaction.commit();
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            ConstructionWand.LOGGER.error("Failed to extract items from sophisticated backpack of player {}!", player.getGameProfile().getName());
+        }
         return count2.get();
     }
 }
