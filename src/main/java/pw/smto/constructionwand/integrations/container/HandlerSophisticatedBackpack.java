@@ -27,7 +27,7 @@ public class HandlerSophisticatedBackpack implements IContainerHandler {
                     count.addAndGet((int)storageViews.getAmount());
                 }
             });
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
             ConstructionWand.LOGGER.error("Failed to count items in sophisticated backpack of player {}!", player.getGameProfile().getName());
         }
         return count.get();
@@ -45,7 +45,7 @@ public class HandlerSophisticatedBackpack implements IContainerHandler {
                 }
             });
             outerTransaction.commit();
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
             ConstructionWand.LOGGER.error("Failed to extract items from sophisticated backpack of player {}!", player.getGameProfile().getName());
         }
         return count2.get();

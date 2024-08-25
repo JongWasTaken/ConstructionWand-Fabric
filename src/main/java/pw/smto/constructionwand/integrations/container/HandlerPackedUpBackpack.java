@@ -27,7 +27,7 @@ public class HandlerPackedUpBackpack implements IContainerHandler {
             BackpackInventory inventory = BackpackStorageManager.getInventory(inventoryIndex);
             if (inventory == null) return 0;
             return inventory.getStacks().stream().filter(stack -> WandUtil.stackEquals(stack, itemStack)).map(ItemStack::getCount).reduce(0, Integer::sum);
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
             ConstructionWand.LOGGER.error("Failed to count items in \"Packed up!\" backpack of player {}!", player.getGameProfile().getName());
             return 0;
         }
@@ -52,7 +52,7 @@ public class HandlerPackedUpBackpack implements IContainerHandler {
                 }
             }
             BackpackStorageManager.save();
-        } catch (Exception ignored) {
+        } catch (Throwable ignored) {
             ConstructionWand.LOGGER.error("Failed to extract items from \"Packed up!\" backpack of player {}!", player.getGameProfile().getName());
         }
         return count;

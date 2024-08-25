@@ -20,24 +20,29 @@ public class HandlerBotania implements IContainerHandler
 
     @Override
     public int countItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
-        Optional<BlockProvider> provOptional = Optional.ofNullable(BotaniaFabricCapabilities.BLOCK_PROVIDER.find(inventoryStack, Unit.INSTANCE));
-        if(provOptional.isEmpty()) return 0;
+        int provCount = 0;
+        try {
+            Optional<BlockProvider> provOptional = Optional.ofNullable(BotaniaFabricCapabilities.BLOCK_PROVIDER.find(inventoryStack, Unit.INSTANCE));
+            if(provOptional.isEmpty()) return 0;
 
-        BlockProvider prov = provOptional.get();
-        int provCount = prov.getBlockCount(player, inventoryStack, Block.getBlockFromItem(itemStack.getItem()));
-        if(provCount == -1)
-            return Integer.MAX_VALUE;
+            BlockProvider prov = provOptional.get();
+            provCount = prov.getBlockCount(player, inventoryStack, Block.getBlockFromItem(itemStack.getItem()));
+            if(provCount == -1)
+                return Integer.MAX_VALUE;
+        } catch (Throwable ignored) {}
         return provCount;
     }
 
     @Override
     public int useItems(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack, int count) {
-        Optional<BlockProvider> provOptional = Optional.ofNullable(BotaniaFabricCapabilities.BLOCK_PROVIDER.find(inventoryStack, Unit.INSTANCE));
-        if(provOptional.isEmpty()) return 0;
+        try {
+            Optional<BlockProvider> provOptional = Optional.ofNullable(BotaniaFabricCapabilities.BLOCK_PROVIDER.find(inventoryStack, Unit.INSTANCE));
+            if(provOptional.isEmpty()) return 0;
 
-        BlockProvider prov = provOptional.get();
-        if(prov.provideBlock(player, inventoryStack, Block.getBlockFromItem(itemStack.getItem()), true))
-            return 0;
+            BlockProvider prov = provOptional.get();
+            if(prov.provideBlock(player, inventoryStack, Block.getBlockFromItem(itemStack.getItem()), true))
+                return 0;
+        } catch (Throwable ignored) {}
         return count;
     }
 }
