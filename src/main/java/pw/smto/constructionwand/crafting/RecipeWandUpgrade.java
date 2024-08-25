@@ -20,7 +20,6 @@ import pw.smto.constructionwand.basics.ConfigServer;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
 
-import static pw.smto.constructionwand.ConstructionWand.LOGGER;
 import static pw.smto.constructionwand.ConstructionWand.MOD_ID;
 
 public class RecipeWandUpgrade extends ShapelessRecipe
@@ -106,9 +105,7 @@ public class RecipeWandUpgrade extends ShapelessRecipe
             int i = pBuffer.readVarInt();
             DefaultedList<Ingredient> nonnulllist = DefaultedList.ofSize(i, Ingredient.EMPTY);
 
-            for(int j = 0; j < nonnulllist.size(); ++j) {
-                nonnulllist.set(j, Ingredient.fromPacket(pBuffer));
-            }
+            nonnulllist.replaceAll(ignored -> Ingredient.fromPacket(pBuffer));
 
             ItemStack itemstack = pBuffer.readItemStack();
             return new RecipeWandUpgrade(s, itemstack, nonnulllist);
