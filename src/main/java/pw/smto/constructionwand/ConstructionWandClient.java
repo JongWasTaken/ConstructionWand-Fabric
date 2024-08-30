@@ -1,5 +1,7 @@
 package pw.smto.constructionwand;
 
+import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.impl.core.ForgeConfigSpecAdapter;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -7,6 +9,8 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.neoforged.fml.config.ModConfig;
+import pw.smto.constructionwand.basics.ConfigClient;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.client.ClientEvents;
 import pw.smto.constructionwand.client.Network;
@@ -18,6 +22,7 @@ import static pw.smto.constructionwand.Registry.Items.WANDS;
 public class ConstructionWandClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        NeoForgeConfigRegistry.INSTANCE.register(ConstructionWand.MOD_ID, ModConfig.Type.CLIENT, new ForgeConfigSpecAdapter(ConfigClient.SPEC));
         for(Item item : WANDS) {
             ModelPredicateProviderRegistry.register(
                     item, ConstructionWand.id("using_core"),
