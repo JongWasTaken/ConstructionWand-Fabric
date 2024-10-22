@@ -6,15 +6,9 @@
     "X# "
   ],
   "key": {
-    "O": {
-      "item": "minecraft:feather"
-    },
-    "X": {
-      "item": "minecraft:gold_ingot"
-    },
-    "#": {
-      "tag": "c:glass_panes"
-    }
+    "O": "minecraft:feather",
+    "X": "minecraft:gold_ingot",
+    "#": "#c:glass_panes"
   },
   "result": {
     "id": "constructionwand:core_angel"

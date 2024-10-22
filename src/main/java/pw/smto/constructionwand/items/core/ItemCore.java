@@ -3,6 +3,7 @@ package pw.smto.constructionwand.items.core;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import pw.smto.constructionwand.ConstructionWand;
@@ -12,8 +13,11 @@ import java.util.List;
 
 public abstract class ItemCore extends Item implements IWandCore
 {
-    public ItemCore(Item.Settings properties) {
-        super(properties);
+    public final RegistryKey<Item> registryKey;
+
+    public ItemCore(RegistryKey<Item> id, Item.Settings properties) {
+        super(properties.registryKey(id));
+        this.registryKey = id;
     }
 
     @Override

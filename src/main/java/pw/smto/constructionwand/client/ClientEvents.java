@@ -10,8 +10,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import pw.smto.constructionwand.basics.ConfigClient;
 import pw.smto.constructionwand.basics.WandUtil;
@@ -47,7 +47,7 @@ public class ClientEvents
                     ItemStack wand = client.player.getStackInHand(client.player.getActiveHand());
                     if(!(wand.getItem() instanceof ItemWand)) return;
 
-                    WandOptions wandOptions = new WandOptions(wand);
+                    WandOptions wandOptions = WandOptions.of(wand);
                     wandOptions.cores.next();
                     ClientPlayNetworking.send(pw.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.cores, true));
                     lastClickTime = client.world.getTime();
@@ -57,15 +57,15 @@ public class ClientEvents
 
         // Sneak+(OPT)+Right click wand to open GUI
         UseItemCallback.EVENT.register((PlayerEntity player, World world, Hand hand) -> {
-            if(!world.isClient) return TypedActionResult.pass(player.getStackInHand(hand));
+            if(!world.isClient) return ActionResult.PASS;
             var target = MinecraftClient.getInstance().crosshairTarget;
             if (guiKeyCombDown(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
                 ItemStack wand = player.getStackInHand(player.getActiveHand());
-                if(!(wand.getItem() instanceof ItemWand)) return TypedActionResult.pass(wand);
+                if(!(wand.getItem() instanceof ItemWand)) return ActionResult.PASS;
                 MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
-                return TypedActionResult.fail(wand);
+                return ActionResult.FAIL;
             }
-            return TypedActionResult.pass(player.getStackInHand(hand));
+            return ActionResult.PASS;
         });
         WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register(RenderBlockPreview::renderBlockHighlight);
     }
@@ -77,7 +77,7 @@ public class ClientEvents
         ItemStack wand = WandUtil.holdingWand(client.player);
         if(wand == null) return false;
 
-        WandOptions wandOptions = new WandOptions(wand);
+        WandOptions wandOptions = WandOptions.of(wand);
         wandOptions.lock.next(scrollDelta < 0);
         ClientPlayNetworking.send(pw.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.lock, true));
 

@@ -55,7 +55,7 @@ public class SupplierInventory implements IWandSupplier
             addBlockItem(target);
 
             // Add replacement items
-            if(options.match.get() != WandOptions.MATCH.EXACT) {
+            if(options.match.get() != WandOptions.Match.EXACT) {
                 for(Item it : ReplacementRegistry.getMatchingSet(target)) {
                     if(it instanceof BlockItem) addBlockItem((BlockItem) it);
                 }

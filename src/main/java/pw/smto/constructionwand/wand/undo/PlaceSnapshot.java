@@ -44,7 +44,7 @@ public class PlaceSnapshot implements ISnapshot
     public static PlaceSnapshot get(World world, PlayerEntity player, BlockHitResult rayTraceResult,
                                     BlockPos pos, BlockItem item,
                                     BlockState supportingBlock, @Nullable WandOptions options) {
-        boolean targetMode = options != null && supportingBlock != null && options.direction.get() == WandOptions.DIRECTION.TARGET;
+        boolean targetMode = options != null && supportingBlock != null && options.direction.get() == WandOptions.Direction.TARGET;
         BlockState blockState = getPlaceBlockstate(world, player, rayTraceResult, pos, item, supportingBlock, targetMode);
         if(blockState == null) return null;
 

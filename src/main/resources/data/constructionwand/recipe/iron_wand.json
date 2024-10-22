@@ -6,12 +6,8 @@
     "#  "
   ],
   "key": {
-    "X": {
-      "item": "minecraft:iron_ingot"
-    },
-    "#": {
-      "item": "minecraft:stick"
-    }
+    "X": "#minecraft:iron_ingot",
+    "#": "minecraft:stick"
   },
   "result": {
     "id": "constructionwand:iron_wand"

@@ -44,10 +44,10 @@ public class ActionConstruction implements IWandAction
 
         // Is place direction allowed by lock?
         if(placeDirection == Direction.UP || placeDirection == Direction.DOWN) {
-            if(options.testLock(WandOptions.LOCK.NORTHSOUTH) || options.testLock(WandOptions.LOCK.EASTWEST))
+            if(options.testLock(WandOptions.Lock.NORTHSOUTH) || options.testLock(WandOptions.Lock.EASTWEST))
                 candidates.add(startingPoint);
         }
-        else if(options.testLock(WandOptions.LOCK.HORIZONTAL) || options.testLock(WandOptions.LOCK.VERTICAL))
+        else if(options.testLock(WandOptions.Lock.HORIZONTAL) || options.testLock(WandOptions.Lock.VERTICAL))
             candidates.add(startingPoint);
 
         while(!candidates.isEmpty() && placeSnapshots.size() < limit) {
@@ -65,15 +65,15 @@ public class ActionConstruction implements IWandAction
                     switch(placeDirection) {
                         case DOWN:
                         case UP:
-                            if(options.testLock(WandOptions.LOCK.NORTHSOUTH)) {
+                            if(options.testLock(WandOptions.Lock.NORTHSOUTH)) {
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.SOUTH.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.EASTWEST)) {
+                            if(options.testLock(WandOptions.Lock.EASTWEST)) {
                                 candidates.add(currentCandidate.add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.WEST.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.NORTHSOUTH) && options.testLock(WandOptions.LOCK.EASTWEST)) {
+                            if(options.testLock(WandOptions.Lock.NORTHSOUTH) && options.testLock(WandOptions.Lock.EASTWEST)) {
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()).add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()).add(Direction.WEST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.SOUTH.getVector()).add(Direction.EAST.getVector()));
@@ -82,15 +82,15 @@ public class ActionConstruction implements IWandAction
                             break;
                         case NORTH:
                         case SOUTH:
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
                                 candidates.add(currentCandidate.add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.WEST.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL) && options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.WEST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.EAST.getVector()));
@@ -99,15 +99,15 @@ public class ActionConstruction implements IWandAction
                             break;
                         case EAST:
                         case WEST:
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.SOUTH.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL) && options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.NORTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.SOUTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.NORTH.getVector()));

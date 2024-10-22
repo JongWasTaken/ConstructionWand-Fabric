@@ -52,7 +52,7 @@ public class WandJob
         // Get wand
         this.wand = wand;
         this.wandItem = (ItemWand) wand.getItem();
-        options = new WandOptions(wand);
+        options = WandOptions.of(wand);
 
         // Select wand action and supplier based on options
         wandSupplier = options.random.get() ?

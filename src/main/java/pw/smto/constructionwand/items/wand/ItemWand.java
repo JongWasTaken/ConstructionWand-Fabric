@@ -8,11 +8,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -29,8 +31,10 @@ import java.util.List;
 
 public abstract class ItemWand extends Item
 {
-    public ItemWand(Item.Settings properties) {
-        super(properties);
+    public final RegistryKey<Item> registryKey;
+    public ItemWand(RegistryKey<Item> id, Item.Settings properties) {
+        super(properties.registryKey(id));
+        this.registryKey = id;
     }
 
     @NotNull
@@ -55,21 +59,21 @@ public abstract class ItemWand extends Item
 
     @NotNull
     @Override
-    public TypedActionResult<ItemStack> use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
+    public ActionResult use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
         ItemStack offHandStack = player.getOffHandStack();
         ItemStack wand = player.getStackInHand(hand);
-        if (offHandStack.isEmpty()) return TypedActionResult.fail(wand);
-        if (wand.equals(offHandStack)) return TypedActionResult.fail(wand);
+        if (offHandStack.isEmpty()) return ActionResult.FAIL;
+        if (wand.equals(offHandStack)) return ActionResult.FAIL;
         if(!player.isSneaking()) {
-            if(world.isClient) return TypedActionResult.fail(wand);
+            if(world.isClient) return ActionResult.FAIL;
 
             // Right click: Place angel block
             WandJob job = getWandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
-            ConstructionWand.LOGGER.warn("Job: " + job);
-            return job.doIt() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
+            ConstructionWand.LOGGER.warn("Job: {}", job);
+            return job.doIt() ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
-        return TypedActionResult.fail(wand);
+        return ActionResult.FAIL;
     }
 
     public static WandJob getWandJob(PlayerEntity player, World world, @Nullable BlockHitResult rayTraceResult, ItemStack wand) {
@@ -79,16 +83,6 @@ public abstract class ItemWand extends Item
         return wandJob;
     }
 
-    //@Override
-    //public boolean isSuitableFor(@NotNull BlockState blockIn) {
-    //    return false;
-    //}
-
-    @Override
-    public boolean canRepair(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
-        return false;
-    }
-
     public int remainingDurability(ItemStack stack) {
         return Integer.MAX_VALUE;
     }
@@ -96,7 +90,7 @@ public abstract class ItemWand extends Item
     @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack itemstack, TooltipContext context, List<Text> lines, TooltipType type) {
-        WandOptions options = new WandOptions(itemstack);
+        WandOptions options = WandOptions.of(itemstack);
         int limit = options.cores.get().getWandAction().getLimit(itemstack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         // +SHIFT tooltip: show all options + installed cores

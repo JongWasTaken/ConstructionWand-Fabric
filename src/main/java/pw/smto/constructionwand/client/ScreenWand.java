@@ -33,7 +33,7 @@ public class ScreenWand extends Screen {
     public ScreenWand(ItemStack wand) {
         super(Text.literal("ScreenWand"));
         this.wand = wand;
-        wandOptions = new WandOptions(wand);
+        wandOptions = WandOptions.of(wand);
     }
 
     private ArrayList<ButtonWidget> buttons;

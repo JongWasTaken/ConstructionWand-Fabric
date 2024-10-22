@@ -18,7 +18,7 @@ public class WandOptions
 
     private static final String TAG_ROOT = "wand_options";
 
-    public enum LOCK
+    public enum Lock
     {
         HORIZONTAL,
         VERTICAL,
@@ -27,13 +27,13 @@ public class WandOptions
         NOLOCK
     }
 
-    public enum DIRECTION
+    public enum Direction
     {
         TARGET,
         PLAYER
     }
 
-    public enum MATCH
+    public enum Match
     {
         EXACT,
         SIMILAR,
@@ -42,28 +42,35 @@ public class WandOptions
 
     public final WandUpgradesSelectable<IWandCore> cores;
 
-    public final OptionEnum<LOCK> lock;
-    public final OptionEnum<DIRECTION> direction;
+    public final OptionEnum<Lock> lock;
+    public final OptionEnum<Direction> direction;
     public final OptionBoolean replace;
-    public final OptionEnum<MATCH> match;
+    public final OptionEnum<Match> match;
     public final OptionBoolean random;
+
+    public final ItemStack stack;
 
     public final IOption<?>[] allOptions;
 
+    public static WandOptions of(ItemStack wandStack) {
+        return new WandOptions(wandStack);
+    }
 
-    public WandOptions(ItemStack wandStack) {
+    private WandOptions(ItemStack wandStack) {
         //tag = wandStack.getOrCreateSubNbt(TAG_ROOT);
         tag = wandStack.getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 
         cores = new WandUpgradesSelectable<>(tag, "cores", new CoreDefault());
 
-        lock = new OptionEnum<>(tag, "lock", LOCK.class, LOCK.NOLOCK);
-        direction = new OptionEnum<>(tag, "direction", DIRECTION.class, DIRECTION.TARGET);
+        lock = new OptionEnum<>(tag, "lock", Lock.class, Lock.NOLOCK);
+        direction = new OptionEnum<>(tag, "direction", Direction.class, Direction.TARGET);
         replace = new OptionBoolean(tag, "replace", true);
-        match = new OptionEnum<>(tag, "match", MATCH.class, MATCH.SIMILAR);
+        match = new OptionEnum<>(tag, "match", Match.class, Match.SIMILAR);
         random = new OptionBoolean(tag, "random", false);
 
         allOptions = new IOption[]{cores, lock, direction, replace, match, random};
+
+        stack = wandStack;
     }
 
     @Nullable
@@ -74,8 +81,8 @@ public class WandOptions
         return null;
     }
 
-    public boolean testLock(LOCK l) {
-        if(lock.get() == LOCK.NOLOCK) return true;
+    public boolean testLock(Lock l) {
+        if(lock.get() == Lock.NOLOCK) return true;
         return lock.get() == l;
     }
 
@@ -101,7 +108,11 @@ public class WandOptions
         return false;
     }
 
-    public void writeToStack(ItemStack item) {
-        item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+    public void writeToStack() {
+        this.stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+    }
+
+    public void writeToStack(ItemStack target) {
+        target.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
     }
 }

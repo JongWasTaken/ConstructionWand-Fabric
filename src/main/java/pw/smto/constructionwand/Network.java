@@ -63,9 +63,9 @@ public class Network {
             }
         }
 
-        public record C2SWandOptionPayload(String key, String value, boolean notify1) implements CustomPayload {
+        public record C2SWandOptionPayload(String key, String value, boolean shouldNotify) implements CustomPayload {
             public static final CustomPayload.Id<C2SWandOptionPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "wand_option"));
-            public static final PacketCodec<RegistryByteBuf, C2SWandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, C2SWandOptionPayload::key, PacketCodecs.STRING, C2SWandOptionPayload::value, PacketCodecs.BOOL, C2SWandOptionPayload::notify1, C2SWandOptionPayload::new);
+            public static final PacketCodec<RegistryByteBuf, C2SWandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, C2SWandOptionPayload::key, PacketCodecs.STRING, C2SWandOptionPayload::value, PacketCodecs.BOOL, C2SWandOptionPayload::shouldNotify, C2SWandOptionPayload::new);
 
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
@@ -100,14 +100,14 @@ public class Network {
 
                 ItemStack wand = WandUtil.holdingWand(player);
                 if(wand == null) return;
-                WandOptions options = new WandOptions(wand);
+                WandOptions options = WandOptions.of(wand);
 
                 IOption<?> option = options.get(payload.key);
                 if(option == null) return;
                 option.setValueString(payload.value);
 
-                if(payload.notify1) ItemWand.optionMessage(player, option);
-                options.writeToStack(wand);
+                if(payload.shouldNotify) ItemWand.optionMessage(player, option);
+                options.writeToStack();
                 player.getInventory().markDirty();
             });
         });

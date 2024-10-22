@@ -47,11 +47,11 @@ public class ActionDestruction implements IWandAction
         // Is break direction allowed by lock?
         // Tried to break blocks from top/bottom face, so the wand should allow breaking in NS/EW direction
         if(breakFace == Direction.UP || breakFace == Direction.DOWN) {
-            if(options.testLock(WandOptions.LOCK.NORTHSOUTH) || options.testLock(WandOptions.LOCK.EASTWEST))
+            if(options.testLock(WandOptions.Lock.NORTHSOUTH) || options.testLock(WandOptions.Lock.EASTWEST))
                 candidates.add(startingPoint);
         }
         // Tried to break blocks from side face, so the wand should allow breaking in horizontal/vertical direction
-        else if(options.testLock(WandOptions.LOCK.HORIZONTAL) || options.testLock(WandOptions.LOCK.VERTICAL))
+        else if(options.testLock(WandOptions.Lock.HORIZONTAL) || options.testLock(WandOptions.Lock.VERTICAL))
             candidates.add(startingPoint);
 
         // Process current candidates, stop when none are avaiable or block limit is reached
@@ -74,15 +74,15 @@ public class ActionDestruction implements IWandAction
                     switch(breakFace) {
                         case DOWN:
                         case UP:
-                            if(options.testLock(WandOptions.LOCK.NORTHSOUTH)) {
+                            if(options.testLock(WandOptions.Lock.NORTHSOUTH)) {
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.SOUTH.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.EASTWEST)) {
+                            if(options.testLock(WandOptions.Lock.EASTWEST)) {
                                 candidates.add(currentCandidate.add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.WEST.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.NORTHSOUTH) && options.testLock(WandOptions.LOCK.EASTWEST)) {
+                            if(options.testLock(WandOptions.Lock.NORTHSOUTH) && options.testLock(WandOptions.Lock.EASTWEST)) {
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()).add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()).add(Direction.WEST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.SOUTH.getVector()).add(Direction.EAST.getVector()));
@@ -91,15 +91,15 @@ public class ActionDestruction implements IWandAction
                             break;
                         case NORTH:
                         case SOUTH:
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
                                 candidates.add(currentCandidate.add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.WEST.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL) && options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.EAST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.WEST.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.EAST.getVector()));
@@ -108,15 +108,15 @@ public class ActionDestruction implements IWandAction
                             break;
                         case EAST:
                         case WEST:
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
                                 candidates.add(currentCandidate.add(Direction.NORTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.SOUTH.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()));
                             }
-                            if(options.testLock(WandOptions.LOCK.HORIZONTAL) && options.testLock(WandOptions.LOCK.VERTICAL)) {
+                            if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.NORTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.SOUTH.getVector()));
                                 candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.NORTH.getVector()));
