@@ -25,7 +25,7 @@ public class WandUpgrades<T extends IWandUpgrade>
         this.dval = dval;
 
         upgrades = new ArrayList<>();
-        if(dval != null) upgrades.add(0, dval);
+        if(dval != null) upgrades.addFirst(dval);
 
         deserialize();
     }
@@ -44,7 +44,7 @@ public class WandUpgrades<T extends IWandUpgrade>
                 data = (T) item;
                 upgrades.add(data);
             } catch(ClassCastException e) {
-                ConstructionWand.LOGGER.warn("Invalid wand upgrade: " + str);
+                ConstructionWand.LOGGER.warn("Invalid wand upgrade: {}", str);
                 require_fix = true;
             }
         }
