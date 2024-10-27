@@ -6,7 +6,7 @@
     "#  "
   ],
   "key": {
-    "X": "#minecraft:iron_ingot",
+    "X": "minecraft:iron_ingot",
     "#": "minecraft:stick"
   },
   "result": {
