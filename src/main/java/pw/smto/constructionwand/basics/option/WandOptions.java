@@ -3,6 +3,7 @@ package pw.smto.constructionwand.basics.option;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.CustomModelDataComponent;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -12,11 +13,12 @@ import pw.smto.constructionwand.api.IWandUpgrade;
 import pw.smto.constructionwand.basics.ReplacementRegistry;
 import pw.smto.constructionwand.items.core.CoreDefault;
 
+import java.util.List;
+
 public class WandOptions
 {
     public final NbtCompound tag;
-
-    private static final String TAG_ROOT = "wand_options";
+    public final CustomModelDataComponent modelData;
 
     public enum Lock
     {
@@ -59,6 +61,7 @@ public class WandOptions
     private WandOptions(ItemStack wandStack) {
         //tag = wandStack.getOrCreateSubNbt(TAG_ROOT);
         tag = wandStack.getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
+        modelData = wandStack.getComponents().getOrDefault(DataComponentTypes.CUSTOM_MODEL_DATA, CustomModelDataComponent.DEFAULT);
 
         cores = new WandUpgradesSelectable<>(tag, "cores", new CoreDefault());
 
@@ -108,11 +111,22 @@ public class WandOptions
         return false;
     }
 
+    // 1.21.4 introduces new item models, which are cool on paper but kinda useless in this case,
+    // because components cannot be used to match the model yet.
+    // So we use custom model data instead.
+    // Cant wait to once again rewrite this for 1.21.5!
+
     public void writeToStack() {
         this.stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+        this.stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, mutateModelData());
     }
 
     public void writeToStack(ItemStack target) {
         target.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+        this.stack.set(DataComponentTypes.CUSTOM_MODEL_DATA, mutateModelData());
+    }
+
+    private CustomModelDataComponent mutateModelData() {
+        return new CustomModelDataComponent(modelData.floats(), List.of(!(cores.get() instanceof CoreDefault)), modelData.strings(), List.of(cores.get().getColor()));
     }
 }

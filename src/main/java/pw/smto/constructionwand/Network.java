@@ -55,7 +55,7 @@ public class Network {
 
         public record C2SQueryUndoPayload(boolean undoPressed) implements CustomPayload {
             public static final CustomPayload.Id<C2SQueryUndoPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "query_undo"));
-            public static final PacketCodec<RegistryByteBuf, C2SQueryUndoPayload> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, C2SQueryUndoPayload::undoPressed, C2SQueryUndoPayload::new);
+            public static final PacketCodec<RegistryByteBuf, C2SQueryUndoPayload> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, C2SQueryUndoPayload::undoPressed, C2SQueryUndoPayload::new);
 
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
@@ -65,7 +65,7 @@ public class Network {
 
         public record C2SWandOptionPayload(String key, String value, boolean shouldNotify) implements CustomPayload {
             public static final CustomPayload.Id<C2SWandOptionPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "wand_option"));
-            public static final PacketCodec<RegistryByteBuf, C2SWandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, C2SWandOptionPayload::key, PacketCodecs.STRING, C2SWandOptionPayload::value, PacketCodecs.BOOL, C2SWandOptionPayload::shouldNotify, C2SWandOptionPayload::new);
+            public static final PacketCodec<RegistryByteBuf, C2SWandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, C2SWandOptionPayload::key, PacketCodecs.STRING, C2SWandOptionPayload::value, PacketCodecs.BOOLEAN, C2SWandOptionPayload::shouldNotify, C2SWandOptionPayload::new);
 
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
