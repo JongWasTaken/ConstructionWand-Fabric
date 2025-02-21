@@ -17,7 +17,7 @@ import pw.smto.constructionwand.basics.WandUtil;
  * {@link HandlerNBTInventory} is a "best effort" implementation for it, but whether it actually works is a different story.
  * <p>
  * Now, any mod that provides portable inventories (i.e. backpacks) should be compatible by default, provided their
- * mod authors are not lazy during the porting process and actually store their data using DataComponentTypes.CONTAINER.
+ * mod authors are not lazy during the porting process and actually store their data using DataComponentTypes.CONTAINER (if possible, of course!).
  * <p>
  * It also works with any inventory size!
  */

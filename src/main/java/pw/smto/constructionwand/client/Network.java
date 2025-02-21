@@ -9,9 +9,7 @@ public class Network {
     @Environment(EnvType.CLIENT)
     public static void init() {
         ClientPlayNetworking.registerGlobalReceiver(pw.smto.constructionwand.Network.Payloads.S2CUndoBlocksPayload.ID, (payload, context) -> {
-            context.client().execute(() -> {
-                RenderBlockPreview.undoBlocks = Set.copyOf(payload.blockPosList());
-            });
+            context.client().execute(() -> RenderBlockPreview.undoBlocks = Set.copyOf(payload.blockPosList()));
         });
     }
 }

@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier;
 import net.neoforged.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pw.smto.constructionwand.basics.ConfigClient;
 import pw.smto.constructionwand.basics.ConfigServer;
 import pw.smto.constructionwand.basics.ReplacementRegistry;
 import pw.smto.constructionwand.containers.ContainerManager;
