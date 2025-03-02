@@ -46,13 +46,13 @@ public class WandUtil
             if (stack.getItem() instanceof ItemCore core) {
                 if (!options.hasUpgrade(core) && ConfigServer.getWandProperties(wand.getItem()).isUpgradeable()) {
                     upgraded = true;
-                    player.sendMessage(Text.translatable(core.getTranslationKey()).formatted(Formatting.AQUA).append(Text.literal(" has been added to your wand.").formatted(Formatting.GRAY)));
+                    player.sendMessage(Text.translatable(core.getTranslationKey()).formatted(Formatting.AQUA).append(Text.literal(" has been added to your wand.").formatted(Formatting.GRAY)), false);
                     options.addUpgrade(core);
                     stack.decrement(1);
                 }
             }
         }
-        if (!upgraded) player.sendMessage(Text.literal("No cores were added to your wand.").formatted(Formatting.RED));
+        if (!upgraded) player.sendMessage(Text.literal("No cores were added to your wand.").formatted(Formatting.RED), false);
         options.writeToStack(wand);
     }
 

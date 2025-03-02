@@ -6,12 +6,8 @@
     "#  "
   ],
   "key": {
-    "X": {
-      "tag": "minecraft:stone_tool_materials"
-    },
-    "#": {
-      "item": "minecraft:stick"
-    }
+    "X": "#minecraft:stone_tool_materials",
+    "#": "minecraft:stick"
   },
   "result": {
     "id": "constructionwand:stone_wand"

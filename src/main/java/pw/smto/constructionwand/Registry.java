@@ -2,9 +2,10 @@ package pw.smto.constructionwand;
 
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ToolMaterials;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import pw.smto.constructionwand.items.core.ItemCore;
@@ -20,16 +21,19 @@ import java.util.List;
 import static pw.smto.constructionwand.ConstructionWand.MOD_ID;
 
 public class Registry {
+    private static RegistryKey<Item> createKey(String name) {
+        return RegistryKey.of(RegistryKeys.ITEM, ConstructionWand.id(name));
+    }
     public static class Items {
         public static List<Item> WANDS = new ArrayList<>();
         public static List<Item> CORES = new ArrayList<>();
 
-        public static final ItemWand STONE_WAND = new ItemWandBasic(new Item.Settings(), ToolMaterials.STONE, ConstructionWand.id("stone_wand"));
-        public static final ItemWand IRON_WAND = new ItemWandBasic(new Item.Settings(), ToolMaterials.IRON, ConstructionWand.id("iron_wand"));
-        public static final ItemWand DIAMOND_WAND = new ItemWandBasic(new Item.Settings(), ToolMaterials.DIAMOND, ConstructionWand.id("diamond_wand"));
-        public static final ItemWand INFINITY_WAND = new ItemWandInfinity();
-        public static final ItemCore CORE_ANGEL = new ItemCoreAngel(new Item.Settings().maxCount(1));
-        public static final ItemCore CORE_DESTRUCTION =  new ItemCoreDestruction(new Item.Settings().maxCount(1));
+        public static final ItemWand STONE_WAND = new ItemWandBasic(createKey("stone_wand"), new Item.Settings(), ToolMaterial.STONE);
+        public static final ItemWand IRON_WAND = new ItemWandBasic(createKey("iron_wand"), new Item.Settings(), ToolMaterial.IRON);
+        public static final ItemWand DIAMOND_WAND = new ItemWandBasic(createKey("diamond_wand"), new Item.Settings(), ToolMaterial.DIAMOND);
+        public static final ItemWand INFINITY_WAND = new ItemWandInfinity(createKey("infinity_wand"));
+        public static final ItemCore CORE_ANGEL = new ItemCoreAngel(createKey("core_angel"));
+        public static final ItemCore CORE_DESTRUCTION =  new ItemCoreDestruction(createKey("core_destruction"));
 
         static {
             WANDS.add(STONE_WAND);
@@ -43,12 +47,12 @@ public class Registry {
     }
 
     public static void registerAll() {
-        net.minecraft.registry.Registry.register(Registries.ITEM, Items.STONE_WAND.identifier, Items.STONE_WAND);
-        net.minecraft.registry.Registry.register(Registries.ITEM, Items.IRON_WAND.identifier, Items.IRON_WAND);
-        net.minecraft.registry.Registry.register(Registries.ITEM, Items.DIAMOND_WAND.identifier, Items.DIAMOND_WAND);
-        net.minecraft.registry.Registry.register(Registries.ITEM, Items.INFINITY_WAND.identifier, Items.INFINITY_WAND);
-        net.minecraft.registry.Registry.register(Registries.ITEM, Items.CORE_ANGEL.identifier, Items.CORE_ANGEL);
-        net.minecraft.registry.Registry.register(Registries.ITEM, Items.CORE_DESTRUCTION.identifier, Items.CORE_DESTRUCTION);
+        net.minecraft.registry.Registry.register(Registries.ITEM, Items.STONE_WAND.registryKey, Items.STONE_WAND);
+        net.minecraft.registry.Registry.register(Registries.ITEM, Items.IRON_WAND.registryKey, Items.IRON_WAND);
+        net.minecraft.registry.Registry.register(Registries.ITEM, Items.DIAMOND_WAND.registryKey, Items.DIAMOND_WAND);
+        net.minecraft.registry.Registry.register(Registries.ITEM, Items.INFINITY_WAND.registryKey, Items.INFINITY_WAND);
+        net.minecraft.registry.Registry.register(Registries.ITEM, Items.CORE_ANGEL.registryKey, Items.CORE_ANGEL);
+        net.minecraft.registry.Registry.register(Registries.ITEM, Items.CORE_DESTRUCTION.registryKey, Items.CORE_DESTRUCTION);
 
         var tabBuilder = PolymerItemGroupUtils.builder();
         tabBuilder.displayName(Text.literal("Construction Wand"));

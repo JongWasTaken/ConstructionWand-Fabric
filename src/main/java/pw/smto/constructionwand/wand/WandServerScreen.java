@@ -27,7 +27,7 @@ public class WandServerScreen extends SimpleGui {
         this.player = player;
         this.wand = wand;
         this.options = new WandOptions(wand);
-        this.setTitle(Text.translatable(wand.getTranslationKey()));
+        this.setTitle(wand.getName());
     }
 
     @Override

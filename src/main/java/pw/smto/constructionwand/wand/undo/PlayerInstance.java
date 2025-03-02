@@ -17,6 +17,9 @@ public class PlayerInstance
     private static final HashMap<UUID, PlayerEntityEntry> history = new HashMap<>();
 
     public static PlayerEntityEntry getEntryFromPlayerEntity(PlayerEntity player) {
+        if (player == null) {
+            return null;
+        }
         return history.computeIfAbsent(player.getUuid(), k -> new PlayerEntityEntry());
     }
 

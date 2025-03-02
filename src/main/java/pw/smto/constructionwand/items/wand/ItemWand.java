@@ -3,14 +3,15 @@ package pw.smto.constructionwand.items.wand;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
 import eu.pb4.polymer.core.api.utils.PolymerKeepModel;
-import eu.pb4.polymer.resourcepack.api.PolymerModelData;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.*;
@@ -26,30 +27,33 @@ import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.wand.WandJob;
 import pw.smto.constructionwand.wand.undo.PlayerInstance;
+import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.List;
 
 public abstract class ItemWand extends Item implements PolymerItem, PolymerKeepModel, PolymerClientDecoded
 {
-    public final Identifier identifier;
-    private final PolymerModelData model;
-    public ItemWand(Item.Settings properties, Identifier id) {
-        super(properties);
-        this.identifier = id;
-        this.model = PolymerResourcePackUtils.requestModel(Items.STICK, Identifier.of(ConstructionWand.MOD_ID, "item/" + id.getPath()));
+    public final RegistryKey<Item> registryKey;
+    private final Identifier model;
+    public ItemWand(RegistryKey<Item> id, Item.Settings properties) {
+        super(properties.registryKey(id));
+        this.registryKey = id;
+        this.model = Identifier.of(ConstructionWand.MOD_ID, id.getValue().getPath());
     }
 
     @Override
-    public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
+    public Item getPolymerItem(ItemStack itemStack, PacketContext context) {
+        var player = context.getPlayer();
+        if (player == null) return Items.STICK;
         if (PlayerInstance.getEntryFromPlayerEntity(player).hasClientMod) {
             return this;
         }
-        return this.model.item();
+        return Items.STICK;
     }
 
     @Override
-    public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        return this.model.value();
+    public Identifier getPolymerItemModel(ItemStack stack, PacketContext context) {
+        return this.registryKey.getValue();
     }
 
     @NotNull
@@ -76,24 +80,24 @@ public abstract class ItemWand extends Item implements PolymerItem, PolymerKeepM
 
     @NotNull
     @Override
-    public TypedActionResult<ItemStack> use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
+    public ActionResult use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
         ItemStack offHandStack = player.getOffHandStack();
         ItemStack wand = player.getStackInHand(hand);
-        if (wand.equals(offHandStack)) return TypedActionResult.fail(wand);
-        if (world.isClient) return TypedActionResult.fail(wand);
+        if (wand.equals(offHandStack)) return ActionResult.FAIL;
+        if (world.isClient) return ActionResult.FAIL;
         if(!PlayerInstance.isUndoActive(player)) {
-            if (offHandStack.isEmpty()) return TypedActionResult.fail(wand);
+            if (offHandStack.isEmpty()) return ActionResult.FAIL;
             // Right click: Place angel block
             WandJob job = getWandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
-            return job.doIt() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
+            return job.doIt() ? ActionResult.SUCCESS : ActionResult.FAIL;
         } else {
             var i = PlayerInstance.getEntryFromPlayerEntity(player);
             if (!i.hasClientMod && !i.blockServerWandScreen) {
                 WandServerScreen.open((ServerPlayerEntity) player, wand);
             } else i.blockServerWandScreen = false;
         }
-        return TypedActionResult.fail(wand);
+        return ActionResult.FAIL;
     }
 
     public static WandJob getWandJob(PlayerEntity player, World world, @Nullable BlockHitResult rayTraceResult, ItemStack wand) {
@@ -101,11 +105,6 @@ public abstract class ItemWand extends Item implements PolymerItem, PolymerKeepM
         wandJob.getSnapshots();
 
         return wandJob;
-    }
-
-    @Override
-    public boolean canRepair(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
-        return false;
     }
 
     public int remainingDurability(ItemStack stack) {

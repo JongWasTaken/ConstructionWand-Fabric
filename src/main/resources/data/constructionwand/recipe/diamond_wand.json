@@ -6,12 +6,8 @@
     "#  "
   ],
   "key": {
-    "X": {
-      "item": "minecraft:diamond"
-    },
-    "#": {
-      "item": "minecraft:stick"
-    }
+    "X": "minecraft:diamond",
+    "#": "minecraft:stick"
   },
   "result": {
     "id": "constructionwand:diamond_wand"

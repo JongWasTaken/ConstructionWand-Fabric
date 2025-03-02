@@ -6,12 +6,8 @@
     "#  "
   ],
   "key": {
-    "X": {
-      "item": "minecraft:nether_star"
-    },
-    "#": {
-      "item": "minecraft:stick"
-    }
+    "X": "minecraft:nether_star",
+    "#": "minecraft:stick"
   },
   "result": {
     "id": "constructionwand:infinity_wand"

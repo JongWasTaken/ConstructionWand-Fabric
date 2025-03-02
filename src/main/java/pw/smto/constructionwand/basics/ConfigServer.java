@@ -1,7 +1,7 @@
 package pw.smto.constructionwand.basics;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ToolMaterials;
+import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -109,9 +109,9 @@ public class ConfigServer
                 "in the /saves/myworld/serverconfig folder. If you want to change the serverconfig for all",
                 "new worlds, copy the config files in the /defaultconfigs folder.");
 
-        new WandProperties(builder, Registry.Items.STONE_WAND, ToolMaterials.STONE.getDurability(), 9, 0, 0, false);
-        new WandProperties(builder, Registry.Items.IRON_WAND, ToolMaterials.IRON.getDurability(), 27, 2, 9, true);
-        new WandProperties(builder, Registry.Items.DIAMOND_WAND, ToolMaterials.DIAMOND.getDurability(), 128, 8, 25, true);
+        new WandProperties(builder, Registry.Items.STONE_WAND, ToolMaterial.STONE.durability(), 9, 0, 0, false);
+        new WandProperties(builder, Registry.Items.IRON_WAND, ToolMaterial.IRON.durability(), 27, 2, 9, true);
+        new WandProperties(builder, Registry.Items.DIAMOND_WAND, ToolMaterial.DIAMOND.durability(), 128, 8, 25, true);
         new WandProperties(builder, Registry.Items.INFINITY_WAND, 0, 1024, 16, 81, true);
 
         builder.push("misc");

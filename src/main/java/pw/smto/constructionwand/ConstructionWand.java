@@ -37,8 +37,8 @@ public class ConstructionWand implements ModInitializer
         PolymerResourcePackUtils.markAsRequired();
         Registry.registerAll();
         ConfigServer.init();
-        ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.SERVER, ConfigServer.SPEC);
-        ForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.CLIENT, ConfigClient.SPEC);
+        ForgeConfigRegistry.INSTANCE.register(MOD_ID, net.neoforged.fml.config.ModConfig.Type.SERVER, ConfigServer.SPEC);
+        ForgeConfigRegistry.INSTANCE.register(MOD_ID, net.neoforged.fml.config.ModConfig.Type.CLIENT, ConfigClient.SPEC);
         Network.init();
         ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> {
             ReplacementRegistry.init();

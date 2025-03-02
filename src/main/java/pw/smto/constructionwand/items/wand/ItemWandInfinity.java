@@ -2,11 +2,11 @@ package pw.smto.constructionwand.items.wand;
 
 
 import net.minecraft.item.Item;
-import pw.smto.constructionwand.ConstructionWand;
+import net.minecraft.registry.RegistryKey;
 
 public class ItemWandInfinity extends ItemWand
 {
-    public ItemWandInfinity() {
-        super(new Item.Settings().maxCount(1).fireproof(), ConstructionWand.id("infinity_wand"));
+    public ItemWandInfinity(RegistryKey<Item> id) {
+        super(id, new Item.Settings().maxCount(1).fireproof());
     }
 }

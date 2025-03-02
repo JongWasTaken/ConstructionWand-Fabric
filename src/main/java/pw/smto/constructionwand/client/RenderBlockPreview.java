@@ -2,6 +2,7 @@ package pw.smto.constructionwand.client;
 
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -55,11 +56,11 @@ public class RenderBlockPreview
         double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickCounter().getTickDelta(false);
 
         for(BlockPos block : blocks) {
-            WorldRenderer.drawBox(
-                context.matrixStack(),
-                context.consumers().getBuffer(RenderLayer.getLines()),
-                new Box(block).offset(-d0, -d1, -d2),
-                colorR, colorG, colorB, 0.4F
+            VertexRendering.drawBox(
+                    context.matrixStack(),
+                    context.consumers().getBuffer(RenderLayer.getLines()),
+                    new Box(block).offset(-d0, -d1, -d2),
+                    colorR, colorG, colorB, 0.4F
             );
         }
         return false;

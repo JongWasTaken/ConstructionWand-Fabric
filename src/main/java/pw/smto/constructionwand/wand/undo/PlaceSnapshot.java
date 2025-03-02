@@ -31,7 +31,7 @@ public class PlaceSnapshot implements ISnapshot
     private final BlockState supportingBlock;
     private final boolean targetMode;
 
-    public PlaceSnapshot(BlockState block, BlockPos pos, ItemStack item, BlockState supportingBlock, boolean targetMode, @Nullable ItemStack includedItem, @Nullable boolean giveBackIncludedItem) {
+    public PlaceSnapshot(BlockState block, BlockPos pos, ItemStack item, BlockState supportingBlock, boolean targetMode, @Nullable ItemStack includedItem, boolean giveBackIncludedItem) {
         this.block = block;
         this.pos = pos;
         this.item = item;

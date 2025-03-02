@@ -1,45 +1,44 @@
 package pw.smto.constructionwand.items.core;
 
 import eu.pb4.polymer.core.api.item.PolymerItem;
-import eu.pb4.polymer.resourcepack.api.PolymerModelData;
-import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandCore;
+import pw.smto.constructionwand.wand.undo.PlayerInstance;
+import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.List;
 
 public abstract class ItemCore extends Item implements IWandCore, PolymerItem
 {
-    public final Identifier identifier;
-    private final PolymerModelData model;
+    public final RegistryKey<Item> registryKey;
 
-    public ItemCore(Item.Settings properties, Identifier id) {
-        super(properties);
-        this.identifier = id;
-        this.model = PolymerResourcePackUtils.requestModel(Items.GUNPOWDER, Identifier.of(ConstructionWand.MOD_ID, "item/" + id.getPath()));
+    public ItemCore(RegistryKey<Item> id, Item.Settings properties) {
+        super(properties.registryKey(id));
+        this.registryKey = id;
 
     }
 
     @Override
-    public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        //if (UndoHistory.getEntryFromPlayerEntity(player).sendPackets) {
-        //    return this;
-        //}
-        return this.model.item();
+    public Item getPolymerItem(ItemStack itemStack, PacketContext context) {
+        var player = context.getPlayer();
+        if (player == null) return Items.STICK;
+        if (PlayerInstance.getEntryFromPlayerEntity(player).hasClientMod) {
+            return this;
+        }
+        return Items.STICK;
     }
 
     @Override
-    public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
-        return this.model.value();
+    public Identifier getPolymerItemModel(ItemStack stack, PacketContext context) {
+        return this.registryKey.getValue();
     }
 
     @Override

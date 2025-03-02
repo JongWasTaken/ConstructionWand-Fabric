@@ -6,15 +6,9 @@
     "X# "
   ],
   "key": {
-    "O": {
-      "item": "minecraft:diamond_block"
-    },
-    "X": {
-      "item": "minecraft:diamond_pickaxe"
-    },
-    "#": {
-      "tag": "c:glass_panes"
-    }
+    "O": "minecraft:diamond_block",
+    "X": "minecraft:diamond_pickaxe",
+    "#": "#c:glass_panes"
   },
   "result": {
     "id": "constructionwand:core_destruction"
