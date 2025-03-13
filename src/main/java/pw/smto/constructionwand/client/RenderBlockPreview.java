@@ -50,9 +50,9 @@ public class RenderBlockPreview
 
         if(blocks == null || blocks.isEmpty()) return true;
 
-        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * context.tickCounter().getTickDelta(false);
-        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * context.tickCounter().getTickDelta(false);
-        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickCounter().getTickDelta(false);
+        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * context.tickCounter().getTickProgress(false);
+        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * context.tickCounter().getTickProgress(false);
+        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickCounter().getTickProgress(false);
 
         for(BlockPos block : blocks) {
             VertexRendering.drawBox(

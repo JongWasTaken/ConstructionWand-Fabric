@@ -31,11 +31,11 @@ public class WandUpgrades<T extends IWandUpgrade>
     }
 
     protected void deserialize() {
-        NbtList listnbt = tag.getList(key, NbtElement.STRING_TYPE);
+        NbtList listnbt = tag.getList(key).orElse(new NbtList());
         boolean require_fix = false;
 
         for(int i = 0; i < listnbt.size(); i++) {
-            String str = listnbt.getString(i);
+            String str = listnbt.getString(i).orElse("");
             Item item = Registries.ITEM.get(Identifier.of(str));
 
             T data;

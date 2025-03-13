@@ -29,6 +29,7 @@ import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.WandItemUseContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -67,22 +68,23 @@ public class WandUtil
     }
 
     public static List<ItemStack> getHotbar(PlayerEntity player) {
-        return player.getInventory().main.subList(0, 9);
+        return player.getInventory().getMainStacks().subList(0, 9);
     }
 
     public static List<ItemStack> getHotbarWithOffhand(PlayerEntity player) {
-        ArrayList<ItemStack> inventory = new ArrayList<>(player.getInventory().main.subList(0, 9));
-        inventory.addAll(player.getInventory().offHand);
+        ArrayList<ItemStack> inventory = new ArrayList<>(player.getInventory().getMainStacks().subList(0, 9));
+        inventory.add(player.getOffHandStack());
         return inventory;
     }
 
     public static List<ItemStack> getMainInv(PlayerEntity player) {
-        return player.getInventory().main.subList(9, player.getInventory().main.size());
+        return player.getInventory().getMainStacks().subList(9, player.getInventory().getMainStacks().size());
     }
 
     public static List<ItemStack> getFullInv(PlayerEntity player) {
-        ArrayList<ItemStack> inventory = new ArrayList<>(player.getInventory().offHand);
-        inventory.addAll(player.getInventory().main);
+        ArrayList<ItemStack> inventory = new ArrayList<>();
+        inventory.add(player.getOffHandStack());
+        inventory.addAll(player.getInventory().getMainStacks());
         return inventory;
     }
 
@@ -140,7 +142,7 @@ public class WandUtil
     public static boolean removeBlock(World world, PlayerEntity player, @Nullable BlockState block, BlockPos pos) {
         BlockState currentBlock = world.getBlockState(pos);
 
-        if(!world.canPlayerModifyAt(player, pos)) return false;
+        if(!world.canEntityModifyAt(player, pos)) return false;
 
         if(!player.isCreative()) {
             boolean hasEntity = false;
@@ -173,7 +175,7 @@ public class WandUtil
     }
 
     public static int countItem(PlayerEntity player, Item item) {
-        if(player.getInventory().main == null) return 0;
+        if(player.getInventory().getMainStacks() == null) return 0;
         if(player.isCreative()) return Integer.MAX_VALUE;
 
         int total = 0;
@@ -199,7 +201,7 @@ public class WandUtil
         if(!world.isInBuildLimit(pos)) return false;
 
         // Is block modifiable?
-        if(!world.canPlayerModifyAt(player, pos)) return false;
+        if(!world.canEntityModifyAt(player, pos)) return false;
 
         // Limit range
         if(ConfigServer.MAX_RANGE.get() > 0 &&

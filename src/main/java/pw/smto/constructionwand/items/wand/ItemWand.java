@@ -3,6 +3,7 @@ package pw.smto.constructionwand.items.wand;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,6 +29,7 @@ import pw.smto.constructionwand.wand.WandJob;
 import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class ItemWand extends Item
 {
@@ -89,34 +91,34 @@ public abstract class ItemWand extends Item
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack itemstack, TooltipContext context, List<Text> lines, TooltipType type) {
-        WandOptions options = WandOptions.of(itemstack);
-        int limit = options.cores.get().getWandAction().getLimit(itemstack);
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        WandOptions options = WandOptions.of(stack);
+        int limit = options.cores.get().getWandAction().getLimit(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         // +SHIFT tooltip: show all options + installed cores
         if(Screen.hasShiftDown()) {
             for(int i = 1; i < options.allOptions.length; i++) {
                 IOption<?> opt = options.allOptions[i];
-                lines.add(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
+                textConsumer.accept(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
                         .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.GRAY))
                 );
             }
             if(!options.cores.getUpgrades().isEmpty()) {
-                lines.add(Text.literal(""));
-                lines.add(Text.translatable(langTooltip + "cores").formatted(Formatting.GRAY));
+                textConsumer.accept(Text.literal(""));
+                textConsumer.accept(Text.translatable(langTooltip + "cores").formatted(Formatting.GRAY));
 
                 for(IWandCore core : options.cores.getUpgrades()) {
-                    lines.add(Text.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
+                    textConsumer.accept(Text.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
                 }
             }
         }
         // Default tooltip: show block limit + active wand core
         else {
             IOption<?> opt = options.allOptions[0];
-            lines.add(Text.translatable(langTooltip + "blocks", limit).formatted(Formatting.GRAY));
-            lines.add(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
+            textConsumer.accept(Text.translatable(langTooltip + "blocks", limit).formatted(Formatting.GRAY));
+            textConsumer.accept(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
                     .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.WHITE)));
-            lines.add(Text.translatable(langTooltip + "shift").formatted(Formatting.AQUA));
+            textConsumer.accept(Text.translatable(langTooltip + "shift").formatted(Formatting.AQUA));
         }
 
     }

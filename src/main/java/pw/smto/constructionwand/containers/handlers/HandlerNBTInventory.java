@@ -17,14 +17,14 @@ public class HandlerNBTInventory implements IContainerHandler
     @Override
     public boolean matches(PlayerEntity player, ItemStack target, ItemStack current) {
         NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
+        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
         return !items.isEmpty();
     }
 
     @Override
     public int countItems(PlayerEntity player, ItemStack target, ItemStack current) {
         NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
+        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
         if (!items.isEmpty()) {
             var inv = new SimpleInventory();
             inv.readNbtList(items, DynamicRegistryManager.EMPTY);
@@ -43,7 +43,7 @@ public class HandlerNBTInventory implements IContainerHandler
     @Override
     public int useItems(PlayerEntity player, ItemStack target, ItemStack current, int count) {
         NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
+        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
         if (!items.isEmpty()) {
             var inv = new SimpleInventory();
             inv.readNbtList(items, DynamicRegistryManager.EMPTY);

@@ -20,6 +20,6 @@ public class MouseMixin {
         if (!pw.smto.constructionwand.client.ClientEvents.onScroll(amount)) {
             return Scroller.scrollCycling(amount, selectedIndex, total);
         }
-        return this.client.player.getInventory().selectedSlot;
+        return this.client.player.getInventory().getSelectedSlot();
     }
 }

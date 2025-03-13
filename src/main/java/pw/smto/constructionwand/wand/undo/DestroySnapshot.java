@@ -60,7 +60,7 @@ public class DestroySnapshot implements ISnapshot
         if(!world.isInBuildLimit(pos)) return false;
 
         // Is block modifiable?
-        if(!world.canPlayerModifyAt(player, pos)) return false;
+        if(!world.canEntityModifyAt(player, pos)) return false;
 
         // Ignore blocks and entities when in creative
         if(player.isCreative()) return true;
