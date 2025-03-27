@@ -1,6 +1,6 @@
 package pw.smto.constructionwand;
 
-import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.impl.core.ForgeConfigSpecAdapter;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -31,7 +31,7 @@ public class ConstructionWand implements ModInitializer
         LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
         Registry.registerAll();
         ConfigServer.init();
-        NeoForgeConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.SERVER, new ForgeConfigSpecAdapter(ConfigServer.SPEC));
+        ConfigRegistry.INSTANCE.register(MOD_ID, ModConfig.Type.SERVER, new ForgeConfigSpecAdapter(ConfigServer.SPEC));
         Network.init();
         ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> {
             ReplacementRegistry.init();
