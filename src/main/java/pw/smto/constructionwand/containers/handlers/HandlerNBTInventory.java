@@ -3,12 +3,17 @@ package pw.smto.constructionwand.containers.handlers;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.util.ErrorReporter;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 
@@ -27,7 +32,7 @@ public class HandlerNBTInventory implements IContainerHandler
         NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
         if (!items.isEmpty()) {
             var inv = new SimpleInventory();
-            inv.readNbtList(items, DynamicRegistryManager.EMPTY);
+            NbtReadView.create(ErrorReporter.EMPTY, DynamicRegistryManager.EMPTY, nbtCompound).getOptionalTypedListView("Inventory", ItemStack.CODEC).ifPresent(inv::readDataList);
             int total = 0;
             for(int i = 0; i < inv.size(); i++) {
                 ItemStack containerStack = inv.getStack(i);
@@ -46,8 +51,7 @@ public class HandlerNBTInventory implements IContainerHandler
         NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
         if (!items.isEmpty()) {
             var inv = new SimpleInventory();
-            inv.readNbtList(items, DynamicRegistryManager.EMPTY);
-
+            NbtReadView.create(ErrorReporter.EMPTY, DynamicRegistryManager.EMPTY, nbtCompound).getOptionalTypedListView("Inventory", ItemStack.CODEC).ifPresent(inv::readDataList);
             for(int i = 0; i < inv.size(); i++) {
                 ItemStack handlerStack = inv.getStack(i);
                 if(WandUtil.stackEquals(target, handlerStack)) {
