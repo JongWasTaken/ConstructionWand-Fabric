@@ -77,8 +77,8 @@ dependencies {
 	//modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
 
 	// forge config api
-	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.6.0"
-	include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.6.0"
+	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.6.1"
+	include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.6.1"
 	//modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:8.0.2"
 }
 

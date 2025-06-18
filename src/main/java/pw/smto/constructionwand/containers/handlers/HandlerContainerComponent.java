@@ -8,19 +8,6 @@ import net.minecraft.util.collection.DefaultedList;
 import pw.smto.constructionwand.api.IContainerHandler;
 import pw.smto.constructionwand.basics.WandUtil;
 
-/**
- * Not only does this class replace HandlerShulkerbox, it also provides an alternative to Forge's Inventory Capability.
- * Mojang's push to DataComponents has (maybe unintentionally) standardized inventories that are attached to items,
- * similar to how Forge does it.
- * <p>
- * Previously, there was no way to know if an item had an inventory attached to it, as the NBT was partially arbitrary.
- * {@link HandlerNBTInventory} is a "best effort" implementation for it, but whether it actually works is a different story.
- * <p>
- * Now, any mod that provides portable inventories (i.e. backpacks) should be compatible by default, provided their
- * mod authors are not lazy during the porting process and actually store their data using DataComponentTypes.CONTAINER (if possible, of course!).
- * <p>
- * It also works with any inventory size!
- */
 public class HandlerContainerComponent implements IContainerHandler
 {
     @Override

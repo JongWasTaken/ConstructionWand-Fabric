@@ -51,7 +51,8 @@ public class ScreenWand extends Screen {
 
     @Override
     public void render(@NotNull DrawContext guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        //renderBackground(guiGraphics, mouseX, mouseY, partialTicks); // crashes the game on 1.21.6 because renderBlur gets called somewhere else somehow
+        this.renderDarkening(guiGraphics); // so we just call this directly instead
         guiGraphics.drawCenteredTextWithShadow(textRenderer, wand.getName(), width / 2, height / 2 - FIELD_HEIGHT / 2 - SPACING_HEIGHT, 16777215);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
@@ -85,7 +86,7 @@ public class ScreenWand extends Screen {
                 .position(getX(cx), getY(cy))
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
                 .tooltip(getButtonTooltip(option))
-                .narrationSupplier(x -> (MutableText) getButtonLabel(option))
+                .narrationSupplier(x -> getButtonLabel(option))
                 .build();
         button.active = option.isEnabled();
         buttons.add(addDrawable(button));
@@ -106,7 +107,7 @@ public class ScreenWand extends Screen {
         return height / 2 - FIELD_HEIGHT / 2 + n * (BUTTON_HEIGHT + SPACING_HEIGHT);
     }
 
-    private Text getButtonLabel(IOption<?> option) {
+    private MutableText getButtonLabel(IOption<?> option) {
         return Text.translatable(option.getKeyTranslation()).append(Text.translatable(option.getValueTranslation()));
     }
 
