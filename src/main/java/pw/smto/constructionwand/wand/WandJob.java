@@ -135,7 +135,7 @@ public class WandJob
                 executed.add(snapshot);
                 if (!player.isCreative()) {
                     // layered blocks would need multiple right-clicks, so each removes 1 durability
-                    wand.damage(snapshot.getRequiredItems().get(0).getCount(), player, EquipmentSlot.MAINHAND);
+                    wand.damage(snapshot.getRequiredItems().getFirst().getCount(), player, EquipmentSlot.MAINHAND);
                 }
             } else {
                 snapshot.forceRestore(world);
@@ -152,7 +152,7 @@ public class WandJob
 
         // Play place sound
         if(!placeSnapshots.isEmpty()) {
-            BlockSoundGroup sound = placeSnapshots.get(0).getBlockState().getSoundGroup();
+            BlockSoundGroup sound = placeSnapshots.getFirst().getBlockState().getSoundGroup();
             world.playSound(null, player.getBlockPos(), sound.getPlaceSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
 
             // Add to job history for undo
