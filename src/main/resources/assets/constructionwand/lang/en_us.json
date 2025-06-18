@@ -66,5 +66,11 @@
   "constructionwand.description.core_angel": "The angel core places a block on the opposite side of the block (or row of blocks) you are facing. Maximum distance depends on wand tier. Right click empty space to place a block in midair. To do that, you'll need to have the block you want to place in your offhand.",
   "constructionwand.description.core_destruction": "The destruction core destroys blocks (no tile entities) on the side facing you. Maximum number of blocks depends on wand tier. Destroyed blocks disappear into the void, you can use the undo feature if you've made a mistake.",
 
-  "stat.constructionwand.use_wand": "Blocks placed using Wand"
+  "stat.constructionwand.use_wand": "Blocks placed using Wand",
+
+  "tag.item.constructionwand.cores": "ConstructionWand Cores",
+  "tag.item.constructionwand.wands": "ConstructionWand Wands",
+
+  "key.category.constructionwand": "Construction Wand",
+  "key.constructionwand.opt_key": "Option Key"
 }

@@ -1,4 +1,5 @@
 package pw.smto.constructionwand.basics;
+
 import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
@@ -34,6 +35,8 @@ import java.util.function.Predicate;
 public class WandUtil
 {
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
+        if (stackA.hasNbt()) return false;
+        if (stackB.hasNbt()) return false;
         return ItemStack.areItemsEqual(stackA, stackB);
     }
 

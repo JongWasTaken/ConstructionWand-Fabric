@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+import pw.smto.constructionwand.ConstructionWandClient;
 import pw.smto.constructionwand.basics.ConfigClient;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.WandOptions;
@@ -88,7 +89,7 @@ public class ClientEvents
     }
 
     public static boolean isOptKeyDown() {
-        return isKeyDown(ConfigClient.OPT_KEY.get());
+        return isKeyDown(ConstructionWandClient.optKey.boundKey.getCode());
     }
 
     public static boolean modeKeyCombDown(PlayerEntity player) {
