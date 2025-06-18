@@ -3,6 +3,7 @@ package pw.smto.constructionwand.basics;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.component.type.NbtComponent;
@@ -45,15 +46,12 @@ public class WandUtil
     }
 
     private static boolean stackIsInvalid(ItemStack stack) {
+        if (!stack.getComponentChanges().equals(ComponentChanges.EMPTY)) {
+            return true;
+        }
         // fail if stack in question contains items (shulker box destruction prevention tm)
         if (stack.contains(DataComponentTypes.CONTAINER)) {
             if (!Objects.equals(stack.get(DataComponentTypes.CONTAINER), ContainerComponent.DEFAULT)) return true;
-        }
-        if (stack.contains(DataComponentTypes.CUSTOM_DATA)) {
-            if (!Objects.equals(stack.get(DataComponentTypes.CUSTOM_DATA), NbtComponent.DEFAULT)) return true;
-        }
-        if (stack.contains(DataComponentTypes.CUSTOM_NAME)) {
-            return true;
         }
 
         return false;
