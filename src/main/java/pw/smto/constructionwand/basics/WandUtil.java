@@ -3,6 +3,9 @@ package pw.smto.constructionwand.basics;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,12 +34,30 @@ import pw.smto.constructionwand.wand.WandItemUseContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class WandUtil
 {
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
+        if (stackIsInvalid(stackA)) return false;
+        if (stackIsInvalid(stackB)) return false;
         return ItemStack.areItemsEqual(stackA, stackB);
+    }
+
+    private static boolean stackIsInvalid(ItemStack stack) {
+        // fail if stack in question contains items (shulker box destruction prevention tm)
+        if (stack.contains(DataComponentTypes.CONTAINER)) {
+            if (!Objects.equals(stack.get(DataComponentTypes.CONTAINER), ContainerComponent.DEFAULT)) return true;
+        }
+        if (stack.contains(DataComponentTypes.CUSTOM_DATA)) {
+            if (!Objects.equals(stack.get(DataComponentTypes.CUSTOM_DATA), NbtComponent.DEFAULT)) return true;
+        }
+        if (stack.contains(DataComponentTypes.CUSTOM_NAME)) {
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean stackEquals(ItemStack stackA, Item item) {

@@ -1,6 +1,8 @@
 package pw.smto.constructionwand.wand.supplier;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -23,6 +25,7 @@ import pw.smto.constructionwand.wand.undo.PlaceSnapshot;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Default WandSupplier. Takes items from player inventory.
@@ -100,9 +103,9 @@ public class SupplierInventory implements IWandSupplier
     }
 
     @Override
-    public int takeItemStack(ItemStack stack) {
-        int count = stack.getCount();
-        Item item = stack.getItem();
+    public int takeItemStack(ItemStack targetItem) {
+        int count = targetItem.getCount();
+        Item item = targetItem.getItem();
 
         if(player.getInventory().getMainStacks() == null) return count;
         if(player.isCreative()) return 0;
