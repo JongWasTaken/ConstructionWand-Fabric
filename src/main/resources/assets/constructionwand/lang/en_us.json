@@ -69,5 +69,8 @@
   "stat.constructionwand.use_wand": "Blocks placed using Wand",
 
   "tag.item.constructionwand.cores": "ConstructionWand Cores",
-  "tag.item.constructionwand.wands": "ConstructionWand Wands"
+  "tag.item.constructionwand.wands": "ConstructionWand Wands",
+
+  "key.category.constructionwand": "Construction Wand",
+  "key.constructionwand.opt_key": "Option Key"
 }

@@ -42,7 +42,8 @@
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~${minecraft_version}",
 		"java": ">=17",
-		"fabric-api": ">=${fabric_version}"
+		"fabric-api": ">=${fabric_version}",
+		"fabric-key-binding-api-v1": "*"
 	},
 	"suggests": {
 		"roughly-enough-items": "${rei_version}"
