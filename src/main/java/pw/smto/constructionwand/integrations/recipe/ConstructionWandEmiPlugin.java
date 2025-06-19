@@ -4,16 +4,15 @@ import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.EmiInfoRecipe;
 import dev.emi.emi.api.stack.EmiStack;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import pw.smto.constructionwand.ConstructionWand;
+import pw.smto.constructionwand.ConstructionWandClient;
 import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.WandConfigEntry;
-import pw.smto.constructionwand.basics.ConfigClient;
 
 import java.util.List;
 
@@ -23,10 +22,10 @@ public class ConstructionWandEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
-        Text optkeyText = Text.translatable(InputUtil.fromKeyCode(ConfigClient.OPT_KEY.get(), -1).getTranslationKey())
+        Text optkeyText = Text.translatable(ConstructionWandClient.optKey.getBoundKeyTranslationKey())
                 .formatted(Formatting.BLUE);
-        Text wandModeText = keyComboText(ConfigClient.SHIFTOPT_MODE.get(), optkeyText);
-        Text wandGuiText = keyComboText(ConfigClient.SHIFTOPT_GUI.get(), optkeyText);
+        Text wandModeText = keyComboText(ConstructionWandClient.Config.requireOptKeyForActions, optkeyText);
+        Text wandGuiText = keyComboText(ConstructionWandClient.Config.requireOptKeyForMenu, optkeyText);
 
         for(Item wand : Registry.Items.WANDS) {
             WandConfigEntry wandProperties = ConstructionWand.WAND_CONFIG_MAP.get(wand);

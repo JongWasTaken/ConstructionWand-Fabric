@@ -14,7 +14,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import pw.smto.constructionwand.ConstructionWandClient;
-import pw.smto.constructionwand.basics.ConfigClient;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
@@ -94,10 +93,10 @@ public class ClientEvents
     }
 
     public static boolean modeKeyCombDown(PlayerEntity player) {
-        return player.isSneaking() && (isOptKeyDown() || !ConfigClient.SHIFTOPT_MODE.get());
+        return player.isSneaking() && (isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForActions);
     }
 
     public static boolean guiKeyCombDown(PlayerEntity player) {
-        return player.isSneaking() && (isOptKeyDown() || !ConfigClient.SHIFTOPT_GUI.get());
+        return player.isSneaking() && (isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForMenu);
     }
 }
