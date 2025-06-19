@@ -1,14 +1,17 @@
 package pw.smto.constructionwand.items.core;
 
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandCore;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class ItemCore extends Item implements IWandCore
 {

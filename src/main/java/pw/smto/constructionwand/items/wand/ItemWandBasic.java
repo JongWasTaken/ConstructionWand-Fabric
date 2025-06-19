@@ -1,8 +1,12 @@
 package pw.smto.constructionwand.items.wand;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.RepairableComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntryList;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemWandBasic extends ItemWand

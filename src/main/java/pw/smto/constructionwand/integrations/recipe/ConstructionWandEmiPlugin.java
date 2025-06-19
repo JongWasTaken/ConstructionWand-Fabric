@@ -12,8 +12,8 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Registry;
+import pw.smto.constructionwand.api.WandConfigEntry;
 import pw.smto.constructionwand.basics.ConfigClient;
-import pw.smto.constructionwand.basics.ConfigServer;
 
 import java.util.List;
 
@@ -29,16 +29,16 @@ public class ConstructionWandEmiPlugin implements EmiPlugin {
         Text wandGuiText = keyComboText(ConfigClient.SHIFTOPT_GUI.get(), optkeyText);
 
         for(Item wand : Registry.Items.WANDS) {
-            ConfigServer.WandProperties wandProperties = ConfigServer.getWandProperties(wand);
+            WandConfigEntry wandProperties = ConstructionWand.WAND_CONFIG_MAP.get(wand);
 
             String durabilityKey = wand == Registry.Items.INFINITY_WAND ? "unlimited" : "limited";
-            Text durabilityText = Text.translatable(baseKey + "durability." + durabilityKey, wandProperties.getDurability());
+            Text durabilityText = Text.translatable(baseKey + "durability." + durabilityKey, wandProperties.durability());
 
             registry.addRecipe(new EmiInfoRecipe(
                     List.of(EmiStack.of(wand)),
                     List.of(Text.translatable(baseKey + "wand",
                             Text.translatable(baseKeyItem + Registries.ITEM.getId(wand).getPath()),
-                            wandProperties.getLimit(), durabilityText, optkeyText, wandModeText, wandGuiText)),
+                            wandProperties.range(), durabilityText, optkeyText, wandModeText, wandGuiText)),
                     Identifier.of(ConstructionWand.MOD_ID, Registries.ITEM.getId(wand).getPath() + "_info")
             ));
         }

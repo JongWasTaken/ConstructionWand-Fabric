@@ -1,22 +1,18 @@
 package pw.smto.constructionwand.crafting;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.IWandUpgrade;
 import pw.smto.constructionwand.basics.ConfigServer;
@@ -84,7 +80,6 @@ public class RecipeWandUpgrade extends ShapelessRecipe
     public boolean fits(int width, int height) {
         return width * height >= 2;
     }
-
 
     @Override
     public RecipeSerializer<?> getSerializer() {

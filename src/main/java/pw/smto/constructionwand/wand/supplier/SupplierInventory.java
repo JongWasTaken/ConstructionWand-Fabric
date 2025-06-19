@@ -1,8 +1,6 @@
 package pw.smto.constructionwand.wand.supplier;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -25,7 +23,6 @@ import pw.smto.constructionwand.wand.undo.PlaceSnapshot;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Default WandSupplier. Takes items from player inventory.
