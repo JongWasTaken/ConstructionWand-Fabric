@@ -6,16 +6,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.recipe.*;
+import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.IngredientPlacement;
+import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.IWandUpgrade;
-import pw.smto.constructionwand.basics.ConfigServer;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
 
@@ -47,7 +50,7 @@ public class RecipeWandUpgrade implements CraftingRecipe
         }
 
         if(wand == null || upgrade == null) return false;
-        return !WandOptions.of(wand).hasUpgrade(upgrade) && ConfigServer.getWandProperties(wand.getItem()).isUpgradeable();
+        return !WandOptions.of(wand).hasUpgrade(upgrade) && ConstructionWand.WAND_CONFIG_MAP.get(wand.getItem()).upgradeable();
     }
 
     @NotNull

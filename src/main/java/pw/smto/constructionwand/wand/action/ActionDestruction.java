@@ -8,9 +8,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.api.IWandSupplier;
-import pw.smto.constructionwand.basics.ConfigServer;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.wand.undo.DestroySnapshot;
@@ -25,7 +25,7 @@ public class ActionDestruction implements IWandAction
 {
     @Override
     public int getLimit(ItemStack wand) {
-        return ConfigServer.getWandProperties(wand.getItem()).getDestruction();
+        return ConstructionWand.WAND_CONFIG_MAP.get(wand.getItem()).destructionLimit();
     }
 
     @NotNull

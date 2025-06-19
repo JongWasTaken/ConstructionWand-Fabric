@@ -8,8 +8,8 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Network;
-import pw.smto.constructionwand.basics.ConfigServer;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -25,7 +25,7 @@ public class UndoHistory
     public static void add(PlayerEntity player, World world, List<ISnapshot> placeSnapshots) {
         LinkedList<HistoryEntry> list = getEntryFromPlayerEntity(player).entries;
         list.add(new HistoryEntry(placeSnapshots, world));
-        while(list.size() > ConfigServer.UNDO_HISTORY.get()) list.removeFirst();
+        while(list.size() > ConstructionWand.Config.undoHistorySize) list.removeFirst();
     }
 
     public static void removePlayerEntity(PlayerEntity player) {

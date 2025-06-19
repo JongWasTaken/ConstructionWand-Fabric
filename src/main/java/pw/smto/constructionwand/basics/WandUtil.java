@@ -2,11 +2,11 @@ package pw.smto.constructionwand.basics;
 //import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +33,6 @@ import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.WandItemUseContext;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -120,8 +119,8 @@ public class WandUtil
         String fullId = name.toString();
         String modId = name.getNamespace();
 
-        boolean inList = ConfigServer.TE_LIST.get().contains(fullId) || ConfigServer.TE_LIST.get().contains(modId);
-        boolean isWhitelist = ConfigServer.TE_WHITELIST.get();
+        boolean inList = ConstructionWand.Config.blockEntityList.contains(fullId) || ConstructionWand.Config.blockEntityList.contains(modId);
+        boolean isWhitelist = ConstructionWand.Config.whitelist;
 
         return isWhitelist == inList;
     }
@@ -223,8 +222,8 @@ public class WandUtil
         if(!world.canEntityModifyAt(player, pos)) return false;
 
         // Limit range
-        if(ConfigServer.MAX_RANGE.get() > 0 &&
-                WandUtil.blockDistance(player.getBlockPos(), pos) > ConfigServer.MAX_RANGE.get()) return false;
+        if(ConstructionWand.Config.maxRange > 0 &&
+                WandUtil.blockDistance(player.getBlockPos(), pos) > ConstructionWand.Config.maxRange) return false;
 
         return true;
     }

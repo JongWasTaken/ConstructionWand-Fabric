@@ -10,12 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +26,6 @@ import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.wand.WandJob;
 import pw.smto.constructionwand.wand.undo.UndoHistory;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class ItemWand extends Item
