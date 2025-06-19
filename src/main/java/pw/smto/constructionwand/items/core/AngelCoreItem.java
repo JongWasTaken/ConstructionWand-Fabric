@@ -7,9 +7,9 @@ import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.wand.action.ActionAngel;
 
-public class ItemCoreAngel extends ItemCore
+public class AngelCoreItem extends CoreItem
 {
-    public ItemCoreAngel(RegistryKey<Item> id) {
+    public AngelCoreItem(RegistryKey<Item> id) {
         super(id, new Item.Settings().maxCount(1));
     }
 

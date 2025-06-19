@@ -5,9 +5,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.RegistryKey;
 
-public class ItemWandBasic extends ItemWand
+public class BreakableWandItem extends WandItem
 {
-    public ItemWandBasic(RegistryKey<Item> id, Item.Settings properties, ToolMaterial tier) {
+    public BreakableWandItem(RegistryKey<Item> id, Item.Settings properties, ToolMaterial tier) {
         super(id, properties.maxDamage(tier.durability()).repairable(tier.repairItems()));
     }
 

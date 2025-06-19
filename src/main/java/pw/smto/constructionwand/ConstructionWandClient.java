@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import org.lwjgl.glfw.GLFW;
 import pw.smto.constructionwand.client.ClientEvents;
 import pw.smto.constructionwand.client.Network;
 
@@ -22,11 +23,14 @@ public class ConstructionWandClient implements ClientModInitializer {
     );
 
     public static KeyBinding optKey;
+    public static KeyBinding optionalMenuKey;
 
     @Override
     public void onInitializeClient() {
         Network.init();
         optKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.opt_key", InputUtil.Type.KEYSYM, 341, "key.category.constructionwand"));
+        optionalMenuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.menu_key", InputUtil.Type.KEYSYM, 86, "key.category.constructionwand"));
+
         ClientEvents.init();
     }
 

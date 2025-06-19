@@ -12,11 +12,11 @@ import pw.smto.constructionwand.api.IWandCore;
 
 import java.util.function.Consumer;
 
-public abstract class ItemCore extends Item implements IWandCore
+public abstract class CoreItem extends Item implements IWandCore
 {
     public final RegistryKey<Item> registryKey;
 
-    public ItemCore(RegistryKey<Item> id, Item.Settings properties) {
+    public CoreItem(RegistryKey<Item> id, Item.Settings properties) {
         super(properties.registryKey(id));
         this.registryKey = id;
     }

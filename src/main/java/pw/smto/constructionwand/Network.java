@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
-import pw.smto.constructionwand.items.wand.ItemWand;
+import pw.smto.constructionwand.items.wand.WandItem;
 import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.ArrayList;
@@ -106,7 +106,7 @@ public class Network {
                 if(option == null) return;
                 option.setValueString(payload.value);
 
-                if(payload.shouldNotify) ItemWand.optionMessage(player, option);
+                if(payload.shouldNotify) WandItem.optionMessage(player, option);
                 options.writeToStack();
                 player.getInventory().markDirty();
             });

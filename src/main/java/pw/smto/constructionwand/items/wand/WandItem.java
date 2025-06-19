@@ -17,7 +17,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandCore;
 import pw.smto.constructionwand.basics.WandUtil;
@@ -28,10 +27,10 @@ import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.function.Consumer;
 
-public abstract class ItemWand extends Item
+public abstract class WandItem extends Item
 {
     public final RegistryKey<Item> registryKey;
-    public ItemWand(RegistryKey<Item> id, Item.Settings properties) {
+    public WandItem(RegistryKey<Item> id, Item.Settings properties) {
         super(properties.registryKey(id));
         this.registryKey = id;
     }
@@ -51,8 +50,8 @@ public abstract class ItemWand extends Item
             return UndoHistory.undo(player, world, context.getBlockPos()) ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
         else {
-            WandJob job = getWandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
-            return job.doIt() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            WandJob job = new WandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
+            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
     }
 
@@ -67,19 +66,12 @@ public abstract class ItemWand extends Item
             if(world.isClient) return ActionResult.FAIL;
 
             // Right click: Place angel block
-            WandJob job = getWandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
+            WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
             ConstructionWand.LOGGER.warn("Job: {}", job);
-            return job.doIt() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
         return ActionResult.FAIL;
-    }
-
-    public static WandJob getWandJob(PlayerEntity player, World world, @Nullable BlockHitResult rayTraceResult, ItemStack wand) {
-        WandJob wandJob = new WandJob(player, world, rayTraceResult, wand);
-        wandJob.getSnapshots();
-
-        return wandJob;
     }
 
     public int remainingDurability(ItemStack stack) {
