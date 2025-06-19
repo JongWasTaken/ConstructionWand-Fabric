@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -78,11 +78,6 @@ dependencies {
 
 	// botania api?!
 	//modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
-
-	// forge config api
-	modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.0"
-	include "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:21.1.0"
-	//modLocalRuntime "fuzs.forgeconfigscreens:forgeconfigscreens-fabric:8.0.2"
 }
 
 processResources {
