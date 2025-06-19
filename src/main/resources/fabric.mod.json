@@ -32,6 +32,12 @@
 		],
 		"emi": [
 			"pw.smto.constructionwand.integrations.recipe.ConstructionWandEmiPlugin"
+		],
+		"modmenu": [
+			"pw.smto.constructionwand.client.screen.ModMenuIntegration"
+		],
+		"rei_client": [
+			"pw.smto.constructionwand.integrations.recipe.ConstructionWandReiPlugin"
 		]
 	},
 	"accessWidener" : "constructionwand.accesswidener",

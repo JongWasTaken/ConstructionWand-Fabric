@@ -20,7 +20,7 @@ import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.IWandUpgrade;
 import pw.smto.constructionwand.basics.option.WandOptions;
-import pw.smto.constructionwand.items.wand.ItemWand;
+import pw.smto.constructionwand.items.wand.WandItem;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class RecipeWandUpgrade implements CraftingRecipe
         for(int i = 0; i < craftingRecipeInput.getStacks().size(); i++) {
             ItemStack stack = craftingRecipeInput.getStacks().get(i);
             if(!stack.isEmpty()) {
-                if(wand == null && stack.getItem() instanceof ItemWand) wand = stack;
+                if(wand == null && stack.getItem() instanceof WandItem) wand = stack;
                 else if(upgrade == null && stack.getItem() instanceof IWandUpgrade)
                     upgrade = (IWandUpgrade) stack.getItem();
                 else return false;
@@ -62,7 +62,7 @@ public class RecipeWandUpgrade implements CraftingRecipe
         for(int i = 0; i < craftingRecipeInput.getStacks().size(); i++) {
             ItemStack stack = craftingRecipeInput.getStacks().get(i);
             if(!stack.isEmpty()) {
-                if(stack.getItem() instanceof ItemWand) wand = stack;
+                if(stack.getItem() instanceof WandItem) wand = stack;
                 else if(stack.getItem() instanceof IWandUpgrade) upgrade = (IWandUpgrade) stack.getItem();
             }
         }

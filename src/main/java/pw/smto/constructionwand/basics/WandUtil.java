@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.containers.ContainerManager;
 import pw.smto.constructionwand.integrations.ModCompat;
-import pw.smto.constructionwand.items.wand.ItemWand;
+import pw.smto.constructionwand.items.wand.WandItem;
 import pw.smto.constructionwand.wand.WandItemUseContext;
 
 import java.util.ArrayList;
@@ -63,10 +63,10 @@ public class WandUtil
     }
 
     public static ItemStack holdingWand(PlayerEntity player) {
-        if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof ItemWand) {
+        if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof WandItem) {
             return player.getStackInHand(Hand.MAIN_HAND);
         }
-        else if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.OFF_HAND).getItem() instanceof ItemWand) {
+        else if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.OFF_HAND).getItem() instanceof WandItem) {
             return player.getStackInHand(Hand.OFF_HAND);
         }
         return null;

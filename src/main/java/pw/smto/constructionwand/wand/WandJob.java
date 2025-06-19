@@ -17,7 +17,7 @@ import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.api.IWandSupplier;
 import pw.smto.constructionwand.basics.option.WandOptions;
-import pw.smto.constructionwand.items.wand.ItemWand;
+import pw.smto.constructionwand.items.wand.WandItem;
 import pw.smto.constructionwand.wand.supplier.SupplierInventory;
 import pw.smto.constructionwand.wand.supplier.SupplierRandom;
 import pw.smto.constructionwand.wand.undo.ISnapshot;
@@ -35,7 +35,7 @@ public class WandJob
     public final BlockHitResult rayTraceResult;
     public final WandOptions options;
     public final ItemStack wand;
-    public final ItemWand wandItem;
+    public final WandItem wandItem;
 
     private final IWandAction wandAction;
     private final IWandSupplier wandSupplier;
@@ -50,7 +50,7 @@ public class WandJob
 
         // Get wand
         this.wand = wand;
-        this.wandItem = (ItemWand) wand.getItem();
+        this.wandItem = (WandItem) wand.getItem();
         options = WandOptions.of(wand);
 
         // Select wand action and supplier based on options
@@ -59,6 +59,8 @@ public class WandJob
         wandAction = options.cores.get().getWandAction();
 
         wandSupplier.getSupply(getTargetItem(world, rayTraceResult));
+
+        getSnapshots();
     }
 
     @Nullable
@@ -69,7 +71,7 @@ public class WandJob
         return (BlockItem) tgitem;
     }
 
-    public void getSnapshots() {
+    private void getSnapshots() {
         int limit;
         // Infinity wand gets enhanced limit in creative mode
         if(player.isCreative() && wandItem == Registry.Items.INFINITY_WAND) limit = ConstructionWand.Config.maxInfinityCreativeRange;
@@ -89,11 +91,11 @@ public class WandJob
         return placeSnapshots.size();
     }
 
-    public boolean doIt() {
+    public boolean run() {
         // Rewrote this whole thing:
-        // 1. First try to remove all items from inventory
+        // 1. Try to remove all items from inventory
         //    -> if it fails, return any taken items
-        // 2.Execute the snapshot
+        // 2. Execute the snapshot
         //    -> if it fails, return all taken items
         // 3. Finally, damage the wand for the count of the first stack
         // 4. Increase stat
@@ -122,9 +124,7 @@ public class WandJob
                 if (!success) {
                     for (ItemStack item : taken) {
                         // if it fails, return any taken items
-                        if(!player.giveItemStack(item)) {
-                            player.dropItem(item, false);
-                        }
+                        player.giveOrDropStack(item);
                     }
                     continue;
                 }
@@ -140,9 +140,7 @@ public class WandJob
                 snapshot.forceRestore(world);
                 for (ItemStack item : taken) {
                     // if it fails, return any taken items
-                    if(!player.giveItemStack(item)) {
-                        player.dropItem(item, false);
-                    }
+                    player.giveOrDropStack(item);
                 }
             }
             player.increaseStat(Registry.Stats.USE_WAND, 1);

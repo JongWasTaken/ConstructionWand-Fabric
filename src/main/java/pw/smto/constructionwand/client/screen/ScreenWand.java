@@ -1,20 +1,16 @@
-package pw.smto.constructionwand.client;
+package pw.smto.constructionwand.client.screen;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ScreenWand extends Screen {
     private final ItemStack wand;
@@ -31,54 +27,30 @@ public class ScreenWand extends Screen {
     private static final int FIELD_HEIGHT = N_ROWS * (BUTTON_HEIGHT + SPACING_HEIGHT) - SPACING_HEIGHT;
 
     public ScreenWand(ItemStack wand) {
-        super(Text.literal("ScreenWand"));
+        super(Text.literal("Construction Wand Item Settings"));
         this.wand = wand;
         wandOptions = WandOptions.of(wand);
     }
 
-    private ArrayList<ButtonWidget> buttons;
-
     @Override
     protected void init() {
-        buttons = new ArrayList<>();
         createButton(0, 0, wandOptions.cores);
         createButton(0, 1, wandOptions.lock);
         createButton(0, 2, wandOptions.direction);
         createButton(1, 0, wandOptions.replace);
         createButton(1, 1, wandOptions.match);
         createButton(1, 2, wandOptions.random);
-    }
-
-    @Override
-    public void render(@NotNull DrawContext guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        //renderBackground(guiGraphics, mouseX, mouseY, partialTicks); // crashes the game on 1.21.6 because renderBlur gets called somewhere else somehow
-        this.renderDarkening(guiGraphics); // so we just call this directly instead
-        guiGraphics.drawCenteredTextWithShadow(textRenderer, wand.getName(), width / 2, height / 2 - FIELD_HEIGHT / 2 - SPACING_HEIGHT, 16777215);
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-    }
-
-    // clicking buttons usually works as-is, but for some reason these were not clickable, so we have to do it manually
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (ButtonWidget buttonWidget : buttons) {
-            if (buttonWidget.isMouseOver(mouseX, mouseY)) {
-                buttonWidget.onPress();
-                return true;
-            }
-        }
-        return super.mouseClicked(mouseX, mouseY, button);
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (Arrays.stream(MinecraftClient.getInstance().options.allKeys).anyMatch(k -> {
-            return k.matchesKey(keyCode,scanCode);
-        })) {
-            this.close();
-            return true;
-        } else {
-            return super.keyPressed(keyCode, scanCode, modifiers);
-        }
+        int w = textRenderer.getWidth(wand.getName());
+        this.addDrawable(new TextWidget((width / 2) - (w / 2), getY(0) - 40, w, 20, wand.getName(), textRenderer));
+        Text t = Text.translatable("gui.constructionwand.settings_button");
+        ButtonWidget button = ButtonWidget.builder(t, (bt) -> {
+                    this.close();
+                    MinecraftClient.getInstance().setScreen(new ScreenSettings(this));
+                })
+                .position(2, 2)
+                .size(textRenderer.getWidth(t) + 8, 16)
+                .build();
+        this.addDrawableChild(button);
     }
 
     private void createButton(int cx, int cy, IOption<?> option) {
@@ -89,7 +61,7 @@ public class ScreenWand extends Screen {
                 .narrationSupplier(x -> getButtonLabel(option))
                 .build();
         button.active = option.isEnabled();
-        buttons.add(addDrawable(button));
+        this.addDrawableChild(button);
     }
 
     private void clickButton(ButtonWidget button, IOption<?> option) {
@@ -104,7 +76,7 @@ public class ScreenWand extends Screen {
     }
 
     private int getY(int n) {
-        return height / 2 - FIELD_HEIGHT / 2 + n * (BUTTON_HEIGHT + SPACING_HEIGHT);
+        return height / 2 - FIELD_HEIGHT / 2 + n * (BUTTON_HEIGHT + SPACING_HEIGHT) + 20;
     }
 
     private MutableText getButtonLabel(IOption<?> option) {

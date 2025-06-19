@@ -7,9 +7,9 @@ import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.wand.action.ActionDestruction;
 
-public class ItemCoreDestruction extends ItemCore
+public class DestructionCoreItem extends CoreItem
 {
-    public ItemCoreDestruction(RegistryKey<Item> id) {
+    public DestructionCoreItem(RegistryKey<Item> id) {
         super(id, new Item.Settings().maxCount(1));
     }
 

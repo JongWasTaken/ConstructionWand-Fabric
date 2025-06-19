@@ -55,29 +55,15 @@ loom {
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
 	include implementation("dev.smto:simpleconfig:2.3.0")
-
-	// fabric api
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// JEI sucks, it does not remap to yarn
-	//modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-	//modCompileOnlyApi("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
-	//modRuntimeOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
-	// so we use REI instead
-	//modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:$rei_version"
-	//modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:$rei_version"
-	//modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:$rei_version"
-	// EMI
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
-
-	// botania api?!
-	//modCompileOnlyApi("vazkii.botania:Botania:${botania_version}")
 }
 
 processResources {
@@ -99,11 +85,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
 	withSourcesJar()
-
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
 }

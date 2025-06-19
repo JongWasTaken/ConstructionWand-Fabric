@@ -10,7 +10,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import pw.smto.constructionwand.basics.WandUtil;
-import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.WandJob;
 
 import java.util.Set;
@@ -38,7 +37,7 @@ public class RenderBlockPreview
             // from the last placement are lagging
             if(wandJob == null || !compareRTR(wandJob.rayTraceResult, rtr) || !(wandJob.wand.equals(wand))
                     || wandJob.blockCount() < 2) {
-                wandJob = ItemWand.getWandJob(player, player.getWorld(), rtr, wand);
+                wandJob = new WandJob(player, player.getWorld(), rtr, wand);
             }
             blocks = wandJob.getBlockPositions();
         }
