@@ -10,7 +10,6 @@ import net.minecraft.util.Formatting;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.api.IWandCore;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public abstract class ItemCore extends Item implements IWandCore

@@ -14,7 +14,6 @@ import net.minecraft.util.Formatting;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.basics.ConfigClient;
-import pw.smto.constructionwand.basics.ConfigServer;
 
 public class ConstructionWandReiPlugin implements REIClientPlugin
 {

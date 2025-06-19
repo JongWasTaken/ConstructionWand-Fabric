@@ -16,7 +16,6 @@ import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Registry;
 import pw.smto.constructionwand.api.IWandAction;
 import pw.smto.constructionwand.api.IWandSupplier;
-import pw.smto.constructionwand.basics.ConfigServer;
 import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.items.wand.ItemWand;
 import pw.smto.constructionwand.wand.supplier.SupplierInventory;
@@ -73,7 +72,7 @@ public class WandJob
     public void getSnapshots() {
         int limit;
         // Infinity wand gets enhanced limit in creative mode
-        if(player.isCreative() && wandItem == Registry.Items.INFINITY_WAND) limit = ConfigServer.LIMIT_CREATIVE.get();
+        if(player.isCreative() && wandItem == Registry.Items.INFINITY_WAND) limit = ConstructionWand.Config.maxInfinityCreativeRange;
         else limit = Math.min(wandItem.remainingDurability(wand), wandAction.getLimit(wand));
 
         if(rayTraceResult.getType() == HitResult.Type.BLOCK)
