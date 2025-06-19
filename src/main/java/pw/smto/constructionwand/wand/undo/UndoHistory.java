@@ -117,9 +117,7 @@ public class UndoHistory
                     if (snapshot.restore(world, player) && !player.isCreative()) {
                         for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
                             if (i == 0 || snapshot.shouldGiveBackIncludedItem()) {
-                                if (!player.giveItemStack(snapshot.getRequiredItems().get(i))) {
-                                    player.dropItem(snapshot.getRequiredItems().get(i), false);
-                                }
+                                player.giveOrDropStack(snapshot.getRequiredItems().get(i));
                             }
                         }
                     }

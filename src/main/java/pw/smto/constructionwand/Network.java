@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import pw.smto.constructionwand.basics.WandUtil;
 import pw.smto.constructionwand.basics.option.IOption;
 import pw.smto.constructionwand.basics.option.WandOptions;
-import pw.smto.constructionwand.items.wand.ItemWand;
+import pw.smto.constructionwand.items.wand.WandItem;
 import pw.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.ArrayList;
@@ -100,7 +100,7 @@ public class Network {
 
                 ItemStack wand = WandUtil.holdingWand(player);
                 if(wand == null) return;
-                WandOptions options = new WandOptions(wand);
+                WandOptions options = WandOptions.of(wand);
 
                 IOption<?> option = options.get(payload.key);
                 if(option == null) return;

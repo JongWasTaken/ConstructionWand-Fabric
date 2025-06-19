@@ -9,11 +9,11 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntryList;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemWandBasic extends ItemWand
+public class BreakableWandItem extends WandItem
 {
     private final ToolMaterial tier;
 
-    public ItemWandBasic(Item.Settings properties, ToolMaterial tier) {
+    public BreakableWandItem(Item.Settings properties, ToolMaterial tier) {
         super(properties.maxDamage(tier.getDurability()));
         this.tier = tier;
     }

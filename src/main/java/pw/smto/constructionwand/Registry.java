@@ -5,15 +5,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ToolMaterials;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import pw.smto.constructionwand.crafting.RecipeWandUpgrade;
-import pw.smto.constructionwand.items.core.ItemCore;
-import pw.smto.constructionwand.items.core.ItemCoreAngel;
-import pw.smto.constructionwand.items.core.ItemCoreDestruction;
-import pw.smto.constructionwand.items.wand.ItemWand;
-import pw.smto.constructionwand.items.wand.ItemWandBasic;
-import pw.smto.constructionwand.items.wand.ItemWandInfinity;
+import pw.smto.constructionwand.items.core.CoreItem;
+import pw.smto.constructionwand.items.core.AngelCoreItem;
+import pw.smto.constructionwand.items.core.DestructionCoreItem;
+import pw.smto.constructionwand.items.wand.WandItem;
+import pw.smto.constructionwand.items.wand.BreakableWandItem;
+import pw.smto.constructionwand.items.wand.InfinityWandItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +27,12 @@ public class Registry {
         public static List<Item> WANDS = new ArrayList<>();
         public static List<Item> CORES = new ArrayList<>();
 
-        public static final ItemWand STONE_WAND = new ItemWandBasic(new Item.Settings(), ToolMaterials.STONE);
-        public static final ItemWand IRON_WAND = new ItemWandBasic(new Item.Settings(), ToolMaterials.IRON);
-        public static final ItemWand DIAMOND_WAND = new ItemWandBasic(new Item.Settings(), ToolMaterials.DIAMOND);
-        public static final ItemWand INFINITY_WAND = new ItemWandInfinity();
-        public static final ItemCore CORE_ANGEL = new ItemCoreAngel();
-        public static final ItemCore CORE_DESTRUCTION =  new ItemCoreDestruction();
+        public static final WandItem STONE_WAND = new BreakableWandItem(new Item.Settings(), ToolMaterial.STONE);
+        public static final WandItem IRON_WAND = new BreakableWandItem(new Item.Settings(), ToolMaterial.IRON);
+        public static final WandItem DIAMOND_WAND = new BreakableWandItem(new Item.Settings(), ToolMaterial.DIAMOND);
+        public static final WandItem INFINITY_WAND = new InfinityWandItem();
+        public static final CoreItem CORE_ANGEL = new AngelCoreItem();
+        public static final CoreItem CORE_DESTRUCTION =  new DestructionCoreItem();
 
         static {
             WANDS.add(STONE_WAND);

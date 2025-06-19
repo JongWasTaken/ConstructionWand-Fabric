@@ -10,12 +10,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -28,12 +26,11 @@ import pw.smto.constructionwand.basics.option.WandOptions;
 import pw.smto.constructionwand.wand.WandJob;
 import pw.smto.constructionwand.wand.undo.UndoHistory;
 
-import java.util.List;
 import java.util.function.Consumer;
 
-public abstract class ItemWand extends Item
+public abstract class WandItem extends Item
 {
-    public ItemWand(Item.Settings properties) {
+    public WandItem(Item.Settings properties) {
         super(properties);
     }
 
@@ -52,8 +49,8 @@ public abstract class ItemWand extends Item
             return UndoHistory.undo(player, world, context.getBlockPos()) ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
         else {
-            WandJob job = getWandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
-            return job.doIt() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            WandJob job = new WandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
+            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
     }
 
@@ -68,10 +65,10 @@ public abstract class ItemWand extends Item
             if(world.isClient) return TypedActionResult.fail(wand);
 
             // Right click: Place angel block
-            WandJob job = getWandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
+            WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
-            ConstructionWand.LOGGER.warn("Job: " + job);
-            return job.doIt() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
+            ConstructionWand.LOGGER.warn("Job: {}", job);
+            return job.run() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
         }
         return TypedActionResult.fail(wand);
     }
@@ -81,16 +78,6 @@ public abstract class ItemWand extends Item
         wandJob.getSnapshots();
 
         return wandJob;
-    }
-
-    //@Override
-    //public boolean isSuitableFor(@NotNull BlockState blockIn) {
-    //    return false;
-    //}
-
-    @Override
-    public boolean canRepair(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
-        return false;
     }
 
     public int remainingDurability(ItemStack stack) {
