@@ -13,7 +13,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import pw.smto.constructionwand.ConstructionWand;
 import pw.smto.constructionwand.Registry;
-import pw.smto.constructionwand.basics.ConfigClient;
 
 public class ConstructionWandReiPlugin implements REIClientPlugin
 {
