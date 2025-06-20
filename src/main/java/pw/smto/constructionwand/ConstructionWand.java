@@ -1,19 +1,22 @@
 package pw.smto.constructionwand;
 
-import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
-import fuzs.forgeconfigapiport.fabric.impl.core.ForgeConfigSpecAdapter;
+import dev.smto.simpleconfig.ConfigLoggers;
+import dev.smto.simpleconfig.SimpleConfig;
+import dev.smto.simpleconfig.api.ConfigAnnotations;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
-import net.neoforged.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pw.smto.constructionwand.basics.ConfigServer;
+import pw.smto.constructionwand.api.WandConfigEntry;
 import pw.smto.constructionwand.basics.ReplacementRegistry;
 import pw.smto.constructionwand.containers.ContainerManager;
 import pw.smto.constructionwand.integrations.ModCompat;
@@ -28,7 +31,7 @@ public class ConstructionWand implements ModInitializer
 {
     public static final String MOD_ID = "constructionwand";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final SimpleConfig CONFIG_MANAGER = new SimpleConfig(
+    public static SimpleConfig configManager = new SimpleConfig(
             FabricLoader.getInstance().getConfigDir().resolve("construction_wand.conf"),
             Config.class,
             ConfigLoggers.create(LOGGER::debug, LOGGER::info, LOGGER::warn, LOGGER::error),
