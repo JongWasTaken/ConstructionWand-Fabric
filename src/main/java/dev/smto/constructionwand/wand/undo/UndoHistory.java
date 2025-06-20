@@ -1,5 +1,9 @@
 package dev.smto.constructionwand.wand.undo;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.Network;
+import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -8,8 +12,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.Network;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -56,13 +58,14 @@ public class UndoHistory
     }
 
     public static boolean isUndoActive(PlayerEntity player) {
-        return getEntryFromPlayerEntity(player).undoActive;
+        if (ModCompat.polymerEnabled) {
+            if (PolymerManager.hasClientMod(player)) return getEntryFromPlayerEntity(player).undoActive;
+            return player.isSneaking();
+        } else return getEntryFromPlayerEntity(player).undoActive;
     }
 
     public static boolean undo(PlayerEntity player, World world, BlockPos pos) {
-        // If CTRL key is not pressed, return
         PlayerEntityEntry playerEntry = getEntryFromPlayerEntity(player);
-        if(!playerEntry.undoActive) return false;
 
         // Get the most recent entry for undo
         LinkedList<HistoryEntry> historyEntries = playerEntry.entries;

@@ -1,5 +1,7 @@
 package dev.smto.constructionwand.containers.handlers;
 
+import dev.smto.constructionwand.api.IContainerHandler;
+import dev.smto.constructionwand.basics.WandUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,8 +12,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.storage.NbtReadView;
 import net.minecraft.util.ErrorReporter;
-import dev.smto.constructionwand.api.IContainerHandler;
-import dev.smto.constructionwand.basics.WandUtil;
 
 public class HandlerNBTInventory implements IContainerHandler
 {

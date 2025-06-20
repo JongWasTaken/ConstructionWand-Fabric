@@ -1,11 +1,11 @@
 package dev.smto.constructionwand.containers.handlers;
 
+import dev.smto.constructionwand.api.IContainerHandler;
+import dev.smto.constructionwand.basics.WandUtil;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import dev.smto.constructionwand.api.IContainerHandler;
-import dev.smto.constructionwand.basics.WandUtil;
 
 public class HandlerBundleComponent implements IContainerHandler
 {

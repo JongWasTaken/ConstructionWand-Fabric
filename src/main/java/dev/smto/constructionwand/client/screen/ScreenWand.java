@@ -1,5 +1,7 @@
 package dev.smto.constructionwand.client.screen;
 
+import dev.smto.constructionwand.basics.option.IOption;
+import dev.smto.constructionwand.basics.option.WandOptions;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,8 +11,6 @@ import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import dev.smto.constructionwand.basics.option.IOption;
-import dev.smto.constructionwand.basics.option.WandOptions;
 
 public class ScreenWand extends Screen {
     private final ItemStack wand;

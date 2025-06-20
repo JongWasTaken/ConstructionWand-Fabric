@@ -1,5 +1,6 @@
 package dev.smto.constructionwand.wand.undo;
 
+import dev.smto.constructionwand.basics.WandUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
@@ -8,7 +9,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.basics.WandUtil;
 
 import java.util.List;
 

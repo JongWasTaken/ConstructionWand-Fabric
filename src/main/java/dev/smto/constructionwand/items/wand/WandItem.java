@@ -1,5 +1,12 @@
 package dev.smto.constructionwand.items.wand;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandCore;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.IOption;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.wand.WandJob;
+import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,13 +24,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.api.IWandCore;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.IOption;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.wand.WandJob;
-import dev.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.function.Consumer;
 

@@ -1,5 +1,10 @@
 package dev.smto.constructionwand.client;
 
+import dev.smto.constructionwand.ConstructionWandClient;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.client.screen.ScreenWand;
+import dev.smto.constructionwand.items.wand.WandItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -13,11 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
-import dev.smto.constructionwand.ConstructionWandClient;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.client.screen.ScreenWand;
-import dev.smto.constructionwand.items.wand.WandItem;
 
 public class ClientEvents
 {
@@ -44,7 +44,7 @@ public class ClientEvents
                 if(client.player == null || !canChangeMode(client.player)) return;
                 var target = MinecraftClient.getInstance().crosshairTarget;
                 if (target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                    ItemStack wand = client.player.getStackInHand(client.player.getActiveHand());
+                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
                     if(!(wand.getItem() instanceof WandItem)) return;
                     WandOptions wandOptions = WandOptions.of(wand);
                     wandOptions.cores.next();
@@ -55,7 +55,7 @@ public class ClientEvents
             // menu key, if bound
             if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
                 if (ConstructionWandClient.optionalMenuKey.isPressed() && client.player != null) {
-                    ItemStack wand = client.player.getStackInHand(client.player.getActiveHand());
+                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
                     if(!(wand.getItem() instanceof WandItem)) return;
                     if (client.currentScreen != null) return;
                     client.setScreen(new ScreenWand(wand));
@@ -68,7 +68,7 @@ public class ClientEvents
             if(!world.isClient) return ActionResult.PASS;
             var target = MinecraftClient.getInstance().crosshairTarget;
             if (canOpenGui(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                ItemStack wand = player.getStackInHand(player.getActiveHand());
+                ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
                 if(!(wand.getItem() instanceof WandItem)) return ActionResult.PASS;
                 MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
                 return ActionResult.FAIL;

@@ -1,5 +1,7 @@
 package dev.smto.constructionwand.client;
 
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.wand.WandJob;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexRendering;
@@ -9,8 +11,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.wand.WandJob;
 
 import java.util.Set;
 

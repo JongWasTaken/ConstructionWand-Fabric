@@ -1,5 +1,8 @@
 package dev.smto.constructionwand.integrations.recipe;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.ConstructionWandClient;
+import dev.smto.constructionwand.api.WandConfigEntry;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.entry.EntryStack;
@@ -10,10 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.ConstructionWandClient;
-import dev.smto.constructionwand.Registry;
-import dev.smto.constructionwand.api.WandConfigEntry;
 
 public class ConstructionWandReiPlugin implements REIClientPlugin
 {
@@ -27,13 +26,13 @@ public class ConstructionWandReiPlugin implements REIClientPlugin
         Text wandModeText = keyComboText(ConstructionWandClient.Config.requireOptKeyForActions, optkeyText);
         Text wandGuiText = keyComboText(ConstructionWandClient.Config.requireOptKeyForMenu, optkeyText);
 
-        for(Item wand : Registry.Items.WANDS) {
+        for(Item wand : ConstructionWand.getRegistry().getWands()) {
             WandConfigEntry wandProperties = null;
             try {
                 wandProperties = (WandConfigEntry) ConstructionWand.WAND_CONFIG_MAP.get(wand).get(null);
             } catch (Throwable ignored) {}
 
-            String durabilityKey = wand == Registry.Items.INFINITY_WAND ? "unlimited" : "limited";
+            String durabilityKey = wand == ConstructionWand.getRegistry().getInfinityWand() ? "unlimited" : "limited";
             Text durabilityText = Text.translatable(baseKey + "durability." + durabilityKey, wandProperties.durability());
 
             var es = EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(wand));
@@ -44,7 +43,7 @@ public class ConstructionWandReiPlugin implements REIClientPlugin
             registry.add(d);
         }
 
-        for(Item core : Registry.Items.CORES) {
+        for(Item core : ConstructionWand.getRegistry().getCores()) {
             var es = EntryStack.of(VanillaEntryTypes.ITEM,new ItemStack(core));
             var d = DefaultInformationDisplay.createFromEntry(es, Text.of("This is a test!"));
             d.line(Text.translatable(baseKey + Registries.ITEM.getId(core).getPath())

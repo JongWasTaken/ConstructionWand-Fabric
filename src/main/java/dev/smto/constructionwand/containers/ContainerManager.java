@@ -1,12 +1,12 @@
 package dev.smto.constructionwand.containers;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import dev.smto.constructionwand.api.IContainerHandler;
 import dev.smto.constructionwand.containers.handlers.HandlerBundleComponent;
 import dev.smto.constructionwand.containers.handlers.HandlerContainerComponent;
 import dev.smto.constructionwand.containers.handlers.HandlerNBTInventory;
 import dev.smto.constructionwand.integrations.ModCompat;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 
