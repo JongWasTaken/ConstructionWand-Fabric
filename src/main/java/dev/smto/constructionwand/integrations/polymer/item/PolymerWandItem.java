@@ -12,46 +12,44 @@ import dev.smto.constructionwand.wand.undo.UndoHistory;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
 import eu.pb4.polymer.core.api.utils.PolymerKeepModel;
-import net.minecraft.component.type.TooltipDisplayComponent;
+import eu.pb4.polymer.resourcepack.api.PolymerModelData;
+import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.Items;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import xyz.nucleoid.packettweaker.PacketContext;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 public abstract class PolymerWandItem extends WandItem implements PolymerItem, PolymerKeepModel, PolymerClientDecoded
 {
-    public PolymerWandItem(RegistryKey<Item> id, Settings properties) {
-        super(id, properties);
+    private final PolymerModelData model;
+    public PolymerWandItem(Identifier id, Settings properties) {
+        super(properties);
+        this.model = PolymerResourcePackUtils.requestModel(Items.STICK, id);
     }
 
     @Override
-    public Item getPolymerItem(ItemStack itemStack, PacketContext context) {
-        var player = context.getPlayer();
-        if (player == null) return Items.STICK;
-        if (PolymerManager.hasClientMod(player)) {
+    public Item getPolymerItem(ItemStack itemStack, @Nullable ServerPlayerEntity serverPlayerEntity) {
+        if (serverPlayerEntity == null) return Items.STICK;
+        if (PolymerManager.hasClientMod(serverPlayerEntity)) {
             return this;
         }
-        return Items.STICK;
+        return this.model.item();
     }
 
     @Override
-    public Identifier getPolymerItemModel(ItemStack stack, PacketContext context) {
-        return this.registryKey.getValue();
+    public int getPolymerCustomModelData(ItemStack itemStack, @Nullable ServerPlayerEntity player) {
+        return this.model.value();
     }
 
     @NotNull
@@ -75,45 +73,44 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
         }
     }
 
-    @NotNull
     @Override
-    public ActionResult use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
+    public TypedActionResult<ItemStack> use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
         ItemStack offHandStack = player.getOffHandStack();
         ItemStack wand = player.getStackInHand(hand);
-        if (wand.equals(offHandStack)) return ActionResult.FAIL;
-        if (world.isClient) return ActionResult.FAIL;
+        if (wand.equals(offHandStack)) return TypedActionResult.fail(wand);
+        if (world.isClient) return TypedActionResult.fail(wand);
         if(!UndoHistory.isUndoActive(player)) {
-            if (offHandStack.isEmpty()) return ActionResult.FAIL;
+            if (offHandStack.isEmpty()) return TypedActionResult.fail(wand);
             // Right click: Place angel block
             WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
-            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            return job.run() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
         } else {
             if (!PolymerManager.hasClientMod(player) && !PolymerManager.isScreenBlocked(player)) {
                 PolymerManager.openServerScreen((ServerPlayerEntity) player, wand);
             } else PolymerManager.unblockServerScreen(player);
         }
-        return ActionResult.FAIL;
+        return TypedActionResult.fail(wand);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         WandOptions options = WandOptions.of(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         int limit = options.cores.get().getWandAction().getLimit(stack);
-        textConsumer.accept(Text.translatable(langTooltip + "blocks", limit).formatted(Formatting.GRAY));
+        tooltip.add(Text.translatable(langTooltip + "blocks", limit).formatted(Formatting.GRAY));
         for(int i = 1; i < options.allOptions.length; i++) {
             IOption<?> opt = options.allOptions[i];
-            textConsumer.accept(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
+            tooltip.add(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
                     .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.GRAY))
             );
         }
         if(!options.cores.getUpgrades().isEmpty()) {
-            textConsumer.accept(Text.literal(""));
-            textConsumer.accept(Text.translatable(langTooltip + "cores").formatted(Formatting.GRAY));
+            tooltip.add(Text.literal(""));
+            tooltip.add(Text.translatable(langTooltip + "cores").formatted(Formatting.GRAY));
 
             for(IWandCore core : options.cores.getUpgrades()) {
-                textConsumer.accept(Text.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
+                tooltip.add(Text.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
             }
         }
     }

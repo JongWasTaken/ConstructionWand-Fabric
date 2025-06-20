@@ -9,13 +9,13 @@ import dev.smto.constructionwand.wand.supplier.SupplierInventory;
 import dev.smto.constructionwand.wand.supplier.SupplierRandom;
 import dev.smto.constructionwand.wand.undo.ISnapshot;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -123,8 +123,9 @@ public class WandJob
                 if (!success) {
                     for (ItemStack item : taken) {
                         // if it fails, return any taken items
-                        player.giveOrDropStack(item);
-                    }
+                        if(!player.giveItemStack(item)) {
+                            player.dropItem(item, false);
+                        }                    }
                     continue;
                 }
             }
@@ -133,14 +134,20 @@ public class WandJob
                 executed.add(snapshot);
                 if (!player.isCreative()) {
                     // layered blocks would need multiple right-clicks, so each removes 1 durability
-                    wand.damage(snapshot.getRequiredItems().getFirst().getCount(), player, EquipmentSlot.MAINHAND);
+                    wand.damage(
+                            // layered blocks would need multiple right-clicks, so each removes 1 durability
+                            snapshot.getRequiredItems().getFirst().getCount(),
+                            player,
+                            e -> e.sendToolBreakStatus(Hand.MAIN_HAND)
+                    );
                 }
             } else {
                 snapshot.forceRestore(world);
                 for (ItemStack item : taken) {
                     // if it fails, return any taken items
-                    player.giveOrDropStack(item);
-                }
+                    if(!player.giveItemStack(item)) {
+                        player.dropItem(item, false);
+                    }                }
             }
             player.increaseStat(ConstructionWand.getRegistry().getUseWandStat(), 1);
         }

@@ -5,6 +5,7 @@ import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -31,6 +32,12 @@ public class ScreenWand extends Screen {
         super(Text.literal("Construction Wand Item Settings"));
         this.wand = wand;
         wandOptions = WandOptions.of(wand);
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
@@ -67,7 +74,8 @@ public class ScreenWand extends Screen {
 
     private void clickButton(ButtonWidget button, IOption<?> option) {
         option.next();
-        ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(option, true));
+        ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.getId(),
+                dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.encode(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(option, true)));
         button.setMessage(getButtonLabel(option));
         button.setTooltip(getButtonTooltip(option));
     }

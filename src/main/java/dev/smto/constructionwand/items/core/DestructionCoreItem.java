@@ -9,13 +9,13 @@ import net.minecraft.util.Identifier;
 
 public class DestructionCoreItem extends CoreItem
 {
-    public DestructionCoreItem(RegistryKey<Item> id) {
-        super(id, new Item.Settings().maxCount(1));
+    public DestructionCoreItem() {
+        super(new Item.Settings().maxCount(1));
     }
 
     @Override
     public int getColor() {
-        return -65536;
+        return 0xFF0000;
     }
 
     @Override

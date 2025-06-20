@@ -9,13 +9,13 @@ import net.minecraft.util.Identifier;
 
 public class PolymerAngelCoreItem extends PolymerCoreItem
 {
-    public PolymerAngelCoreItem(RegistryKey<Item> id) {
+    public PolymerAngelCoreItem(Identifier id) {
         super(id, new Settings().maxCount(1));
     }
 
     @Override
     public int getColor() {
-        return -1461995;
+        return 0xE9B115;
     }
 
     @Override

@@ -1,6 +1,11 @@
 package dev.smto.constructionwand.integrations;
 
 import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.containers.ContainerManager;
+import dev.smto.constructionwand.containers.handlers.HandlerBankStorage;
+import dev.smto.constructionwand.containers.handlers.HandlerBotania;
+import dev.smto.constructionwand.containers.handlers.HandlerPackedUpBackpack;
+import dev.smto.constructionwand.containers.handlers.HandlerSophisticatedBackpack;
 import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -30,27 +35,24 @@ public class ModCompat {
 
     public static void registerModContainerHandlers() {
         if (!checked) return;
-        /*
-        if(BANK_STORAGE) {
+        if(bankStorage) {
             ContainerManager.register(new HandlerBankStorage());
             ConstructionWand.LOGGER.info("Bank Storage integration added");
         }
 
-        if(PACKED_UP) {
+        if(packedUp) {
             ContainerManager.register(new HandlerPackedUpBackpack());
             ConstructionWand.LOGGER.info("Packed Up integration added");
         }
 
-        if(SOPHISTICATED_BACKPACKS) {
+        if(sophisticatedBackpacks) {
             ContainerManager.register(new HandlerSophisticatedBackpack());
             ConstructionWand.LOGGER.info("Sophisticated Backpacks integration added");
         }
 
-        if(BOTANIA) {
+        if(botania) {
             ContainerManager.register(new HandlerBotania());
             ConstructionWand.LOGGER.info("Botania integration added");
         }
-
-         */
     }
 }

@@ -54,7 +54,7 @@ public class UndoHistory
             else positions = entry.getBlockPositions();
         }
 
-        ServerPlayNetworking.send((ServerPlayerEntity) player, new Network.Payloads.S2CUndoBlocksPayload(positions.stream().toList()));
+        ServerPlayNetworking.send((ServerPlayerEntity) player, Network.Payloads.S2CUndoBlocksPayload.getId(), Network.Payloads.S2CUndoBlocksPayload.encode(new Network.Payloads.S2CUndoBlocksPayload(positions.stream().toList())));
     }
 
     public static boolean isUndoActive(PlayerEntity player) {
@@ -120,7 +120,9 @@ public class UndoHistory
                     if (snapshot.restore(world, player) && !player.isCreative()) {
                         for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
                             if (i == 0 || snapshot.shouldGiveBackIncludedItem()) {
-                                player.giveOrDropStack(snapshot.getRequiredItems().get(i));
+                                if(!player.giveItemStack(snapshot.getRequiredItems().get(i))) {
+                                    player.dropItem(snapshot.getRequiredItems().get(i), false);
+                                }
                             }
                         }
                     }

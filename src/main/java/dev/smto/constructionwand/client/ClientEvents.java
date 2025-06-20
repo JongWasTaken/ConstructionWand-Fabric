@@ -17,6 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 public class ClientEvents
@@ -32,7 +33,7 @@ public class ClientEvents
             boolean optState = isOptKeyDown();
             if(optPressed != optState) {
                 optPressed = optState;
-                ClientPlayNetworking.send(new dev.smto.constructionwand.Network.Payloads.C2SQueryUndoPayload(optPressed));
+                ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SQueryUndoPayload.getId(), dev.smto.constructionwand.Network.Payloads.C2SQueryUndoPayload.encode(new dev.smto.constructionwand.Network.Payloads.C2SQueryUndoPayload(optPressed)));
             }
         });
 
@@ -48,7 +49,9 @@ public class ClientEvents
                     if(!(wand.getItem() instanceof WandItem)) return;
                     WandOptions wandOptions = WandOptions.of(wand);
                     wandOptions.cores.next();
-                    ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.cores, true));
+                    ClientPlayNetworking.send(
+                            dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.getId(),
+                            dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.encode(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.cores, true)));
                     lastClickTime = client.world.getTime();
                 }
             }
@@ -68,15 +71,15 @@ public class ClientEvents
 
         // Sneak+(OPT)+Right click wand to open GUI
         UseItemCallback.EVENT.register((PlayerEntity player, World world, Hand hand) -> {
-            if(!world.isClient) return ActionResult.PASS;
+            if(!world.isClient) return TypedActionResult.pass(player.getStackInHand(player.getActiveHand()));
             var target = MinecraftClient.getInstance().crosshairTarget;
             if (canOpenGui(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
                 ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
-                if(!(wand.getItem() instanceof WandItem)) return ActionResult.PASS;
+                if(!(wand.getItem() instanceof WandItem)) return TypedActionResult.pass(player.getStackInHand(player.getActiveHand()));
                 MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
-                return ActionResult.FAIL;
+                return TypedActionResult.fail(player.getStackInHand(player.getActiveHand()));
             }
-            return ActionResult.PASS;
+            return TypedActionResult.pass(player.getStackInHand(player.getActiveHand()));
         });
         WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register(RenderBlockPreview::renderBlockHighlight);
     }
@@ -90,7 +93,7 @@ public class ClientEvents
 
         WandOptions wandOptions = WandOptions.of(wand);
         wandOptions.lock.next(scrollDelta < 0);
-        ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.lock, true));
+        ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.getId(), dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.encode(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.lock, true)));
 
         return true;
     }

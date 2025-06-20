@@ -1,14 +1,21 @@
 package dev.smto.constructionwand.integrations.polymer.item;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Identifier;
 
 public class PolymerBreakableWandItem extends PolymerWandItem
 {
-    public PolymerBreakableWandItem(RegistryKey<Item> id, Settings properties, ToolMaterial tier) {
-        super(id, properties.maxDamage(tier.durability()).repairable(tier.repairItems()));
+    private final ToolMaterial tier;
+
+    public PolymerBreakableWandItem(Identifier id, Settings properties, ToolMaterial tier) {
+        super(id, properties.maxDamage(tier.getDurability()));
+        this.tier = tier;
+    }
+
+    @Override
+    public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+        return tier.getRepairIngredient().test(ingredient);
     }
 
     @Override

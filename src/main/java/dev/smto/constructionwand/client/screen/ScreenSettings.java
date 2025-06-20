@@ -1,6 +1,7 @@
 package dev.smto.constructionwand.client.screen;
 
 import dev.smto.constructionwand.ConstructionWandClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -62,6 +63,12 @@ public class ScreenSettings extends Screen {
                 .narrationSupplier(x -> Text.translatable("gui.constructionwand.discard"))
                 .build();
         this.addDrawableChild(discardButton);
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     private void createText(String key, int yOffset) {

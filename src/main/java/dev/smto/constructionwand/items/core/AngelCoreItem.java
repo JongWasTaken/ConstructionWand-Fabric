@@ -9,13 +9,13 @@ import net.minecraft.util.Identifier;
 
 public class AngelCoreItem extends CoreItem
 {
-    public AngelCoreItem(RegistryKey<Item> id) {
-        super(id, new Item.Settings().maxCount(1));
+    public AngelCoreItem() {
+        super(new Item.Settings().maxCount(1));
     }
 
     @Override
     public int getColor() {
-        return -1461995;
+        return 0xE9B115;
     }
 
     @Override

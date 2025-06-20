@@ -2,33 +2,33 @@ package dev.smto.constructionwand.containers.handlers;
 
 import dev.smto.constructionwand.api.IContainerHandler;
 import dev.smto.constructionwand.basics.WandUtil;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.util.ErrorReporter;
 
 public class HandlerNBTInventory implements IContainerHandler
 {
     @Override
     public boolean matches(PlayerEntity player, ItemStack target, ItemStack current) {
-        NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
-        return !items.isEmpty();
+        // this is almost cavemanish compared to forge but its a best-effort type of thing
+        NbtCompound nbtCompound = current.hasNbt() ? current.getNbt() : new NbtCompound();
+        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
+        if (items.size() != 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public int countItems(PlayerEntity player, ItemStack target, ItemStack current) {
-        NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
-        if (!items.isEmpty()) {
+        NbtCompound nbtCompound = current.hasNbt() ? current.getNbt() : new NbtCompound();
+        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
+        if (items.size() != 0) {
             var inv = new SimpleInventory();
-            NbtReadView.create(ErrorReporter.EMPTY, DynamicRegistryManager.EMPTY, nbtCompound).getOptionalTypedListView("Inventory", ItemStack.CODEC).ifPresent(inv::readDataList);
+            inv.readNbtList(items);
             int total = 0;
             for(int i = 0; i < inv.size(); i++) {
                 ItemStack containerStack = inv.getStack(i);
@@ -43,11 +43,12 @@ public class HandlerNBTInventory implements IContainerHandler
 
     @Override
     public int useItems(PlayerEntity player, ItemStack target, ItemStack current, int count) {
-        NbtCompound nbtCompound = current.getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items").orElse(new NbtList()) : new NbtList();
-        if (!items.isEmpty()) {
+        NbtCompound nbtCompound = current.hasNbt() ? current.getNbt() : new NbtCompound();
+        NbtList items = nbtCompound.contains("Items") ? nbtCompound.getList("Items", NbtElement.COMPOUND_TYPE) : new NbtList();
+        if (items.size() != 0) {
             var inv = new SimpleInventory();
-            NbtReadView.create(ErrorReporter.EMPTY, DynamicRegistryManager.EMPTY, nbtCompound).getOptionalTypedListView("Inventory", ItemStack.CODEC).ifPresent(inv::readDataList);
+            inv.readNbtList(items);
+
             for(int i = 0; i < inv.size(); i++) {
                 ItemStack handlerStack = inv.getStack(i);
                 if(WandUtil.stackEquals(target, handlerStack)) {

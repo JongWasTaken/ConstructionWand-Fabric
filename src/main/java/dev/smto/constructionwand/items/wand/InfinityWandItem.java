@@ -6,7 +6,7 @@ import net.minecraft.registry.RegistryKey;
 
 public class InfinityWandItem extends WandItem
 {
-    public InfinityWandItem(RegistryKey<Item> id) {
-        super(id, new Item.Settings().maxCount(1).fireproof());
+    public InfinityWandItem() {
+        super(new Item.Settings().maxCount(1).fireproof());
     }
 }

@@ -2,9 +2,8 @@ package dev.smto.constructionwand.api;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.network.PacketByteBuf;
 
 public record WandConfigEntry(boolean upgradeable, int durability, int range, int angelDistance, int destructionLimit) {
     public static Codec<WandConfigEntry> CODEC = RecordCodecBuilder.create(i ->
@@ -17,5 +16,21 @@ public record WandConfigEntry(boolean upgradeable, int durability, int range, in
         ).apply(i, WandConfigEntry::new)
     );
 
-    public static PacketCodec<ByteBuf, WandConfigEntry> PACKET_CODEC = PacketCodecs.codec(CODEC);
+    public static PacketByteBuf encode(PacketByteBuf buf, WandConfigEntry w) {
+        buf.writeBoolean(w.upgradeable());
+        buf.writeInt(w.durability());
+        buf.writeInt(w.range());
+        buf.writeInt(w.angelDistance());
+        buf.writeInt(w.destructionLimit());
+        return buf;
+    }
+
+    public static WandConfigEntry decode(PacketByteBuf p) {
+        var upgradable = p.readBoolean();
+        var durability = p.readInt();
+        var range = p.readInt();
+        var angelDistance = p.readInt();
+        var destructionLimit = p.readInt();
+        return new WandConfigEntry(upgradable, durability, range, angelDistance, destructionLimit);
+    }
 }

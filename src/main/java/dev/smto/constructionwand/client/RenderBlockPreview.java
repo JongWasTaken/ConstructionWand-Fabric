@@ -4,7 +4,7 @@ import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.wand.WandJob;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexRendering;
+import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
@@ -48,12 +48,12 @@ public class RenderBlockPreview
 
         if(blocks == null || blocks.isEmpty()) return true;
 
-        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * context.tickCounter().getTickProgress(false);
-        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * context.tickCounter().getTickProgress(false);
-        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickCounter().getTickProgress(false);
+        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * context.tickDelta();
+        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * context.tickDelta();
+        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * context.tickDelta();
 
         for(BlockPos block : blocks) {
-            VertexRendering.drawBox(
+            WorldRenderer.drawBox(
                 context.matrixStack(),
                 context.consumers().getBuffer(RenderLayer.getLines()),
                 new Box(block).offset(-d0, -d1, -d2),

@@ -9,10 +9,6 @@ import dev.smto.constructionwand.integrations.ModCompat;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.WandItemUseContext;
 import net.minecraft.block.BlockState;
-import net.minecraft.component.ComponentChanges;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.ContainerComponent;
-import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -42,21 +38,9 @@ import java.util.function.Predicate;
 public class WandUtil
 {
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
-        if (stackIsInvalid(stackA)) return false;
-        if (stackIsInvalid(stackB)) return false;
+        if (stackA.hasNbt()) return false;
+        if (stackB.hasNbt()) return false;
         return ItemStack.areItemsEqual(stackA, stackB);
-    }
-
-    private static boolean stackIsInvalid(ItemStack stack) {
-        if (!stack.getComponentChanges().equals(ComponentChanges.EMPTY)) {
-            return true;
-        }
-        // fail if stack in question contains items (shulker box destruction prevention tm)
-        if (stack.contains(DataComponentTypes.CONTAINER)) {
-            if (!Objects.equals(stack.get(DataComponentTypes.CONTAINER), ContainerComponent.DEFAULT)) return true;
-        }
-
-        return false;
     }
 
     public static boolean stackEquals(ItemStack stackA, Item item) {
@@ -66,20 +50,21 @@ public class WandUtil
 
 
     public static ItemStack convertPolymerStack(ItemStack stack) {
-        if (stack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
-            var nbt = Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
+        if (true) return stack;
+        if (stack.hasNbt()) {
+            var nbt = stack.getNbt();
             if (nbt.contains("$polymer:stack")) {
-                nbt = nbt.getCompound("$polymer:stack").orElse(new NbtCompound());
+                nbt = nbt.getCompound("$polymer:stack");
                 if (nbt.contains("id")) {
-                    Identifier id = Identifier.tryParse(nbt.getString("id").orElse(""));
+                    Identifier id = Identifier.tryParse(nbt.getString("id"));
                     if (id != null) {
                         Item item = Registries.ITEM.get(id);
                         if (item != null) {
                             ItemStack newStack = item.getDefaultStack();
                             try {
-                                nbt = nbt.getCompound("components").orElse(new NbtCompound()).getCompound("minecraft:custom_data").orElse(new NbtCompound());
+                                nbt = nbt.getCompound("components").getCompound("minecraft:custom_data");
                             } catch (Exception ignored) {}
-                            newStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+                            //newStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
                             return newStack;
                         }
                     }
@@ -115,23 +100,23 @@ public class WandUtil
     }
 
     public static List<ItemStack> getHotbar(PlayerEntity player) {
-        return player.getInventory().getMainStacks().subList(0, 9);
+        return player.getInventory().main.subList(0, 9);
     }
 
     public static List<ItemStack> getHotbarWithOffhand(PlayerEntity player) {
-        ArrayList<ItemStack> inventory = new ArrayList<>(player.getInventory().getMainStacks().subList(0, 9));
+        ArrayList<ItemStack> inventory = new ArrayList<>(player.getInventory().main.subList(0, 9));
         inventory.add(player.getOffHandStack());
         return inventory;
     }
 
     public static List<ItemStack> getMainInv(PlayerEntity player) {
-        return player.getInventory().getMainStacks().subList(9, player.getInventory().getMainStacks().size());
+        return player.getInventory().main.subList(9, player.getInventory().main.size());
     }
 
     public static List<ItemStack> getFullInv(PlayerEntity player) {
         ArrayList<ItemStack> inventory = new ArrayList<>();
         inventory.add(player.getOffHandStack());
-        inventory.addAll(player.getInventory().getMainStacks());
+        inventory.addAll(player.getInventory().main);
         return inventory;
     }
 
@@ -189,7 +174,7 @@ public class WandUtil
     public static boolean removeBlock(World world, PlayerEntity player, @Nullable BlockState block, BlockPos pos) {
         BlockState currentBlock = world.getBlockState(pos);
 
-        if(!world.canEntityModifyAt(player, pos)) return false;
+        if(!world.canPlayerModifyAt(player, pos)) return false;
 
         if(!player.isCreative()) {
             boolean hasEntity = false;
@@ -222,7 +207,7 @@ public class WandUtil
     }
 
     public static int countItem(PlayerEntity player, Item item) {
-        if(player.getInventory().getMainStacks() == null) return 0;
+        if(player.getInventory().main == null) return 0;
         if(player.isCreative()) return Integer.MAX_VALUE;
 
         int total = 0;
@@ -248,7 +233,7 @@ public class WandUtil
         if(!world.isInBuildLimit(pos)) return false;
 
         // Is block modifiable?
-        if(!world.canEntityModifyAt(player, pos)) return false;
+        if(!world.canPlayerModifyAt(player, pos)) return false;
 
         // Limit range
         if(ConstructionWand.Config.maxRange > 0 &&

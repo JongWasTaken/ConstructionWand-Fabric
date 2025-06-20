@@ -6,17 +6,12 @@ import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
-import io.netty.buffer.ByteBuf;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -26,54 +21,73 @@ import net.minecraft.util.math.BlockPos;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dev.smto.constructionwand.ConstructionWand.MOD_ID;
+import static dev.smto.constructionwand.ConstructionWand.id;
 
 public class Network {
 
     public static class Payloads {
-        public record S2CUndoBlocksPayload(List<BlockPos> blockPosList) implements CustomPayload {
-            public static final CustomPayload.Id<S2CUndoBlocksPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "undo_blocks"));
-            public static final PacketCodec<ByteBuf, List<BlockPos>> PACKET_CODEC = new PacketCodec<ByteBuf, List<BlockPos>>() {
-                public List<BlockPos> decode(ByteBuf byteBuf) {
-                    if (byteBuf.readableBytes() <= 0) return new ArrayList<>();
-                    List<BlockPos> out = new ArrayList<>();
-                    while (byteBuf.readableBytes() > 0) {
-                        out.add(PacketByteBuf.readBlockPos(byteBuf));
-                    }
-                    return out;
+        public record S2CUndoBlocksPayload(List<BlockPos> blockPosList) {
+            public static final Identifier ID = id("undo_blocks");
+            public static S2CUndoBlocksPayload decode(PacketByteBuf byteBuf) {
+                if (byteBuf.readableBytes() <= 0) return new S2CUndoBlocksPayload(List.of());
+                List<BlockPos> out = new ArrayList<>();
+                while (byteBuf.readableBytes() > 0) {
+                    out.add(byteBuf.readBlockPos());
                 }
+                return new S2CUndoBlocksPayload(out);
+            }
 
-                public void encode(ByteBuf byteBuf, List<BlockPos> blockPosList) {
-                    if (blockPosList.isEmpty()) return;
-                    for (BlockPos blockPos : blockPosList) {
-                        PacketByteBuf.writeBlockPos(byteBuf, blockPos);
-                    }
+            public static PacketByteBuf encode(S2CUndoBlocksPayload data) {
+                if (data.blockPosList.isEmpty()) return PacketByteBufs.empty();
+                var buf = PacketByteBufs.create();
+                for (BlockPos blockPos : data.blockPosList) {
+                    buf.writeBlockPos(blockPos);
                 }
-            };
-            public static final PacketCodec<RegistryByteBuf, S2CUndoBlocksPayload> CODEC = PacketCodec.tuple(PACKET_CODEC, S2CUndoBlocksPayload::blockPosList, S2CUndoBlocksPayload::new);
+                return buf;
+            }
 
-            @Override
-            public CustomPayload.Id<? extends CustomPayload> getId() {
+            public static Identifier getId() {
                 return ID;
             }
         }
 
-        public record C2SQueryUndoPayload(boolean undoPressed) implements CustomPayload {
-            public static final CustomPayload.Id<C2SQueryUndoPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "query_undo"));
-            public static final PacketCodec<RegistryByteBuf, C2SQueryUndoPayload> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, C2SQueryUndoPayload::undoPressed, C2SQueryUndoPayload::new);
+        public record C2SQueryUndoPayload(boolean undoPressed) {
+            public static final Identifier ID = id("query_undo");
 
-            @Override
-            public CustomPayload.Id<? extends CustomPayload> getId() {
+            public static PacketByteBuf encode(C2SQueryUndoPayload input) {
+                var buf = PacketByteBufs.create();
+                buf.writeBoolean(input.undoPressed());
+                return buf;
+            }
+
+            public static C2SQueryUndoPayload decode(PacketByteBuf input) {
+                return new C2SQueryUndoPayload(input.readBoolean());
+            }
+
+            public static Identifier getId() {
                 return ID;
             }
         }
 
-        public record C2SWandOptionPayload(String key, String value, boolean shouldNotify) implements CustomPayload {
-            public static final CustomPayload.Id<C2SWandOptionPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "wand_option"));
-            public static final PacketCodec<RegistryByteBuf, C2SWandOptionPayload> CODEC = PacketCodec.tuple(PacketCodecs.STRING, C2SWandOptionPayload::key, PacketCodecs.STRING, C2SWandOptionPayload::value, PacketCodecs.BOOLEAN, C2SWandOptionPayload::shouldNotify, C2SWandOptionPayload::new);
+        public record C2SWandOptionPayload(String key, String value, boolean shouldNotify) {
+            public static final Identifier ID = id("wand_option");
 
-            @Override
-            public CustomPayload.Id<? extends CustomPayload> getId() {
+            public static PacketByteBuf encode(C2SWandOptionPayload input) {
+                var buf = PacketByteBufs.create();
+                buf.writeString(input.key());
+                buf.writeString(input.value());
+                buf.writeBoolean(input.shouldNotify());
+                return buf;
+            }
+
+            public static C2SWandOptionPayload decode(PacketByteBuf input) {
+                String key = input.readString();
+                String value = input.readString();
+                boolean shouldNotify = input.readBoolean();
+                return new C2SWandOptionPayload(key, value, shouldNotify);
+            }
+
+            public static Identifier getId() {
                 return ID;
             }
 
@@ -82,34 +96,44 @@ public class Network {
             }
         }
 
-        public record S2CPing(boolean unused) implements CustomPayload {
-            public static final CustomPayload.Id<S2CPing> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
-            public static final PacketCodec<RegistryByteBuf, S2CPing> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, S2CPing::unused, S2CPing::new);
-            @Override
-            public CustomPayload.Id<? extends CustomPayload> getId() {
+        public record S2CPing(boolean unused) {
+            public static final Identifier ID = id("pong");
+
+            public static PacketByteBuf encode(S2CPing input) {
+                var buf = PacketByteBufs.create();
+                buf.writeBoolean(input.unused());
+                return buf;
+            }
+
+            public static S2CPing decode(PacketByteBuf input) {
+                return new S2CPing(input.readBoolean());
+            }
+
+            public static Identifier getId() {
                 return ID;
             }
         }
 
-        public record C2SPong(boolean unused) implements CustomPayload {
-            public static final CustomPayload.Id<C2SPong> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
-            public static final PacketCodec<RegistryByteBuf, C2SPong> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, C2SPong::unused, C2SPong::new);
-            @Override
-            public CustomPayload.Id<? extends CustomPayload> getId() {
+        public record C2SPong(boolean unused) {
+            public static final Identifier ID = id("pong");
+
+            public static PacketByteBuf encode(C2SPong input) {
+                var buf = PacketByteBufs.create();
+                buf.writeBoolean(input.unused());
+                return buf;
+            }
+
+            public static C2SPong decode(PacketByteBuf input) {
+                return new C2SPong(input.readBoolean());
+            }
+
+            public static Identifier getId() {
                 return ID;
             }
         }
 
-        public record S2CSyncModConfigPayload(List<Integer> ints, List<Boolean> booleans, List<Identifier> similarBlocks, List<String> blockEntityList, List<WandConfigEntry> wands) implements CustomPayload {
-            public static final CustomPayload.Id<S2CSyncModConfigPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "mod_config"));
-            public static final PacketCodec<RegistryByteBuf, S2CSyncModConfigPayload> CODEC = PacketCodec.tuple(
-                    PacketCodecs.INTEGER.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::ints,
-                    PacketCodecs.BOOLEAN.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::booleans,
-                    Identifier.PACKET_CODEC.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::similarBlocks,
-                    PacketCodecs.STRING.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::blockEntityList,
-                    WandConfigEntry.PACKET_CODEC.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::wands,
-                    S2CSyncModConfigPayload::new
-            );
+        public record S2CSyncModConfigPayload(List<Integer> ints, List<Boolean> booleans, List<String> similarBlocks, List<String> blockEntityList, List<WandConfigEntry> wands) {
+            public static final Identifier ID = id("mod_config");
 
             public static S2CSyncModConfigPayload create() {
                 return new S2CSyncModConfigPayload(
@@ -150,38 +174,82 @@ public class Network {
                 ConstructionWand.Config.infinityWand = payload.wands().getLast();
             }
 
-            @Override
-            public CustomPayload.Id<? extends CustomPayload> getId() {
+            public static PacketByteBuf encode(S2CSyncModConfigPayload input) {
+                var b = PacketByteBufs.create();
+                int[] lens = new int[] {input.ints.size(), input.booleans.size(), input.similarBlocks.size(), input.blockEntityList.size(), input.wands.size() };
+                b.writeIntArray(lens);
+                for (Integer anInt : input.ints) {
+                    b.writeInt(anInt);
+                }
+                for (Boolean aBoolean : input.booleans) {
+                    b.writeBoolean(aBoolean);
+                }
+                for (String similarBlock : input.similarBlocks) {
+                    b.writeString(similarBlock);
+                }
+                for (String s : input.blockEntityList) {
+                    b.writeString(s);
+                }
+                for (WandConfigEntry wand : input.wands) {
+                    WandConfigEntry.encode(b, wand);
+                }
+                return b;
+            }
+
+            public static S2CSyncModConfigPayload decode(PacketByteBuf input) {
+                var lens = input.readIntArray();
+                // ints
+                var ints = new ArrayList<Integer>();
+                for (int i = 0; i < lens[0]; i++) {
+                    ints.add(input.readInt());
+                }
+                // bools
+                var booleans = new ArrayList<Boolean>();
+                for (int i = 0; i < lens[1]; i++) {
+                    booleans.add(input.readBoolean());
+                }
+                // similarBlocks
+                var similarBlocks = new ArrayList<String>();
+                for (int i = 0; i < lens[2]; i++) {
+                    similarBlocks.add(input.readString());
+                }
+                // blockEntityList
+                var blockEntityList = new ArrayList<String>();
+                for (int i = 0; i < lens[3]; i++) {
+                    blockEntityList.add(input.readString());
+                }
+                // wands
+                var wands = new ArrayList<WandConfigEntry>();
+                for (int i = 0; i < lens[4]; i++) {
+                    wands.add(WandConfigEntry.decode(input));
+                }
+                return new S2CSyncModConfigPayload(ints, booleans, similarBlocks, blockEntityList, wands);
+            }
+
+            public static Identifier getId() {
                 return ID;
             }
         }
     }
 
     public static void init() {
-        PayloadTypeRegistry.playS2C().register(Payloads.S2CUndoBlocksPayload.ID, Payloads.S2CUndoBlocksPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(Payloads.S2CSyncModConfigPayload.ID, Payloads.S2CSyncModConfigPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(Payloads.S2CPing.ID, Payloads.S2CPing.CODEC);
-
-        PayloadTypeRegistry.playC2S().register(Payloads.C2SQueryUndoPayload.ID, Payloads.C2SQueryUndoPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(Payloads.C2SWandOptionPayload.ID, Payloads.C2SWandOptionPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(Payloads.C2SPong.ID, Payloads.C2SPong.CODEC);
-
-        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SQueryUndoPayload.ID, (payload, context) -> {
-            context.server().execute(() -> {
-                ServerPlayerEntity player = context.player();
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SQueryUndoPayload.getId(), (MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) -> {
+            var payload = Payloads.C2SQueryUndoPayload.decode(buf);
+            server.execute(() -> {
                 if(player == null) return;
-                UndoHistory.updateClient(player, payload.undoPressed);
+                UndoHistory.updateClient(player, payload.undoPressed());
             });
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SWandOptionPayload.ID, (payload, context) -> {
-            context.server().execute(() -> {
-                ServerPlayerEntity player = context.player();
+        ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SWandOptionPayload.getId(), (MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) -> {
+            var payload = Payloads.C2SWandOptionPayload.decode(buf);
+            server.execute(() -> {
                 if(player == null) return;
 
                 ItemStack wand = WandUtil.holdingWand(player);
                 if(wand == null) return;
                 WandOptions options = WandOptions.of(wand);
+
 
                 IOption<?> option = options.get(payload.key);
                 if(option == null) return;
@@ -194,7 +262,9 @@ public class Network {
         });
 
         ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
-            if (server.isDedicated()) ServerPlayNetworking.send(handler.player, Payloads.S2CSyncModConfigPayload.create());
+            if (server.isDedicated()) ServerPlayNetworking.send(handler.player,
+                    Payloads.S2CSyncModConfigPayload.getId(),
+                    Payloads.S2CSyncModConfigPayload.encode(Payloads.S2CSyncModConfigPayload.create()));
             else ConstructionWand.ensureConfigManager();
         });
     }

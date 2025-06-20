@@ -9,13 +9,13 @@ import net.minecraft.util.Identifier;
 
 public class PolymerDestructionCoreItem extends PolymerCoreItem
 {
-    public PolymerDestructionCoreItem(RegistryKey<Item> id) {
+    public PolymerDestructionCoreItem(Identifier id) {
         super(id, new Settings().maxCount(1));
     }
 
     @Override
     public int getColor() {
-        return -65536;
+        return 0xFF0000;
     }
 
     @Override

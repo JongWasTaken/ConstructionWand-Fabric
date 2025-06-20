@@ -13,31 +13,31 @@ import java.util.Set;
 
 public class ReplacementRegistry
 {
-    private static final HashSet<HashSet<Item>> replacements = new HashSet<>();
+    private static final HashSet<HashSet<Item>> REPLACEMENTS = new HashSet<>();
 
     public static void init() {
-        replacements.clear();
+        REPLACEMENTS.clear();
 
         for(Object key : ConstructionWand.Config.similarBlocks) {
             if(!(key instanceof String)) continue;
             HashSet<Item> set = new HashSet<>();
 
             for(String id : ((String) key).split(";")) {
-                Item item = Registries.ITEM.get(Identifier.of(id));
+                Item item = Registries.ITEM.get(Identifier.tryParse(id));
                 if(item == null || item == Items.AIR) {
                     ConstructionWand.LOGGER.warn("Replacement Registry: Could not find item " + id);
                     continue;
                 }
                 set.add(item);
             }
-            if(!set.isEmpty()) replacements.add(set);
+            if(!set.isEmpty()) REPLACEMENTS.add(set);
         }
     }
 
     public static Set<Item> getMatchingSet(Item item) {
         HashSet<Item> res = new HashSet<>();
 
-        for(HashSet<Item> set : replacements) {
+        for(HashSet<Item> set : REPLACEMENTS) {
             if(set.contains(item)) res.addAll(set);
         }
         res.remove(item);
@@ -48,7 +48,7 @@ public class ReplacementRegistry
         if(b1 == b2) return true;
         if(b1 == Blocks.AIR || b2 == Blocks.AIR) return false;
 
-        for(HashSet<Item> set : replacements) {
+        for(HashSet<Item> set : REPLACEMENTS) {
             if(set.contains(b1.asItem()) && set.contains(b2.asItem())) return true;
         }
         return false;

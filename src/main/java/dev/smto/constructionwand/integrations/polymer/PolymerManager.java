@@ -16,10 +16,10 @@ import eu.pb4.sgui.api.gui.SimpleGui;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.MinecraftServer;
@@ -43,14 +43,13 @@ public class PolymerManager {
         PolymerResourcePackUtils.markAsRequired();
 
         ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
-            ServerPlayNetworking.send(handler.player, new Network.Payloads.S2CPing(false));
+            ServerPlayNetworking.send(handler.player, Network.Payloads.S2CPing.getId(), Network.Payloads.S2CPing.encode(new Network.Payloads.S2CPing(false)));
         });
 
-        ServerPlayNetworking.registerGlobalReceiver(Network.Payloads.C2SPong.ID, (payload, context) -> {
-            context.server().execute(() -> {
-                ServerPlayerEntity player = context.player();
+        ServerPlayNetworking.registerGlobalReceiver(Network.Payloads.C2SPong.ID, (MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) -> {
+            server.execute(() -> {
                 if(player == null) return;
-                ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player.getName().getLiteralString());
+                ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player.getName().getString());
                 PLAYERS_WITH_CLIENT.add(player.getUuid());
             });
         });
@@ -85,16 +84,11 @@ public class PolymerManager {
             var key = option.get();
             if (key instanceof IWandCore core) {
                 if (core instanceof PolymerDestructionCoreItem) {
-                    var model = ConstructionWand.getRegistry().getDestructionCore().getDefaultStack().get(DataComponentTypes.ITEM_MODEL);
-                    var item = Items.STICK.getDefaultStack();
-                    item.set(DataComponentTypes.ITEM_MODEL, model);
-                    return item;
+                    return ConstructionWand.getRegistry().getDestructionCore().getDefaultStack();
                 }
                 if (core instanceof PolymerAngelCoreItem) {
-                    var model = ConstructionWand.getRegistry().getAngelCore().getDefaultStack().get(DataComponentTypes.ITEM_MODEL);
-                    var item = Items.STICK.getDefaultStack();
-                    item.set(DataComponentTypes.ITEM_MODEL, model);
-                    return item;
+                    return ConstructionWand.getRegistry().getAngelCore().getDefaultStack();
+
                 }
                 return Items.BRICKS.getDefaultStack();
             }
@@ -165,7 +159,6 @@ public class PolymerManager {
                 this.addSlot(buildElement(options.allOptions[i]));
             }
             this.setSlot(8, GuiElementBuilder.from(Items.EXPERIENCE_BOTTLE.getDefaultStack())
-                    .hideDefaultTooltip()
                     .setName(
                             ((MutableText)PolymerStat.getName(ConstructionWand.getRegistry().getUseWandStat())).formatted(Formatting.AQUA)
                     )
@@ -192,8 +185,6 @@ public class PolymerManager {
         private GuiElement buildElement(IOption<?> option) {
             return GuiElementBuilder.from(getIcon(option))
                     .setLore(List.of())
-                    .hideDefaultTooltip()
-                    .noDefaults()
                     .setName(getCapitalizedKey(option))
                     .addLoreLine(Text.translatable(option.getValueTranslation()).formatted(Formatting.GRAY))
                     .addLoreLine(Text.literal(" "))

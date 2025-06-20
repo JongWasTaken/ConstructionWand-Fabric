@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.Codecs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +42,7 @@ public class ConstructionWand implements ModInitializer
                 FabricLoader.getInstance().getConfigDir().resolve("construction_wand.conf"),
                 Config.class,
                 ConfigLoggers.create(LOGGER::debug, LOGGER::info, LOGGER::warn, LOGGER::error),
-                Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Identifier.CODEC.listOf())
+                Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Codecs.NON_EMPTY_STRING.listOf())
         );
     }
 
@@ -87,17 +88,8 @@ public class ConstructionWand implements ModInitializer
         public static int maxInfinityCreativeRange = 2048;
         @ConfigAnnotations.Comment(comment = "Number of operations that can be undone.")
         public static int undoHistorySize = 3;
-        @ConfigAnnotations.Comment(comment = "Blocks to treat equally when in Similar mode.")
-        public static ArrayList<Identifier> similarBlocks = new ArrayList<>(List.of(
-                Identifier.ofVanilla("dirt"),
-                Identifier.ofVanilla("grass_block"),
-                Identifier.ofVanilla("coarse_dirt"),
-                Identifier.ofVanilla("podzol"),
-                Identifier.ofVanilla("mycelium"),
-                Identifier.ofVanilla("farmland"),
-                Identifier.ofVanilla("dirt_path"),
-                Identifier.ofVanilla("rooted_dirt")
-        ));
+        @ConfigAnnotations.Comment(comment = "Blocks to treat equally when in Similar mode. Separate ids with ;")
+        public static ArrayList<String> similarBlocks = new ArrayList<>(List.of("minecraft:dirt;minecraft:grass_block;minecraft:coarse_dirt;minecraft:podzol;minecraft:mycelium;minecraft:farmland;minecraft:dirt_path;minecraft:rooted_dirt"));
         @ConfigAnnotations.Comment(comment = "Place blocks below you while falling > 10 blocks with angel core (Can be used to save you from drops/the void)")
         public static boolean angelFalling = false;
 

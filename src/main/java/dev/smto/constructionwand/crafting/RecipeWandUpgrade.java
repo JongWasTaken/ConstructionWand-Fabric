@@ -1,46 +1,40 @@
 package dev.smto.constructionwand.crafting;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.google.gson.JsonObject;
 import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.api.IWandUpgrade;
 import dev.smto.constructionwand.api.WandConfigEntry;
-import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.items.wand.WandItem;
+import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.recipe.CraftingRecipe;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.IngredientPlacement;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import dev.smto.constructionwand.api.IWandUpgrade;
+import dev.smto.constructionwand.basics.option.WandOptions;
 
-import java.util.List;
+import static dev.smto.constructionwand.ConstructionWand.MOD_ID;
 
-public class RecipeWandUpgrade implements CraftingRecipe
+public class RecipeWandUpgrade extends ShapelessRecipe
 {
-    public final List<Ingredient> ingredients;
-    @Nullable
-    private IngredientPlacement ingredientPlacement;
-
-    public RecipeWandUpgrade(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
+    public RecipeWandUpgrade(String group, ItemStack result, DefaultedList<Ingredient> ingredients) {
+        super(new Identifier(MOD_ID, "wand_upgrade"), group, CraftingRecipeCategory.MISC, result, ingredients);
     }
 
     @Override
-    public boolean matches(CraftingRecipeInput craftingRecipeInput, World world) {
+    public boolean matches(@NotNull RecipeInputInventory inv, @NotNull World worldIn) {
         ItemStack wand = null;
         IWandUpgrade upgrade = null;
 
-        for(int i = 0; i < craftingRecipeInput.getStacks().size(); i++) {
-            ItemStack stack = craftingRecipeInput.getStacks().get(i);
+        for(int i = 0; i < inv.size(); i++) {
+            ItemStack stack = inv.getStack(i);
             if(!stack.isEmpty()) {
                 if(wand == null && stack.getItem() instanceof WandItem) wand = stack;
                 else if(upgrade == null && stack.getItem() instanceof IWandUpgrade)
@@ -54,74 +48,79 @@ public class RecipeWandUpgrade implements CraftingRecipe
         try {
             wandConfig = (WandConfigEntry) ConstructionWand.WAND_CONFIG_MAP.get(wand.getItem()).get(null);
         } catch (Throwable ignored) {}
+
         return !WandOptions.of(wand).hasUpgrade(upgrade) && wandConfig.upgradeable();
     }
 
     @NotNull
     @Override
-    public ItemStack craft(CraftingRecipeInput craftingRecipeInput, RegistryWrapper.WrapperLookup wrapperLookup) {
+    public ItemStack craft(@NotNull RecipeInputInventory inv, @NotNull DynamicRegistryManager registryAccess) {
         ItemStack wand = null;
         IWandUpgrade upgrade = null;
 
-        for(int i = 0; i < craftingRecipeInput.getStacks().size(); i++) {
-            ItemStack stack = craftingRecipeInput.getStacks().get(i);
+        for(int i = 0; i < inv.size(); i++) {
+            ItemStack stack = inv.getStack(i);
             if(!stack.isEmpty()) {
                 if(stack.getItem() instanceof WandItem) wand = stack;
                 else if(stack.getItem() instanceof IWandUpgrade) upgrade = (IWandUpgrade) stack.getItem();
             }
         }
-        //LOGGER.warn("Crafting wand upgrade: " + wand + ", " + upgrade);
         if(wand == null || upgrade == null) return ItemStack.EMPTY;
 
         ItemStack newWand = wand.copy();
-
-        var u = WandOptions.of(newWand);
-        u.addUpgrade(upgrade);
-        u.writeToStack();
-
+        WandOptions.of(newWand).addUpgrade(upgrade);
         return newWand;
     }
 
     @Override
-    public RecipeSerializer<RecipeWandUpgrade> getSerializer() {
+    public boolean fits(int width, int height) {
+        return width * height >= 2;
+    }
+
+
+    @Override
+    public RecipeSerializer<?> getSerializer() {
         return ConstructionWand.getRegistry().getRecipeSerializer();
     }
 
-    @Override
-    public IngredientPlacement getIngredientPlacement() {
-        if (this.ingredientPlacement == null) {
-            this.ingredientPlacement = IngredientPlacement.forShapeless(this.ingredients);
-        }
-
-        return this.ingredientPlacement;
-    }
-
-    @Override
-    public CraftingRecipeCategory getCategory() {
-        return CraftingRecipeCategory.MISC;
-    }
-
     public static class Serializer implements RecipeSerializer<RecipeWandUpgrade> {
-        private static final MapCodec<RecipeWandUpgrade> CODEC = RecordCodecBuilder.mapCodec(
-                instance -> instance.group(
-                                Ingredient.CODEC.listOf(1, 9).fieldOf("ingredients").forGetter(recipe -> recipe.ingredients)
-                        )
-                        .apply(instance, RecipeWandUpgrade::new)
-        );
-        public static final PacketCodec<RegistryByteBuf, RecipeWandUpgrade> PACKET_CODEC = PacketCodec.tuple(
-                Ingredient.PACKET_CODEC.collect(PacketCodecs.toList()),
-                recipe -> recipe.ingredients,
-                RecipeWandUpgrade::new
-        );
 
         @Override
-        public MapCodec<RecipeWandUpgrade> codec() {
-            return CODEC;
+        public RecipeWandUpgrade read(Identifier id, JsonObject json) {
+            String type = json.get("type").getAsString();
+            ItemStack result = Registries.ITEM.get(new Identifier(json.get("result").getAsJsonObject().get("item").getAsString())).getDefaultStack();
+            var ilist = json.get("ingredients").getAsJsonArray();
+            DefaultedList<Ingredient> nonnulllist = DefaultedList.ofSize(ilist.size(), Ingredient.EMPTY);
+            for(int i = 0; i < ilist.size(); ++i) {
+                nonnulllist.set(i, Ingredient.fromJson(ilist.get(i).getAsJsonObject()));
+            }
+
+            return new RecipeWandUpgrade(type, result, nonnulllist);
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, RecipeWandUpgrade> packetCodec() {
-            return PACKET_CODEC;
+        public RecipeWandUpgrade read(Identifier identifier, PacketByteBuf pBuffer) {
+            String s = pBuffer.readString();
+            int i = pBuffer.readVarInt();
+            DefaultedList<Ingredient> nonnulllist = DefaultedList.ofSize(i, Ingredient.EMPTY);
+
+            nonnulllist.replaceAll(ignored -> Ingredient.fromPacket(pBuffer));
+
+            ItemStack itemstack = pBuffer.readItemStack();
+            return new RecipeWandUpgrade(s, itemstack, nonnulllist);
         }
+
+
+        @Override
+        public void write(PacketByteBuf buf, RecipeWandUpgrade recipe) {
+            buf.writeString(recipe.getGroup());
+            buf.writeVarInt(recipe.getIngredients().size());
+
+            for(Ingredient ingredient : recipe.getIngredients()) {
+                ingredient.write(buf);
+            }
+            buf.writeItemStack(recipe.getOutput(DynamicRegistryManager.EMPTY));
+        }
+
     }
 }

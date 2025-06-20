@@ -4,6 +4,7 @@ import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandUpgrade;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.registry.Registries;
@@ -30,12 +31,12 @@ public class WandUpgrades<T extends IWandUpgrade>
     }
 
     protected void deserialize() {
-        NbtList listnbt = tag.getList(key).orElse(new NbtList());
+        NbtList listnbt = tag.getList(key, NbtElement.STRING_TYPE);
         boolean require_fix = false;
 
         for(int i = 0; i < listnbt.size(); i++) {
-            String str = listnbt.getString(i).orElse("");
-            Item item = Registries.ITEM.get(Identifier.of(str));
+            String str = listnbt.getString(i);
+            Item item = Registries.ITEM.get(new Identifier(str));
 
             T data;
             try {
@@ -43,7 +44,7 @@ public class WandUpgrades<T extends IWandUpgrade>
                 data = (T) item;
                 upgrades.add(data);
             } catch(ClassCastException e) {
-                ConstructionWand.LOGGER.warn("Invalid wand upgrade: {}", str);
+                ConstructionWand.LOGGER.warn("Invalid wand upgrade: " + str);
                 require_fix = true;
             }
         }

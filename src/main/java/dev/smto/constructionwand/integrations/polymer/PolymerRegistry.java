@@ -11,8 +11,9 @@ import dev.smto.constructionwand.items.core.CoreItem;
 import dev.smto.constructionwand.items.wand.WandItem;
 import eu.pb4.polymer.core.api.item.PolymerItemGroupUtils;
 import eu.pb4.polymer.core.api.other.PolymerStat;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
-import net.minecraft.item.ToolMaterial;
+import net.minecraft.item.ToolMaterials;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.stat.StatFormatter;
@@ -20,14 +21,15 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 import static dev.smto.constructionwand.ConstructionWand.MOD_ID;
+import static dev.smto.constructionwand.ConstructionWand.id;
 
 public class PolymerRegistry extends ModRegistry {
-    private final WandItem stoneWand = new PolymerBreakableWandItem(createKey("stone_wand"), new Item.Settings(), ToolMaterial.STONE);
-    private final WandItem ironWand = new PolymerBreakableWandItem(createKey("iron_wand"), new Item.Settings(), ToolMaterial.IRON);
-    private final WandItem diamondWand = new PolymerBreakableWandItem(createKey("diamond_wand"), new Item.Settings(), ToolMaterial.DIAMOND);
-    private final WandItem infinityWand = new PolymerInfinityWandItem(createKey("infinity_wand"));
-    private final CoreItem coreAngel = new PolymerAngelCoreItem(createKey("core_angel"));
-    private final CoreItem coreDestruction = new PolymerDestructionCoreItem(createKey("core_destruction"));
+    private final WandItem stoneWand = new PolymerBreakableWandItem(id("stone_wand"), new Item.Settings(), ToolMaterials.STONE);
+    private final WandItem ironWand = new PolymerBreakableWandItem(id("iron_wand"), new Item.Settings(), ToolMaterials.IRON);
+    private final WandItem diamondWand = new PolymerBreakableWandItem(id("diamond_wand"), new Item.Settings(), ToolMaterials.DIAMOND);
+    private final WandItem infinityWand = new PolymerInfinityWandItem(id("infinity_wand"));
+    private final CoreItem coreAngel = new PolymerAngelCoreItem(id("core_angel"));
+    private final CoreItem coreDestruction = new PolymerDestructionCoreItem(id("core_destruction"));
     private final Identifier statUseWand = PolymerStat.registerStat(Identifier.of(ConstructionWand.MOD_ID, "use_wand"), StatFormatter.DEFAULT);
     private final RecipeSerializer<RecipeWandUpgrade> recipeWandUpgrade = new RecipeWandUpgrade.Serializer();
 
@@ -72,13 +74,13 @@ public class PolymerRegistry extends ModRegistry {
     }
     @Override
     public void registerAll() {
-        net.minecraft.registry.Registry.register(Registries.ITEM, stoneWand.registryKey, stoneWand);
-        net.minecraft.registry.Registry.register(Registries.ITEM, ironWand.registryKey, ironWand);
-        net.minecraft.registry.Registry.register(Registries.ITEM, diamondWand.registryKey, diamondWand);
-        net.minecraft.registry.Registry.register(Registries.ITEM, infinityWand.registryKey, infinityWand);
-        net.minecraft.registry.Registry.register(Registries.ITEM, coreAngel.registryKey, coreAngel);
-        net.minecraft.registry.Registry.register(Registries.ITEM, coreDestruction.registryKey, coreDestruction);
-        var tabBuilder = PolymerItemGroupUtils.builder();
+        net.minecraft.registry.Registry.register(Registries.ITEM, id("stone_wand"), stoneWand);
+        net.minecraft.registry.Registry.register(Registries.ITEM, id("iron_wand"), ironWand);
+        net.minecraft.registry.Registry.register(Registries.ITEM, id("diamond_wand"), diamondWand);
+        net.minecraft.registry.Registry.register(Registries.ITEM, id("infinity_wand"), infinityWand);
+        net.minecraft.registry.Registry.register(Registries.ITEM, id("core_angel"), coreAngel);
+        net.minecraft.registry.Registry.register(Registries.ITEM, id("core_destruction"), coreDestruction);
+        var tabBuilder = FabricItemGroup.builder();
         tabBuilder.displayName(Text.literal("Construction Wand"));
         tabBuilder.icon(infinityWand::getDefaultStack);
         tabBuilder.entries((displayContext, entries) -> {
@@ -90,6 +92,6 @@ public class PolymerRegistry extends ModRegistry {
             entries.add(coreDestruction.getDefaultStack());
         });
         PolymerItemGroupUtils.registerPolymerItemGroup(Identifier.of(MOD_ID, "items"), tabBuilder.build());
-        net.minecraft.registry.Registry.register(Registries.RECIPE_SERIALIZER, ConstructionWand.id("wand_upgrade"), recipeWandUpgrade);
+        net.minecraft.registry.Registry.register(Registries.RECIPE_SERIALIZER, id("wand_upgrade"), recipeWandUpgrade);
     }
 }

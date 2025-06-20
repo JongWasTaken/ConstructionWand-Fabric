@@ -4,11 +4,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Identifier;
 
 public class BreakableWandItem extends WandItem
 {
-    public BreakableWandItem(RegistryKey<Item> id, Item.Settings properties, ToolMaterial tier) {
-        super(id, properties.maxDamage(tier.durability()).repairable(tier.repairItems()));
+    private final ToolMaterial tier;
+    public BreakableWandItem(Item.Settings properties, ToolMaterial tier) {
+        super(properties.maxDamage(tier.getDurability()));
+        this.tier = tier;
+    }
+
+    @Override
+    public boolean canRepair(ItemStack stack, ItemStack ingredient) {
+        return this.tier.getRepairIngredient().test(ingredient);
     }
 
     @Override

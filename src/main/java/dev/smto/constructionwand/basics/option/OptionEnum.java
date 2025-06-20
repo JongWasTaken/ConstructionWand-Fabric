@@ -19,7 +19,7 @@ public class OptionEnum<E extends Enum<E>> implements IOption<E>
         this.enabled = enabled;
         this.dval = dval;
 
-        value = Enums.getIfPresent(enumClass, tag.getString(key).orElse("").toUpperCase()).or(dval);
+        value = Enums.getIfPresent(enumClass, tag.getString(key).toUpperCase()).or(dval);
     }
 
     public OptionEnum(NbtCompound tag, String key, Class<E> enumClass, E dval) {
