@@ -62,6 +62,8 @@ dependencies {
 	include implementation("dev.smto:simpleconfig:2.4.0")
 	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// recipe viewers
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
