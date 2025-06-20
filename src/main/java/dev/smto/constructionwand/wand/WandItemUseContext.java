@@ -1,5 +1,6 @@
 package dev.smto.constructionwand.wand;
 
+import dev.smto.constructionwand.basics.WandUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
@@ -9,7 +10,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import dev.smto.constructionwand.basics.WandUtil;
 
 public class WandItemUseContext extends ItemPlacementContext
 {

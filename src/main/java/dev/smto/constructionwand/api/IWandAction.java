@@ -1,11 +1,11 @@
 package dev.smto.constructionwand.api;
 
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.wand.undo.ISnapshot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.wand.undo.ISnapshot;
 
 import java.util.List;
 

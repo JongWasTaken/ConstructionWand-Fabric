@@ -1,5 +1,14 @@
 package dev.smto.constructionwand.wand;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandAction;
+import dev.smto.constructionwand.api.IWandSupplier;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.items.wand.WandItem;
+import dev.smto.constructionwand.wand.supplier.SupplierInventory;
+import dev.smto.constructionwand.wand.supplier.SupplierRandom;
+import dev.smto.constructionwand.wand.undo.ISnapshot;
+import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -12,16 +21,6 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.Registry;
-import dev.smto.constructionwand.api.IWandAction;
-import dev.smto.constructionwand.api.IWandSupplier;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.items.wand.WandItem;
-import dev.smto.constructionwand.wand.supplier.SupplierInventory;
-import dev.smto.constructionwand.wand.supplier.SupplierRandom;
-import dev.smto.constructionwand.wand.undo.ISnapshot;
-import dev.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,7 @@ public class WandJob
     private void getSnapshots() {
         int limit;
         // Infinity wand gets enhanced limit in creative mode
-        if(player.isCreative() && wandItem == Registry.Items.INFINITY_WAND) limit = ConstructionWand.Config.maxInfinityCreativeRange;
+        if(player.isCreative() && wandItem == ConstructionWand.getRegistry().getInfinityWand()) limit = ConstructionWand.Config.maxInfinityCreativeRange;
         else limit = Math.min(wandItem.remainingDurability(wand), wandAction.getLimit(wand));
 
         if(rayTraceResult.getType() == HitResult.Type.BLOCK)
@@ -143,7 +142,7 @@ public class WandJob
                     player.giveOrDropStack(item);
                 }
             }
-            player.increaseStat(Registry.Stats.USE_WAND, 1);
+            player.increaseStat(ConstructionWand.getRegistry().getUseWandStat(), 1);
         }
         placeSnapshots = executed;
 

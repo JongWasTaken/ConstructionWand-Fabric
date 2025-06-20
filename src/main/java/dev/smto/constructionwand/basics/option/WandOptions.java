@@ -1,5 +1,9 @@
 package dev.smto.constructionwand.basics.option;
 
+import dev.smto.constructionwand.api.IWandCore;
+import dev.smto.constructionwand.api.IWandUpgrade;
+import dev.smto.constructionwand.basics.ReplacementRegistry;
+import dev.smto.constructionwand.items.core.CoreDefault;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
@@ -8,10 +12,6 @@ import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.api.IWandCore;
-import dev.smto.constructionwand.api.IWandUpgrade;
-import dev.smto.constructionwand.basics.ReplacementRegistry;
-import dev.smto.constructionwand.items.core.CoreDefault;
 
 import java.util.List;
 

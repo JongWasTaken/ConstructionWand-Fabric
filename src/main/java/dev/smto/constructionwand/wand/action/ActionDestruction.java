@@ -1,6 +1,13 @@
 package dev.smto.constructionwand.wand.action;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandAction;
+import dev.smto.constructionwand.api.IWandSupplier;
 import dev.smto.constructionwand.api.WandConfigEntry;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.wand.undo.DestroySnapshot;
+import dev.smto.constructionwand.wand.undo.ISnapshot;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -9,13 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.api.IWandAction;
-import dev.smto.constructionwand.api.IWandSupplier;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.wand.undo.DestroySnapshot;
-import dev.smto.constructionwand.wand.undo.ISnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;

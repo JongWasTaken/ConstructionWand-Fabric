@@ -2,7 +2,11 @@ package dev.smto.constructionwand.crafting;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandUpgrade;
 import dev.smto.constructionwand.api.WandConfigEntry;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.items.wand.WandItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
@@ -17,11 +21,6 @@ import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.Registry;
-import dev.smto.constructionwand.api.IWandUpgrade;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.items.wand.WandItem;
 
 import java.util.List;
 
@@ -85,7 +84,7 @@ public class RecipeWandUpgrade implements CraftingRecipe
 
     @Override
     public RecipeSerializer<RecipeWandUpgrade> getSerializer() {
-        return Registry.RecipeSerializers.WAND_UPGRADE;
+        return ConstructionWand.getRegistry().getRecipeSerializer();
     }
 
     @Override

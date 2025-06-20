@@ -1,24 +1,30 @@
 package dev.smto.constructionwand.integrations;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class ModCompat {
     private static boolean checked = false;
-    public static boolean CREATE = false;
-    public static boolean BANK_STORAGE = false;
-    public static boolean PACKED_UP = false;
-    public static boolean SOPHISTICATED_BACKPACKS = false;
-    public static boolean BOTANIA = false;
+
+    public static boolean create = false;
+    public static boolean bankStorage = false;
+    public static boolean packedUp = false;
+    public static boolean sophisticatedBackpacks = false;
+    public static boolean botania = false;
+    public static boolean polymerEnabled = false;
 
     public static void checkForMods() {
         if (checked) return;
 
-        CREATE = FabricLoader.getInstance().isModLoaded("create");
-        BANK_STORAGE = FabricLoader.getInstance().isModLoaded("bankstorage");
-        PACKED_UP = FabricLoader.getInstance().isModLoaded("packedup");
-        SOPHISTICATED_BACKPACKS = FabricLoader.getInstance().isModLoaded("sophisticatedbackpacks");
-        BOTANIA = FabricLoader.getInstance().isModLoaded("botania");
+        create = FabricLoader.getInstance().isModLoaded("create");
+        bankStorage = FabricLoader.getInstance().isModLoaded("bankstorage");
+        packedUp = FabricLoader.getInstance().isModLoaded("packedup");
+        sophisticatedBackpacks = FabricLoader.getInstance().isModLoaded("sophisticatedbackpacks");
+        botania = FabricLoader.getInstance().isModLoaded("botania");
+        polymerEnabled = FabricLoader.getInstance().isModLoaded(ConstructionWand.MOD_ID + "-polymer");
 
+        if (polymerEnabled) PolymerManager.init();
         checked = true;
     }
 

@@ -41,6 +41,7 @@ repositories {
 	}
 	maven { url "https://maven.shedaniel.me/" }
 	maven { url "https://maven.architectury.dev/" }
+	maven { url 'https://maven.nucleoid.xyz' }
 }
 
 loom {
@@ -64,6 +65,11 @@ dependencies {
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
+
+	// polymer stuff
+	modCompileOnly "eu.pb4:polymer-core:${project.polymer_version}"
+	modCompileOnly "eu.pb4:polymer-resource-pack:${project.polymer_version}"
+	modCompileOnly "eu.pb4:sgui:${project.sgui_version}"
 }
 
 processResources {
