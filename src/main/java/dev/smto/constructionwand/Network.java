@@ -100,12 +100,12 @@ public class Network {
             }
         }
 
-        public record S2CSyncModConfigPayload(List<Integer> ints, List<Boolean> booleans, List<Identifier> similarBlocks, List<String> blockEntityList, List<WandConfigEntry> wands) implements CustomPayload {
+        public record S2CSyncModConfigPayload(List<Integer> ints, List<Boolean> booleans, List<String> similarBlocks, List<String> blockEntityList, List<WandConfigEntry> wands) implements CustomPayload {
             public static final CustomPayload.Id<S2CSyncModConfigPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "mod_config"));
             public static final PacketCodec<RegistryByteBuf, S2CSyncModConfigPayload> CODEC = PacketCodec.tuple(
                     PacketCodecs.INTEGER.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::ints,
                     PacketCodecs.BOOLEAN.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::booleans,
-                    Identifier.PACKET_CODEC.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::similarBlocks,
+                    PacketCodecs.STRING.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::similarBlocks,
                     PacketCodecs.STRING.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::blockEntityList,
                     WandConfigEntry.PACKET_CODEC.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::wands,
                     S2CSyncModConfigPayload::new

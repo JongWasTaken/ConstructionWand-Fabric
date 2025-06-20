@@ -18,11 +18,11 @@ public class ReplacementRegistry
     public static void init() {
         replacements.clear();
 
-        for(Object key : ConstructionWand.Config.similarBlocks) {
+        for(String key : ConstructionWand.Config.similarBlocks) {
             if(!(key instanceof String)) continue;
             HashSet<Item> set = new HashSet<>();
 
-            for(String id : ((String) key).split(";")) {
+            for(String id : key.split(";")) {
                 Item item = Registries.ITEM.get(Identifier.of(id));
                 if(item == null || item == Items.AIR) {
                     ConstructionWand.LOGGER.warn("Replacement Registry: Could not find item " + id);
