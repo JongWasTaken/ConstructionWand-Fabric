@@ -161,17 +161,17 @@ public class Network {
 
                 ConstructionWand.configManager = null; // remove config manager so data is not saved to disk
 
-                ConstructionWand.Config.maxRange = payload.ints().getFirst();
+                ConstructionWand.Config.maxRange = payload.ints().get(0);
                 ConstructionWand.Config.maxInfinityCreativeRange = payload.ints().get(1);
                 ConstructionWand.Config.undoHistorySize = payload.ints().get(2);
-                ConstructionWand.Config.angelFalling = payload.booleans().getFirst();
-                ConstructionWand.Config.whitelist = payload.booleans().getLast();
+                ConstructionWand.Config.angelFalling = payload.booleans().get(0);
+                ConstructionWand.Config.whitelist = payload.booleans().get(1);
                 ConstructionWand.Config.similarBlocks = new ArrayList<>(payload.similarBlocks());
                 ConstructionWand.Config.blockEntityList = new ArrayList<>(payload.blockEntityList());
-                ConstructionWand.Config.stoneWand = payload.wands().getFirst();
+                ConstructionWand.Config.stoneWand = payload.wands().get(0);
                 ConstructionWand.Config.ironWand = payload.wands().get(1);
                 ConstructionWand.Config.diamondWand = payload.wands().get(2);
-                ConstructionWand.Config.infinityWand = payload.wands().getLast();
+                ConstructionWand.Config.infinityWand = payload.wands().get(3);
             }
 
             public static PacketByteBuf encode(S2CSyncModConfigPayload input) {

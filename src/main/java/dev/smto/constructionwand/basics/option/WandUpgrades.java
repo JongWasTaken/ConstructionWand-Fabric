@@ -25,7 +25,7 @@ public class WandUpgrades<T extends IWandUpgrade>
         this.dval = dval;
 
         upgrades = new ArrayList<>();
-        if(dval != null) upgrades.addFirst(dval);
+        if(dval != null) upgrades.add(0, dval);
 
         deserialize();
     }

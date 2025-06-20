@@ -136,7 +136,7 @@ public class WandJob
                     // layered blocks would need multiple right-clicks, so each removes 1 durability
                     wand.damage(
                             // layered blocks would need multiple right-clicks, so each removes 1 durability
-                            snapshot.getRequiredItems().getFirst().getCount(),
+                            snapshot.getRequiredItems().get(0).getCount(),
                             player,
                             e -> e.sendToolBreakStatus(Hand.MAIN_HAND)
                     );
@@ -155,7 +155,7 @@ public class WandJob
 
         // Play place sound
         if(!placeSnapshots.isEmpty()) {
-            BlockSoundGroup sound = placeSnapshots.getFirst().getBlockState().getSoundGroup();
+            BlockSoundGroup sound = placeSnapshots.get(0).getBlockState().getSoundGroup();
             world.playSound(null, player.getBlockPos(), sound.getPlaceSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
 
             // Add to job history for undo
