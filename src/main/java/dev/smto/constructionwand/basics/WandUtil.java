@@ -1,7 +1,7 @@
 package dev.smto.constructionwand.basics;
-//import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
-//import com.simibubi.create.content.decoration.copycat.CopycatBlock;
-//import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
+import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
+import com.simibubi.create.content.decoration.copycat.CopycatBlock;
+import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.containers.ContainerManager;
@@ -158,13 +158,13 @@ public class WandUtil
         if (includedItem != null) {
             // Create Copycats compat
             if (ModCompat.create) {
-                //if (block.getBlock() instanceof CopycatBlock c) {
-                //    var cEnt = c.getBlockEntity(world, pos);
-                //    if (cEnt != null) {
-                //        cEnt.setMaterial(((BlockItem)includedItem.getItem()).getBlock().getDefaultState());
-                //        cEnt.setConsumedItem(includedItem);
-                //    }
-                //}
+                if (block.getBlock() instanceof CopycatBlock c) {
+                    var cEnt = c.getBlockEntity(world, pos);
+                    if (cEnt != null) {
+                        cEnt.setMaterial(((BlockItem)includedItem.getItem()).getBlock().getDefaultState());
+                        cEnt.setConsumedItem(includedItem);
+                    }
+                }
             }
         }
 

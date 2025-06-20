@@ -1,6 +1,6 @@
 package dev.smto.constructionwand.wand.undo;
 
-//import com.simibubi.create.content.decoration.copycat.CopycatBlock;
+import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
@@ -11,6 +11,7 @@ import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.state.property.Properties;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.hit.BlockHitResult;
@@ -63,13 +64,15 @@ public class PlaceSnapshot implements ISnapshot
         boolean giveBackIncludedItem = true;
         // dont bother on the client side, CopycatBlock.getBlockEntity() behaves weirdly there
         if (!world.isClient) {
-            if (ModCompat.create) {
-                //if (supportingBlock.getBlock() instanceof CopycatBlock b) {
-                //    var be = b.getBlockEntity(world, pos.offset(rayTraceResult.getSide().getOpposite()));
-                //    includedItem = be.getConsumedItem();
-                //    giveBackIncludedItem = false;
-                //    if (includedItem.getItem() == Items.AIR) includedItem = null;
-                //}
+            if (ModCompat.create && supportingBlock != null) {
+                if (supportingBlock.getBlock() instanceof CopycatBlock b) {
+                    var be = b.getBlockEntity(world, pos.offset(rayTraceResult.getSide().getOpposite()));
+                    if (be != null) {
+                        includedItem = be.getConsumedItem();
+                        giveBackIncludedItem = false;
+                        if (includedItem.getItem() == Items.AIR) includedItem = null;
+                    }
+                }
             }
         }
         return new PlaceSnapshot(blockState, pos, new ItemStack(item, count), supportingBlock, targetMode, includedItem, giveBackIncludedItem);
