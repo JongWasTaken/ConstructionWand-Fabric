@@ -184,9 +184,9 @@ public class WandUtil
             if (ent != null) {
                 hasEntity = true;
                 if (ModCompat.create) {
-                    //if (ent instanceof CopycatBlockEntity) {
-                    //    hasEntity = false;
-                    //}
+                    if (ent instanceof CopycatBlockEntity) {
+                        hasEntity = false;
+                    }
                 }
             }
 
