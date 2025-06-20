@@ -12,6 +12,7 @@ Version 2.0.0 introduces breaking changes:
   - The old key-combination still works
 - Client-side config screen
   - Also has ModMenu integration
+- Changed namespace to new domain (`pw.smto` -> `dev.smto`)
 - General code cleanup
 
 ## Downloads
