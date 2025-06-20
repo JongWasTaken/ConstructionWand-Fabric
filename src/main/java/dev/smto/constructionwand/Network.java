@@ -1,5 +1,11 @@
 package dev.smto.constructionwand;
 
+import dev.smto.constructionwand.api.WandConfigEntry;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.IOption;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.items.wand.WandItem;
+import dev.smto.constructionwand.wand.undo.UndoHistory;
 import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -16,12 +22,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import dev.smto.constructionwand.api.WandConfigEntry;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.IOption;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.items.wand.WandItem;
-import dev.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +79,24 @@ public class Network {
 
             public static C2SWandOptionPayload of(IOption<?> option, boolean notify) {
                 return new C2SWandOptionPayload(option.getKey(), option.getValueString(), notify);
+            }
+        }
+
+        public record S2CPing(boolean unused) implements CustomPayload {
+            public static final CustomPayload.Id<S2CPing> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
+            public static final PacketCodec<RegistryByteBuf, S2CPing> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, S2CPing::unused, S2CPing::new);
+            @Override
+            public CustomPayload.Id<? extends CustomPayload> getId() {
+                return ID;
+            }
+        }
+
+        public record C2SPong(boolean unused) implements CustomPayload {
+            public static final CustomPayload.Id<C2SPong> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
+            public static final PacketCodec<RegistryByteBuf, C2SPong> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, C2SPong::unused, C2SPong::new);
+            @Override
+            public CustomPayload.Id<? extends CustomPayload> getId() {
+                return ID;
             }
         }
 
@@ -142,10 +160,11 @@ public class Network {
     public static void init() {
         PayloadTypeRegistry.playS2C().register(Payloads.S2CUndoBlocksPayload.ID, Payloads.S2CUndoBlocksPayload.CODEC);
         PayloadTypeRegistry.playS2C().register(Payloads.S2CSyncModConfigPayload.ID, Payloads.S2CSyncModConfigPayload.CODEC);
+        PayloadTypeRegistry.playS2C().register(Payloads.S2CPing.ID, Payloads.S2CPing.CODEC);
 
         PayloadTypeRegistry.playC2S().register(Payloads.C2SQueryUndoPayload.ID, Payloads.C2SQueryUndoPayload.CODEC);
         PayloadTypeRegistry.playC2S().register(Payloads.C2SWandOptionPayload.ID, Payloads.C2SWandOptionPayload.CODEC);
-
+        PayloadTypeRegistry.playC2S().register(Payloads.C2SPong.ID, Payloads.C2SPong.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SQueryUndoPayload.ID, (payload, context) -> {
             context.server().execute(() -> {

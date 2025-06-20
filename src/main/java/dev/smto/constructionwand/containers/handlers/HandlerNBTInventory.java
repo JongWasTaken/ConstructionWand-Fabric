@@ -11,8 +11,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.storage.NbtReadView;
 import net.minecraft.util.ErrorReporter;
-import pw.smto.constructionwand.api.IContainerHandler;
-import pw.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.api.IContainerHandler;
+import dev.smto.constructionwand.basics.WandUtil;
 
 public class HandlerNBTInventory implements IContainerHandler
 {

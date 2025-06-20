@@ -1,5 +1,10 @@
 package dev.smto.constructionwand.client;
 
+import dev.smto.constructionwand.ConstructionWandClient;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.client.screen.ScreenWand;
+import dev.smto.constructionwand.items.wand.WandItem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -12,7 +17,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import dev.smto.constructionwand.ConstructionWandClient;
 import dev.smto.constructionwand.basics.WandUtil;
@@ -39,17 +43,15 @@ public class ClientEvents
 
         // Sneak+(OPT)+Left click wand to change core
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            //ConstructionWand.LOGGER.warn(lastClickTime);
             if (client.world == null) return;
             if (lastClickTime + 5 > client.world.getTime()) return;
             if(client.options.attackKey.isPressed()) {
                 if(client.player == null || !canChangeMode(client.player)) return;
                 var target = MinecraftClient.getInstance().crosshairTarget;
                 if (target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                    ItemStack wand = client.player.getStackInHand(client.player.getActiveHand());
-                    if(!(wand.getItem() instanceof ItemWand)) return;
-
-                    WandOptions wandOptions = new WandOptions(wand);
+                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
+                    if(!(wand.getItem() instanceof WandItem)) return;
+                    WandOptions wandOptions = WandOptions.of(wand);
                     wandOptions.cores.next();
                     ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.cores, true));
                     lastClickTime = client.world.getTime();
@@ -58,7 +60,7 @@ public class ClientEvents
             // menu key, if bound
             if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
                 if (ConstructionWandClient.optionalMenuKey.isPressed() && client.player != null) {
-                    ItemStack wand = client.player.getStackInHand(client.player.getActiveHand());
+                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
                     if(!(wand.getItem() instanceof WandItem)) return;
                     if (client.currentScreen != null) return;
                     client.setScreen(new ScreenWand(wand));
@@ -70,9 +72,9 @@ public class ClientEvents
         UseItemCallback.EVENT.register((PlayerEntity player, World world, Hand hand) -> {
             if(!world.isClient) return TypedActionResult.pass(player.getStackInHand(hand));
             var target = MinecraftClient.getInstance().crosshairTarget;
-            if (guiKeyCombDown(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                ItemStack wand = player.getStackInHand(player.getActiveHand());
-                if(!(wand.getItem() instanceof ItemWand)) return TypedActionResult.pass(wand);
+            if (canOpenGui(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
+                ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
+                if(!(wand.getItem() instanceof WandItem)) return ActionResult.PASS;
                 MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
                 return TypedActionResult.fail(wand);
             }
@@ -88,7 +90,7 @@ public class ClientEvents
         ItemStack wand = WandUtil.holdingWand(client.player);
         if(wand == null) return false;
 
-        WandOptions wandOptions = new WandOptions(wand);
+        WandOptions wandOptions = WandOptions.of(wand);
         wandOptions.lock.next(scrollDelta < 0);
         ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.lock, true));
 

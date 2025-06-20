@@ -1,4 +1,4 @@
-package dev.smto.constructionwand.items.core;
+package dev.smto.constructionwand.integrations.polymer.item;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandAction;
@@ -7,10 +7,10 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
-public class AngelCoreItem extends CoreItem
+public class PolymerAngelCoreItem extends PolymerCoreItem
 {
-    public ItemCoreAngel() {
-        super(new Item.Settings().maxCount(1));
+    public PolymerAngelCoreItem(RegistryKey<Item> id) {
+        super(id, new Settings().maxCount(1));
     }
 
     @Override

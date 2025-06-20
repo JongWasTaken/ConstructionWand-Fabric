@@ -1,5 +1,13 @@
 package dev.smto.constructionwand.wand.supplier;
 
+import dev.smto.constructionwand.api.IWandSupplier;
+import dev.smto.constructionwand.basics.ReplacementRegistry;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.basics.pool.IPool;
+import dev.smto.constructionwand.basics.pool.OrderedPool;
+import dev.smto.constructionwand.containers.ContainerManager;
+import dev.smto.constructionwand.wand.undo.PlaceSnapshot;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -11,14 +19,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.api.IWandSupplier;
-import dev.smto.constructionwand.basics.ReplacementRegistry;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.basics.pool.IPool;
-import dev.smto.constructionwand.basics.pool.OrderedPool;
-import dev.smto.constructionwand.containers.ContainerManager;
-import dev.smto.constructionwand.wand.undo.PlaceSnapshot;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

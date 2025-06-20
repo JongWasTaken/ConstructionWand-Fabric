@@ -1,5 +1,7 @@
 package dev.smto.constructionwand;
 
+import dev.smto.constructionwand.client.ClientEvents;
+import dev.smto.constructionwand.client.Network;
 import dev.smto.simpleconfig.ConfigLoggers;
 import dev.smto.simpleconfig.SimpleConfig;
 import dev.smto.simpleconfig.api.ConfigAnnotations;
@@ -10,9 +12,8 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
-import pw.smto.constructionwand.client.ClientEvents;
-import pw.smto.constructionwand.client.Network;
+import dev.smto.constructionwand.client.ClientEvents;
+import dev.smto.constructionwand.client.Network;
 
 @Environment(EnvType.CLIENT)
 public class ConstructionWandClient implements ClientModInitializer {

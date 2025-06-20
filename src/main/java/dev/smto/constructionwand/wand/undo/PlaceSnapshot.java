@@ -2,6 +2,10 @@ package dev.smto.constructionwand.wand.undo;
 
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.wand.WandItemUseContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,10 +17,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.integrations.ModCompat;
-import dev.smto.constructionwand.wand.WandItemUseContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class PlaceSnapshot implements ISnapshot
         boolean giveBackIncludedItem = true;
         // dont bother on the client side, CopycatBlock.getBlockEntity() behaves weirdly there
         if (!world.isClient) {
-            if (ModCompat.CREATE) {
+            if (ModCompat.create) {
                 //if (supportingBlock.getBlock() instanceof CopycatBlock b) {
                 //    var be = b.getBlockEntity(world, pos.offset(rayTraceResult.getSide().getOpposite()));
                 //    includedItem = be.getConsumedItem();

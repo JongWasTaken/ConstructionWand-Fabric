@@ -1,5 +1,7 @@
 package dev.smto.constructionwand.items.core;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandCore;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -7,8 +9,6 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.api.IWandCore;
 
 import java.util.function.Consumer;
 

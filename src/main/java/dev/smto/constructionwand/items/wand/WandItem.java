@@ -1,5 +1,12 @@
 package dev.smto.constructionwand.items.wand;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandCore;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.IOption;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.wand.WandJob;
+import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,22 +24,20 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import pw.smto.constructionwand.ConstructionWand;
-import pw.smto.constructionwand.api.IWandCore;
-import pw.smto.constructionwand.basics.WandUtil;
-import pw.smto.constructionwand.basics.option.IOption;
-import pw.smto.constructionwand.basics.option.WandOptions;
-import pw.smto.constructionwand.wand.WandJob;
-import pw.smto.constructionwand.wand.undo.UndoHistory;
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandCore;
+import dev.smto.constructionwand.basics.WandUtil;
+import dev.smto.constructionwand.basics.option.IOption;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.wand.WandJob;
+import dev.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.function.Consumer;
 
 public abstract class WandItem extends Item
 {
-    public final RegistryKey<Item> registryKey;
-    public WandItem(RegistryKey<Item> id, Item.Settings properties) {
-        super(properties.registryKey(id));
-        this.registryKey = id;
+    public WandItem(Item.Settings properties) {
+        super(properties);
     }
 
     @NotNull

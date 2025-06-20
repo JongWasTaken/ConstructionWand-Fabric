@@ -3,10 +3,16 @@ package dev.smto.constructionwand.basics;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 //import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.containers.ContainerManager;
+import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.items.wand.WandItem;
+import dev.smto.constructionwand.wand.WandItemUseContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.ComponentChanges;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ContainerComponent;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,6 +20,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
@@ -26,11 +33,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.containers.ContainerManager;
-import dev.smto.constructionwand.integrations.ModCompat;
-import dev.smto.constructionwand.items.wand.WandItem;
-import dev.smto.constructionwand.wand.WandItemUseContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,12 +64,39 @@ public class WandUtil
         return stackEquals(stackA, stackB);
     }
 
-    public static ItemStack holdingWand(PlayerEntity player) {
-        if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.MAIN_HAND).getItem() instanceof WandItem) {
-            return player.getStackInHand(Hand.MAIN_HAND);
+
+    public static ItemStack convertPolymerStack(ItemStack stack) {
+        if (stack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
+            var nbt = Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
+            if (nbt.contains("$polymer:stack")) {
+                nbt = nbt.getCompound("$polymer:stack").orElse(new NbtCompound());
+                if (nbt.contains("id")) {
+                    Identifier id = Identifier.tryParse(nbt.getString("id").orElse(""));
+                    if (id != null) {
+                        Item item = Registries.ITEM.get(id);
+                        if (item != null) {
+                            ItemStack newStack = item.getDefaultStack();
+                            try {
+                                nbt = nbt.getCompound("components").orElse(new NbtCompound()).getCompound("minecraft:custom_data").orElse(new NbtCompound());
+                            } catch (Exception ignored) {}
+                            newStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
+                            return newStack;
+                        }
+                    }
+                }
+            }
         }
-        else if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY && player.getStackInHand(Hand.OFF_HAND).getItem() instanceof WandItem) {
-            return player.getStackInHand(Hand.OFF_HAND);
+        return stack;
+    }
+
+    public static ItemStack holdingWand(PlayerEntity player) {
+        if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY) {
+            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
+            if (stack.getItem() instanceof WandItem) return stack;
+        }
+        if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY) {
+            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
+            if (stack.getItem() instanceof WandItem) return stack;
         }
         return null;
     }
@@ -142,7 +171,7 @@ public class WandUtil
 
         if (includedItem != null) {
             // Create Copycats compat
-            if (ModCompat.CREATE) {
+            if (ModCompat.create) {
                 //if (block.getBlock() instanceof CopycatBlock c) {
                 //    var cEnt = c.getBlockEntity(world, pos);
                 //    if (cEnt != null) {
@@ -168,7 +197,7 @@ public class WandUtil
 
             if (ent != null) {
                 hasEntity = true;
-                if (ModCompat.CREATE) {
+                if (ModCompat.create) {
                     //if (ent instanceof CopycatBlockEntity) {
                     //    hasEntity = false;
                     //}

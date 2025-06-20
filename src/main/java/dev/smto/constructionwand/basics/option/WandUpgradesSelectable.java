@@ -1,7 +1,7 @@
 package dev.smto.constructionwand.basics.option;
 
-import net.minecraft.nbt.NbtCompound;
 import dev.smto.constructionwand.api.IWandUpgrade;
+import net.minecraft.nbt.NbtCompound;
 
 public class WandUpgradesSelectable<T extends IWandUpgrade> extends WandUpgrades<T> implements IOption<T>
 {

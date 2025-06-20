@@ -1,5 +1,12 @@
 package dev.smto.constructionwand;
 
+import dev.smto.constructionwand.api.ModRegistry;
+import dev.smto.constructionwand.api.WandConfigEntry;
+import dev.smto.constructionwand.basics.ReplacementRegistry;
+import dev.smto.constructionwand.containers.ContainerManager;
+import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.polymer.PolymerRegistry;
+import dev.smto.constructionwand.wand.undo.UndoHistory;
 import dev.smto.simpleconfig.ConfigLoggers;
 import dev.smto.simpleconfig.SimpleConfig;
 import dev.smto.simpleconfig.api.ConfigAnnotations;
@@ -16,11 +23,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import dev.smto.constructionwand.api.WandConfigEntry;
-import dev.smto.constructionwand.basics.ReplacementRegistry;
-import dev.smto.constructionwand.containers.ContainerManager;
-import dev.smto.constructionwand.integrations.ModCompat;
-import dev.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +33,7 @@ public class ConstructionWand implements ModInitializer
 {
     public static final String MOD_ID = "constructionwand";
     public static final Logger LOGGER = LogManager.getLogger();
+    private static ModRegistry REGISTRY;
 
     public static SimpleConfig configManager = null;
 
@@ -50,21 +53,28 @@ public class ConstructionWand implements ModInitializer
         return Identifier.of(MOD_ID, name);
     }
 
+    public static ModRegistry getRegistry() {
+        return REGISTRY;
+    }
+
     @Override
     public void onInitialize() {
         ensureConfigManager();
-        LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
-        Registry.registerAll();
-        try {
-            WAND_CONFIG_MAP.put(Registry.Items.STONE_WAND, Config.class.getField("stoneWand"));
-            WAND_CONFIG_MAP.put(Registry.Items.IRON_WAND, Config.class.getField("ironWand"));
-            WAND_CONFIG_MAP.put(Registry.Items.DIAMOND_WAND, Config.class.getField("diamondWand"));
-            WAND_CONFIG_MAP.put(Registry.Items.INFINITY_WAND, Config.class.getField("infinityWand"));
-        } catch (Throwable ignored) {}
         Network.init();
+        ModCompat.checkForMods();
+        if (ModCompat.polymerEnabled) {
+            REGISTRY = new PolymerRegistry();
+        } else REGISTRY = new DefaultRegistry();
+        LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
+        REGISTRY.registerAll();
+        try {
+            WAND_CONFIG_MAP.put(REGISTRY.getStoneWand(), Config.class.getField("stoneWand"));
+            WAND_CONFIG_MAP.put(REGISTRY.getIronWand(), Config.class.getField("ironWand"));
+            WAND_CONFIG_MAP.put(REGISTRY.getDiamondWand(), Config.class.getField("diamondWand"));
+            WAND_CONFIG_MAP.put(REGISTRY.getInfinityWand(), Config.class.getField("infinityWand"));
+        } catch (Throwable ignored) {}
         ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> {
             ReplacementRegistry.init();
-            ModCompat.checkForMods();
             ContainerManager.init();
         });
         ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer server) -> UndoHistory.removePlayerEntity(handler.player));
