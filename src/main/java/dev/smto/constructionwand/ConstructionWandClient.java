@@ -51,7 +51,7 @@ public class ConstructionWandClient implements ClientModInitializer {
     }
 
     public static class Config {
-        @ConfigAnnotations.Section(section = "Client config")
+        @ConfigAnnotations.Header(header = "ConstructionWand client config")
         @ConfigAnnotations.Comment(comment = "Press SNEAK+OPTKEY instead of SNEAK for opening wand GUI")
         public static boolean requireOptKeyForMenu = false;
         @ConfigAnnotations.Comment(comment = "Press SNEAK+OPTKEY instead of SNEAK for changing wand mode/direction lock")

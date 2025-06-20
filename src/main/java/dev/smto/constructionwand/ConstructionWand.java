@@ -71,6 +71,7 @@ public class ConstructionWand implements ModInitializer
     }
 
     public static class Config {
+        @ConfigAnnotations.Header(header = "ConstructionWand common config")
         @ConfigAnnotations.Section(section = "General settings")
         @ConfigAnnotations.Comment(comment = "Maximum placement range (0: unlimited). Affects all wands and is meant for lag prevention, not game balancing.")
         public static int maxRange = 100;
@@ -111,7 +112,7 @@ public class ConstructionWand implements ModInitializer
         @ConfigAnnotations.Comment(comment = "Settings for the diamond wand")
         public static WandConfigEntry diamondWand = new WandConfigEntry(true, 1561, 128, 8, 25);
 
-        @ConfigAnnotations.Comment(comment = "Settings for the infinity wand")
+        @ConfigAnnotations.Comment(comment = "Settings for the infinity wand (durability ignored)")
         public static WandConfigEntry infinityWand = new WandConfigEntry(true, -1, 1024, 16, 81);
 
 
