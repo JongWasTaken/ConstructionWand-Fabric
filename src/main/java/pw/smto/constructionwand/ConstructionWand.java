@@ -3,9 +3,12 @@ package pw.smto.constructionwand;
 import dev.smto.simpleconfig.ConfigLoggers;
 import dev.smto.simpleconfig.SimpleConfig;
 import dev.smto.simpleconfig.api.ConfigAnnotations;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
@@ -28,12 +31,12 @@ public class ConstructionWand implements ModInitializer
 {
     public static final String MOD_ID = "constructionwand";
     public static final Logger LOGGER = LogManager.getLogger();
-    public static final SimpleConfig CONFIG_MANAGER = new SimpleConfig(
+    public static SimpleConfig configManager = new SimpleConfig(
             FabricLoader.getInstance().getConfigDir().resolve("construction_wand.conf"),
             Config.class,
             ConfigLoggers.create(LOGGER::debug, LOGGER::info, LOGGER::warn, LOGGER::error),
             Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Identifier.CODEC.listOf())
-    );
+    );;
 
     public static final Map<Item, WandConfigEntry> WAND_CONFIG_MAP = new HashMap<>();
 
