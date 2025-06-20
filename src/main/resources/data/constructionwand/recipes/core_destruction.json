@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " #X",
+    "#O#",
+    "X# "
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:diamond_block"
+    },
+    "X": {
+      "item": "minecraft:diamond_pickaxe"
+    },
+    "#": {
+      "tag": "c:glass_panes"
+    }
+  },
+  "result": {
+    "item": "constructionwand:core_destruction"
+  }
+}
