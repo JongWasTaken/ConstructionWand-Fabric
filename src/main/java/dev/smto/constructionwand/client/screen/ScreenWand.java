@@ -1,5 +1,6 @@
 package dev.smto.constructionwand.client.screen;
 
+import dev.smto.constructionwand.ConstructionWandClient;
 import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -69,6 +70,19 @@ public class ScreenWand extends Screen {
         ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(option, true));
         button.setMessage(getButtonLabel(option));
         button.setTooltip(getButtonTooltip(option));
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
+            if (ConstructionWandClient.optionalMenuKey.matchesKey(keyCode, scanCode)) {
+                this.close();
+                ConstructionWandClient.optionalMenuKey.setPressed(false);
+                return true;
+            }
+        }
+
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private int getX(int n) {

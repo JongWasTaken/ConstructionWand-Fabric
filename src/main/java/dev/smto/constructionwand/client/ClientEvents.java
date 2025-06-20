@@ -55,10 +55,13 @@ public class ClientEvents
             // menu key, if bound
             if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
                 if (ConstructionWandClient.optionalMenuKey.isPressed() && client.player != null) {
-                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
-                    if(!(wand.getItem() instanceof WandItem)) return;
-                    if (client.currentScreen != null) return;
-                    client.setScreen(new ScreenWand(wand));
+                    if (client.currentScreen == null) {
+                        ConstructionWandClient.optionalMenuKey.setPressed(false);
+                        ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
+                        if(!(wand.getItem() instanceof WandItem)) return;
+                        if (client.currentScreen != null) return;
+                        client.setScreen(new ScreenWand(wand));
+                    }
                 }
             }
         });
