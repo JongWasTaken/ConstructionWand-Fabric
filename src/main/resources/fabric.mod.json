@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
-	"id": "constructionwand",
+	"id": "constructionwand-polymer",
 	"version": "${version}",
-	"name": "Construction Wand (Fabric)",
-	"description": "Construction Wands make building easier!\n\nWith a Construction Wand you can place multiple blocks (up to 1024) at once, extending your build on the side you're\nfacing. If that's not enough: you can upgrade your wand with additional cores, allowing you to place a block\nbehind the block you are facing, conjure blocks in mid air or destroy lots of blocks very fast.\n\nThis is a fabric port of Theta-Dev's original minecraft mod. May the odds continue to be in your favor.",
+	"name": "Construction Wand (Fabric) PolymerEnabler",
+	"description": "Addon for the fabric port of Construction Wand.\nEnables the use of Polymer for server-side modpacks.",
 	"authors": [
 		"JongWasTaken",
 		"Theta-Dev"
@@ -16,39 +16,18 @@
 	"license": "MIT",
 	"icon": "logo.png",
 	"environment": "*",
-	"mixins": [
-		"constructionwand.mixins.json",
-		{
-			"config": "constructionwand.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"entrypoints": {
 		"main": [
-          	"dev.smto.constructionwand.ConstructionWand"
-		],
-		"client": [
-			"dev.smto.constructionwand.ConstructionWandClient"
-		],
-		"emi": [
-			"dev.smto.constructionwand.integrations.recipe.ConstructionWandEmiPlugin"
-		],
-		"modmenu": [
-			"dev.smto.constructionwand.client.screen.ModMenuIntegration"
-		],
-		"rei_client": [
-			"dev.smto.constructionwand.integrations.recipe.ConstructionWandReiPlugin"
+          	"dev.smto.constructionwandpolymer.Entrypoint"
 		]
 	},
-	"accessWidener" : "constructionwand.accesswidener",
 	"depends": {
-		"fabricloader": ">=${loader_version}",
-		"minecraft": "~${minecraft_version}",
+		"fabricloader": "*",
+		"minecraft": "*",
 		"java": ">=21",
-		"fabric-api": ">=${fabric_version}",
-		"fabric-key-binding-api-v1": "*"
-	},
-	"suggests": {
-		"roughly-enough-items": "${rei_version}"
+		"constructionwand": ">=2.0.0",
+		"polymer-core": "*",
+		"polymer-resource-pack": "*",
+		"sgui": "*"
 	}
 }

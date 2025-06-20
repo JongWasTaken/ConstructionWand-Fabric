@@ -1,7 +1,0 @@
-{
-  "type": "constructionwand:wand_upgrade",
-  "ingredients": [
-    "#constructionwand:wands",
-    "#constructionwand:cores"
-  ]
-}

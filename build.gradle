@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = project.mod_version + "+" + project.minecraft_version
+version = project.mod_version
 group = project.maven_group
 
 base {
@@ -45,10 +45,8 @@ repositories {
 }
 
 loom {
-    //splitEnvironmentSourceSets()
-	accessWidenerPath = file("src/main/resources/constructionwand.accesswidener")
 	mods {
-		"constructionwand" {
+		"constructionwandpolymer" {
 			sourceSet sourceSets.main
 		}
 	}
@@ -59,19 +57,12 @@ dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	include implementation("dev.smto:simpleconfig:2.4.0")
-	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// recipe viewers
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${project.rei_version}"
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
-	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
-
 	// polymer stuff
-	modCompileOnly "eu.pb4:polymer-core:${project.polymer_version}"
-	modCompileOnly "eu.pb4:polymer-resource-pack:${project.polymer_version}"
-	modCompileOnly "eu.pb4:sgui:${project.sgui_version}"
+	include modImplementation("eu.pb4:polymer-core:${project.polymer_version}")
+	include modImplementation("eu.pb4:polymer-resource-pack:${project.polymer_version}")
+	include modImplementation("eu.pb4:sgui:${project.sgui_version}")
 }
 
 processResources {
@@ -79,11 +70,7 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand(Map<String, Object>.of(
-				"version", project.version.toString().split("\\+")[0],
-				"loader_version", loader_version,
-				"minecraft_version", minecraft_version,
-				"fabric_version", fabric_version.toString().split("\\+")[0],
-				"rei_version", rei_version
+				"version", project.version
 		))
 	}
 }
