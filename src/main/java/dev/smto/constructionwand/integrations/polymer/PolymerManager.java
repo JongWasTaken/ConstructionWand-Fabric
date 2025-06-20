@@ -50,7 +50,7 @@ public class PolymerManager {
             context.server().execute(() -> {
                 ServerPlayerEntity player = context.player();
                 if(player == null) return;
-                ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player);
+                ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player.getName().getLiteralString());
                 PLAYERS_WITH_CLIENT.add(player.getUuid());
             });
         });
