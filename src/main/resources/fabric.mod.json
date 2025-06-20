@@ -25,26 +25,26 @@
 	],
 	"entrypoints": {
 		"main": [
-          "pw.smto.constructionwand.ConstructionWand"
+          	"dev.smto.constructionwand.ConstructionWand"
 		],
 		"client": [
-			"pw.smto.constructionwand.ConstructionWandClient"
+			"dev.smto.constructionwand.ConstructionWandClient"
 		],
 		"emi": [
-			"pw.smto.constructionwand.integrations.recipe.ConstructionWandEmiPlugin"
+			"dev.smto.constructionwand.integrations.recipe.ConstructionWandEmiPlugin"
 		],
 		"modmenu": [
-			"pw.smto.constructionwand.client.screen.ModMenuIntegration"
+			"dev.smto.constructionwand.client.screen.ModMenuIntegration"
 		],
 		"rei_client": [
-			"pw.smto.constructionwand.integrations.recipe.ConstructionWandReiPlugin"
+			"dev.smto.constructionwand.integrations.recipe.ConstructionWandReiPlugin"
 		]
 	},
 	"accessWidener" : "constructionwand.accesswidener",
 	"depends": {
 		"fabricloader": ">=${loader_version}",
 		"minecraft": "~${minecraft_version}",
-		"java": ">=17",
+		"java": ">=21",
 		"fabric-api": ">=${fabric_version}",
 		"fabric-key-binding-api-v1": "*"
 	},
