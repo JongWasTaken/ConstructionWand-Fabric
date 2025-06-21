@@ -2,6 +2,7 @@ package dev.smto.constructionwand.containers.handlers;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IContainerHandler;
+import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandlerSlot;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,7 +29,8 @@ public class HandlerSophisticatedBackpack implements IContainerHandler {
                 }
             });
         } catch (Throwable ignored) {
-            ConstructionWand.LOGGER.error("Failed to count items in sophisticated backpack of player {}!", player.getGameProfile().getName());
+            //ConstructionWand.LOGGER.warn(ignored.getMessage());
+            //ConstructionWand.LOGGER.error("Failed to count items in sophisticated backpack of player {}!", player.getGameProfile().getName());
         }
         return count.get();
     }
