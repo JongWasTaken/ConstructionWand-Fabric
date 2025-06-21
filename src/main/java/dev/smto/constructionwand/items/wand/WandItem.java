@@ -68,7 +68,7 @@ public abstract class WandItem extends Item
             // Right click: Place angel block
             WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
-            ConstructionWand.LOGGER.warn("Job: {}", job);
+            //ConstructionWand.LOGGER.warn("Job: {}", job);
             return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
         }
         return ActionResult.FAIL;
