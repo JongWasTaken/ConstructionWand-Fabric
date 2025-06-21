@@ -24,13 +24,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.api.IWandCore;
-import dev.smto.constructionwand.basics.WandUtil;
-import dev.smto.constructionwand.basics.option.IOption;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.wand.WandJob;
-import dev.smto.constructionwand.wand.undo.UndoHistory;
 
 import java.util.function.Consumer;
 
@@ -73,7 +66,7 @@ public abstract class WandItem extends Item
             // Right click: Place angel block
             WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
-            ConstructionWand.LOGGER.warn("Job: {}", job);
+            //ConstructionWand.LOGGER.warn("Job: {}", job);
             return job.run() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
         }
         return TypedActionResult.fail(wand);
