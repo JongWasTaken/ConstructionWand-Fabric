@@ -1,6 +1,6 @@
 # Construction Wand for Fabric
 
-This is an unofficial port of [ConstructionWand](https://github.com/Theta-Dev/ConstructionWand) by Theta-Dev for Minecraft 1.21+.  
+This is an unofficial port of [ConstructionWand](https://github.com/Theta-Dev/ConstructionWand) by Theta-Dev for Minecraft Fabric 1.20.1 as well as the newest current version (1.21+).  
   
 Version 2.0.0 introduces breaking changes:  
 - Config file format changed

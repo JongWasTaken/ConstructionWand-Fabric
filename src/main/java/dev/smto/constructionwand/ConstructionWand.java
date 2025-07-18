@@ -1,5 +1,6 @@
 package dev.smto.constructionwand;
 
+import com.mojang.serialization.Codec;
 import dev.smto.constructionwand.api.ModRegistry;
 import dev.smto.constructionwand.api.WandConfigEntry;
 import dev.smto.constructionwand.basics.ReplacementRegistry;
@@ -41,7 +42,7 @@ public class ConstructionWand implements ModInitializer
                 FabricLoader.getInstance().getConfigDir().resolve("construction_wand.conf"),
                 Config.class,
                 ConfigLoggers.create(LOGGER::debug, LOGGER::info, LOGGER::warn, LOGGER::error),
-                Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Identifier.CODEC.listOf())
+                Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Codec.STRING.listOf())
         );
     }
 
