@@ -13,6 +13,5 @@ public class MouseMixin {
         if (!dev.smto.constructionwand.client.ClientEvents.onScroll(scrollAmount)) {
             instance.scrollInHotbar(scrollAmount);
         }
-        return this.client.player.getInventory().getSelectedSlot();
     }
 }

@@ -9,8 +9,8 @@ import net.minecraft.util.Identifier;
 
 public class DestructionCoreItem extends CoreItem
 {
-    public DestructionCoreItem(RegistryKey<Item> id) {
-        super(id, new Item.Settings().maxCount(1));
+    public DestructionCoreItem() {
+        super(new Item.Settings().maxCount(1));
     }
 
     @Override

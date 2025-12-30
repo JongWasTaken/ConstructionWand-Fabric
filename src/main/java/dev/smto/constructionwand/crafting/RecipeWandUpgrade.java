@@ -1,29 +1,27 @@
 package dev.smto.constructionwand.crafting;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandUpgrade;
 import dev.smto.constructionwand.api.WandConfigEntry;
+import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.items.wand.WandItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.IngredientPlacement;
 import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.recipe.input.CraftingRecipeInput;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.Registry;
-import dev.smto.constructionwand.api.IWandUpgrade;
-import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.items.wand.WandItem;
-
-import java.util.List;
 
 public class RecipeWandUpgrade extends ShapelessRecipe
 {
@@ -93,7 +91,7 @@ public class RecipeWandUpgrade extends ShapelessRecipe
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return Registry.RecipeSerializers.WAND_UPGRADE;
+        return ConstructionWand.getRegistry().getRecipeSerializer();
     }
 
     public static class Serializer implements RecipeSerializer<RecipeWandUpgrade> {

@@ -50,8 +50,14 @@ public class WandOptions
 
     public final IOption<?>[] allOptions;
 
+    public final ItemStack stack;
 
-    public WandOptions(ItemStack wandStack) {
+    public static WandOptions of(ItemStack wandStack) {
+        return new WandOptions(wandStack);
+    }
+
+    private WandOptions(ItemStack wandStack) {
+        stack = wandStack;
         //tag = wandStack.getOrCreateSubNbt(TAG_ROOT);
         tag = wandStack.getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
 
@@ -101,7 +107,7 @@ public class WandOptions
         return false;
     }
 
-    public void writeToStack(ItemStack item) {
-        item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
+    public void writeToStack() {
+        this.stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
     }
 }

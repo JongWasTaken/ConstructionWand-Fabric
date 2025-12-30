@@ -1,7 +1,9 @@
 package dev.smto.constructionwand;
 
+import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.client.ClientEvents;
 import dev.smto.constructionwand.client.Network;
+import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.simpleconfig.ConfigLoggers;
 import dev.smto.simpleconfig.SimpleConfig;
 import dev.smto.simpleconfig.api.ConfigAnnotations;
@@ -9,11 +11,13 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import dev.smto.constructionwand.client.ClientEvents;
-import dev.smto.constructionwand.client.Network;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 @Environment(EnvType.CLIENT)
 public class ConstructionWandClient implements ClientModInitializer {
@@ -28,19 +32,19 @@ public class ConstructionWandClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        for(Item item : WANDS) {
+        for(Item item : ConstructionWand.WAND_CONFIG_MAP.keySet()) {
             ModelPredicateProviderRegistry.register(
                     item, ConstructionWand.id("using_core"),
                     (stack, world, entity, seed) -> {
-                        if (entity == null || !(stack.getItem() instanceof ItemWand)) return 0;
-                        return new WandOptions(stack).cores.get().getColor() != -1 ? 1 : 0;
+                        if (entity == null || !(stack.getItem() instanceof WandItem)) return 0;
+                        return WandOptions.of(stack).cores.get().getColor() != -1 ? 1 : 0;
                     }
             );
             ColorProviderRegistry.ITEM.register((ItemStack stack, int layer) -> {
                 // No clue what changed from 1.20.1 to 1.21, but colors work different now.
                 // I used this site for conversion: https://argb-int-calculator.netlify.app/
-                if (layer == 1 && stack.getItem() instanceof ItemWand) {
-                    return new WandOptions(stack).cores.get().getColor();
+                if (layer == 1 && stack.getItem() instanceof WandItem) {
+                    return WandOptions.of(stack).cores.get().getColor();
                 } else return -1;
             }, item);
         }

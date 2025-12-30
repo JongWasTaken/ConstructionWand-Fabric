@@ -2,21 +2,18 @@ package dev.smto.constructionwand.items.core;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandCore;
-import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 public abstract class CoreItem extends Item implements IWandCore
 {
-    public final RegistryKey<Item> registryKey;
 
-    public CoreItem(RegistryKey<Item> id, Item.Settings properties) {
+    public CoreItem(Item.Settings properties) {
         super(properties);
     }
 

@@ -1,7 +1,6 @@
 package dev.smto.constructionwand.integrations;
 
 import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class ModCompat {
@@ -24,7 +23,6 @@ public class ModCompat {
         botania = FabricLoader.getInstance().isModLoaded("botania");
         polymerEnabled = FabricLoader.getInstance().isModLoaded(ConstructionWand.MOD_ID + "-polymer");
 
-        if (polymerEnabled) PolymerManager.init();
         checked = true;
     }
 

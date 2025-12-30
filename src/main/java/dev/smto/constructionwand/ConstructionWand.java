@@ -1,21 +1,18 @@
 package dev.smto.constructionwand;
 
+import com.mojang.serialization.Codec;
 import dev.smto.constructionwand.api.ModRegistry;
 import dev.smto.constructionwand.api.WandConfigEntry;
 import dev.smto.constructionwand.basics.ReplacementRegistry;
 import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.integrations.ModCompat;
-import dev.smto.constructionwand.integrations.polymer.PolymerRegistry;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
 import dev.smto.simpleconfig.ConfigLoggers;
 import dev.smto.simpleconfig.SimpleConfig;
 import dev.smto.simpleconfig.api.ConfigAnnotations;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
@@ -24,6 +21,7 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +41,7 @@ public class ConstructionWand implements ModInitializer
                 FabricLoader.getInstance().getConfigDir().resolve("construction_wand.conf"),
                 Config.class,
                 ConfigLoggers.create(LOGGER::debug, LOGGER::info, LOGGER::warn, LOGGER::error),
-                Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Identifier.CODEC.listOf())
+                Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Codec.STRING.listOf())
         );
     }
 
@@ -62,9 +60,7 @@ public class ConstructionWand implements ModInitializer
         ensureConfigManager();
         Network.init();
         ModCompat.checkForMods();
-        if (ModCompat.polymerEnabled) {
-            REGISTRY = new PolymerRegistry();
-        } else REGISTRY = new DefaultRegistry();
+        REGISTRY = new DefaultRegistry();
         LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
         REGISTRY.registerAll();
         try {

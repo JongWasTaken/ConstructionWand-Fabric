@@ -64,38 +64,18 @@ public class WandUtil
         return stackEquals(stackA, stackB);
     }
 
-
-    public static ItemStack convertPolymerStack(ItemStack stack) {
-        if (stack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
-            var nbt = Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
-            if (nbt.contains("$polymer:stack")) {
-                nbt = nbt.getCompound("$polymer:stack").orElse(new NbtCompound());
-                if (nbt.contains("id")) {
-                    Identifier id = Identifier.tryParse(nbt.getString("id").orElse(""));
-                    if (id != null) {
-                        Item item = Registries.ITEM.get(id);
-                        if (item != null) {
-                            ItemStack newStack = item.getDefaultStack();
-                            try {
-                                nbt = nbt.getCompound("components").orElse(new NbtCompound()).getCompound("minecraft:custom_data").orElse(new NbtCompound());
-                            } catch (Exception ignored) {}
-                            newStack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt));
-                            return newStack;
-                        }
-                    }
-                }
-            }
-        }
+    public static ItemStack unusedGetStackHook(ItemStack stack) {
+        // this was used for polymer before, but is now unused
         return stack;
     }
 
     public static ItemStack holdingWand(PlayerEntity player) {
         if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
+            ItemStack stack = unusedGetStackHook(player.getStackInHand(Hand.MAIN_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
         if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
+            ItemStack stack = unusedGetStackHook(player.getStackInHand(Hand.OFF_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
         return null;

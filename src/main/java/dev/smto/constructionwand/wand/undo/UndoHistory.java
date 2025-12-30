@@ -3,7 +3,6 @@ package dev.smto.constructionwand.wand.undo;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.Network;
 import dev.smto.constructionwand.integrations.ModCompat;
-import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -58,10 +57,7 @@ public class UndoHistory
     }
 
     public static boolean isUndoActive(PlayerEntity player) {
-        if (ModCompat.polymerEnabled) {
-            if (PolymerManager.hasClientMod(player)) return getEntryFromPlayerEntity(player).undoActive;
-            return player.isSneaking();
-        } else return getEntryFromPlayerEntity(player).undoActive;
+        return getEntryFromPlayerEntity(player).undoActive;
     }
 
     public static boolean undo(PlayerEntity player, World world, BlockPos pos) {
@@ -120,7 +116,9 @@ public class UndoHistory
                     if (snapshot.restore(world, player) && !player.isCreative()) {
                         for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
                             if (i == 0 || snapshot.shouldGiveBackIncludedItem()) {
-                                player.giveOrDropStack(snapshot.getRequiredItems().get(i));
+                                if (!player.giveItemStack(snapshot.getRequiredItems().get(i))) {
+                                    player.dropItem(snapshot.getRequiredItems().get(i), false);
+                                }
                             }
                         }
                     }

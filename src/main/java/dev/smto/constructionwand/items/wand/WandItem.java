@@ -10,22 +10,21 @@ import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 public abstract class WandItem extends Item
 {
@@ -79,7 +78,7 @@ public abstract class WandItem extends Item
     @Environment(EnvType.CLIENT)
     @Override
     public void appendTooltip(ItemStack itemstack, TooltipContext context, List<Text> lines, TooltipType type) {
-        WandOptions options = new WandOptions(itemstack);
+        WandOptions options = WandOptions.of(itemstack);
         int limit = options.cores.get().getWandAction().getLimit(itemstack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         // +SHIFT tooltip: show all options + installed cores

@@ -84,7 +84,7 @@ public class Network {
 
         public record S2CPing(boolean unused) implements CustomPayload {
             public static final CustomPayload.Id<S2CPing> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
-            public static final PacketCodec<RegistryByteBuf, S2CPing> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, S2CPing::unused, S2CPing::new);
+            public static final PacketCodec<RegistryByteBuf, S2CPing> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, S2CPing::unused, S2CPing::new);
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
                 return ID;
@@ -93,7 +93,7 @@ public class Network {
 
         public record C2SPong(boolean unused) implements CustomPayload {
             public static final CustomPayload.Id<C2SPong> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
-            public static final PacketCodec<RegistryByteBuf, C2SPong> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, C2SPong::unused, C2SPong::new);
+            public static final PacketCodec<RegistryByteBuf, C2SPong> CODEC = PacketCodec.tuple(PacketCodecs.BOOL, C2SPong::unused, C2SPong::new);
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
                 return ID;
@@ -104,7 +104,7 @@ public class Network {
             public static final CustomPayload.Id<S2CSyncModConfigPayload> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "mod_config"));
             public static final PacketCodec<RegistryByteBuf, S2CSyncModConfigPayload> CODEC = PacketCodec.tuple(
                     PacketCodecs.INTEGER.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::ints,
-                    PacketCodecs.BOOLEAN.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::booleans,
+                    PacketCodecs.BOOL.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::booleans,
                     PacketCodecs.STRING.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::similarBlocks,
                     PacketCodecs.STRING.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::blockEntityList,
                     WandConfigEntry.PACKET_CODEC.collect(PacketCodecs.toList()), S2CSyncModConfigPayload::wands,
@@ -187,8 +187,8 @@ public class Network {
                 if(option == null) return;
                 option.setValueString(payload.value);
 
-                if(payload.notify1) ItemWand.optionMessage(player, option);
-                options.writeToStack(wand);
+                if(payload.notify1) WandItem.optionMessage(player, option);
+                options.writeToStack();
                 player.getInventory().markDirty();
             });
         });
