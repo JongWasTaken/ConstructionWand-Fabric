@@ -4,15 +4,16 @@ import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.wand.WandJob;
 import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.state.OutlineRenderState;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
+import net.minecraft.util.math.ColorHelper;
+import net.minecraft.util.shape.VoxelShapes;
 
 import java.util.Set;
 
@@ -22,17 +23,17 @@ public class RenderBlockPreview
     public static Set<BlockPos> undoBlocks;
 
     public static boolean renderBlockHighlight(WorldRenderContext context, OutlineRenderState outlineRenderState) {
-        PlayerEntity player = context.gameRenderer().getClient().player;
+        ClientPlayerEntity player = context.gameRenderer().getClient().player;
         if(player == null) return true;
 
         var tickCounter = MinecraftClient.getInstance().getRenderTickCounter();
-        HitResult hitResult = context.gameRenderer().findCrosshairTarget(player, player.getBlockInteractionRange(), player.getEntityInteractionRange(), tickCounter.getTickProgress(true));
+        HitResult hitResult = player.getCrosshairTarget(tickCounter.getTickProgress(true), context.gameRenderer().getClient().getCameraEntity());
 
         BlockHitResult rtr = hitResult instanceof BlockHitResult ? (BlockHitResult) hitResult : null;
         if(rtr == null) return true;
 
         Set<BlockPos> blocks;
-        float colorR = 0, colorG = 0, colorB = 0;
+        int colorR = 0, colorG = 0, colorB = 0;
 
         ItemStack wand = WandUtil.holdingWand(player);
         if(wand == null) return true;
@@ -50,7 +51,7 @@ public class RenderBlockPreview
         }
         else {
             blocks = undoBlocks;
-            colorG = 1;
+            colorG = 255;
         }
 
         if(blocks == null || blocks.isEmpty()) return true;
@@ -60,13 +61,15 @@ public class RenderBlockPreview
         double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * tickCounter.getTickProgress(true);
 
         for(BlockPos block : blocks) {
-            VertexRendering.drawBox(
-                context.matrices().peek(),
-                context.consumers().getBuffer(RenderLayer.getLines()),
-                new Box(block).offset(-d0, -d1, -d2),
-                colorR, colorG, colorB, 0.4F
+            VertexRendering.drawOutline(
+                    context.matrices(),
+                    context.consumers().getBuffer(RenderLayers.lines()),
+                    VoxelShapes.fullCube(),
+                    block.getX() -d0, block.getY() -d1, block.getZ() -d2,
+                    ColorHelper.getArgb(colorR, colorG, colorB), 2F
             );
         }
+
         return false;
     }
 
