@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -73,16 +74,16 @@ public class ScreenWand extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyInput k) {
         if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
-            if (ConstructionWandClient.optionalMenuKey.matchesKey(keyCode, scanCode)) {
+            if (ConstructionWandClient.optionalMenuKey.matchesKey(k)) {
                 this.close();
                 ConstructionWandClient.optionalMenuKey.setPressed(false);
                 return true;
             }
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(k);
     }
 
     private int getX(int n) {

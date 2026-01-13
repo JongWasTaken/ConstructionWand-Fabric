@@ -70,8 +70,9 @@
 
   "tag.item.constructionwand.cores": "ConstructionWand Cores",
   "tag.item.constructionwand.wands": "ConstructionWand Wands",
+  "tag.item.constructionwand.breakable_wands": "ConstructionWand Breakable Wands",
 
-  "key.category.constructionwand": "Construction Wand",
+  "key.category.constructionwand.all": "Construction Wand",
   "key.constructionwand.opt_key": "Wand option key",
   "key.constructionwand.menu_key": "Open wand menu",
   "gui.constructionwand.settings": "Construction Wand Client Settings",

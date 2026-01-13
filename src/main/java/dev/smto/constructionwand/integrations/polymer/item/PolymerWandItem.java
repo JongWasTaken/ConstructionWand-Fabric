@@ -61,7 +61,7 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
         Hand hand = context.getHand();
         World world = context.getWorld();
 
-        if(world.isClient || player == null) return ActionResult.PASS;
+        if(world.isClient() || player == null) return ActionResult.PASS;
 
         ItemStack stack = player.getStackInHand(hand);
 
@@ -81,7 +81,7 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
         ItemStack offHandStack = player.getOffHandStack();
         ItemStack wand = player.getStackInHand(hand);
         if (wand.equals(offHandStack)) return ActionResult.FAIL;
-        if (world.isClient) return ActionResult.FAIL;
+        if (world.isClient()) return ActionResult.FAIL;
         if(!UndoHistory.isUndoActive(player)) {
             if (offHandStack.isEmpty()) return ActionResult.FAIL;
             // Right click: Place angel block

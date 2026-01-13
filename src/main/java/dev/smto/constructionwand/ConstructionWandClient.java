@@ -27,8 +27,9 @@ public class ConstructionWandClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Network.init();
-        optKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.opt_key", InputUtil.Type.KEYSYM, 341, "key.category.constructionwand"));
-        optionalMenuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.menu_key", InputUtil.Type.KEYSYM, 86, "key.category.constructionwand"));
+        var cat = KeyBinding.Category.create(ConstructionWand.id("all"));
+        optKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.opt_key", InputUtil.Type.KEYSYM, 341, cat));
+        optionalMenuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.menu_key", InputUtil.Type.KEYSYM, 86, cat));
 
         ClientEvents.init();
     }

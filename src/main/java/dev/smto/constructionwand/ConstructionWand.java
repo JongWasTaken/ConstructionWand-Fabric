@@ -1,6 +1,7 @@
 package dev.smto.constructionwand;
 
 import com.mojang.serialization.Codec;
+import dev.architectury.event.events.client.ClientLifecycleEvent;
 import dev.smto.constructionwand.api.ModRegistry;
 import dev.smto.constructionwand.api.WandConfigEntry;
 import dev.smto.constructionwand.basics.ReplacementRegistry;
@@ -12,7 +13,9 @@ import dev.smto.simpleconfig.ConfigLoggers;
 import dev.smto.simpleconfig.SimpleConfig;
 import dev.smto.simpleconfig.api.ConfigAnnotations;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
@@ -72,6 +75,7 @@ public class ConstructionWand implements ModInitializer
             WAND_CONFIG_MAP.put(REGISTRY.getDiamondWand(), Config.class.getField("diamondWand"));
             WAND_CONFIG_MAP.put(REGISTRY.getInfinityWand(), Config.class.getField("infinityWand"));
         } catch (Throwable ignored) {}
+
         ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> {
             ReplacementRegistry.init();
             ContainerManager.init();

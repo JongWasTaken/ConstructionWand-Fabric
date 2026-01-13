@@ -35,8 +35,8 @@ public class UndoHistory
     }
 
     public static void updateClient(PlayerEntity player, boolean ctrlDown) {
-        World world = player.getWorld();
-        if(world.isClient) return;
+        World world = player.getEntityWorld();
+        if(world.isClient()) return;
 
         // Set state of CTRL key
         PlayerEntityEntry playerEntry = getEntryFromPlayerEntity(player);

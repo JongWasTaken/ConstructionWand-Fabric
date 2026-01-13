@@ -62,7 +62,7 @@ public class PlaceSnapshot implements ISnapshot
         ItemStack includedItem = null;
         boolean giveBackIncludedItem = true;
         // dont bother on the client side, CopycatBlock.getBlockEntity() behaves weirdly there
-        if (!world.isClient) {
+        if (!world.isClient()) {
             if (ModCompat.create) {
                 //if (supportingBlock.getBlock() instanceof CopycatBlock b) {
                 //    var be = b.getBlockEntity(world, pos.offset(rayTraceResult.getSide().getOpposite()));

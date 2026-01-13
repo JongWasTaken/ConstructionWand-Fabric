@@ -9,7 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
@@ -68,7 +68,7 @@ public class ClientEvents
 
         // Sneak+(OPT)+Right click wand to open GUI
         UseItemCallback.EVENT.register((PlayerEntity player, World world, Hand hand) -> {
-            if(!world.isClient) return ActionResult.PASS;
+            if(!world.isClient()) return ActionResult.PASS;
             var target = MinecraftClient.getInstance().crosshairTarget;
             if (canOpenGui(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
                 ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
@@ -97,7 +97,7 @@ public class ClientEvents
 
     public static boolean isOptKeyDown() {
         // a bit hacky, but allows the user to use any key regardless of conflicts
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), ConstructionWandClient.optKey.boundKey.getCode());
+        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), ConstructionWandClient.optKey.boundKey.getCode());
     }
 
     public static boolean canChangeMode(PlayerEntity player) {
