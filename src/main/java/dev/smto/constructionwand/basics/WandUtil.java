@@ -5,7 +5,7 @@ import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.containers.ContainerManager;
-import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.WandItemUseContext;
 import net.minecraft.block.BlockState;
@@ -38,9 +38,21 @@ import java.util.function.Predicate;
 public class WandUtil
 {
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
-        if (stackA.hasNbt()) return false;
-        if (stackB.hasNbt()) return false;
+        if (stackIsInvalid(stackA)) return false;
+        if (stackIsInvalid(stackB)) return false;
         return ItemStack.areItemsEqual(stackA, stackB);
+    }
+
+    private static boolean stackIsInvalid(ItemStack stack) {
+        if (!stack.getComponentChanges().equals(ComponentChanges.EMPTY)) {
+            return true;
+        }
+        // fail if stack in question contains items (shulker box destruction prevention tm)
+        if (stack.contains(DataComponentTypes.CONTAINER)) {
+            if (!Objects.equals(stack.get(DataComponentTypes.CONTAINER), ContainerComponent.DEFAULT)) return true;
+        }
+
+        return false;
     }
 
     public static boolean stackEquals(ItemStack stackA, Item item) {
@@ -140,6 +152,10 @@ public class WandUtil
     }
 
     public static boolean placeBlock(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
+        if (ModCompat.shouldCancelBlockPlacement(world, player, block, pos, item, includedItem)) {
+            return false;
+        }
+
         if(!world.setBlockState(pos, block)) {
             ConstructionWand.LOGGER.info("Block could not be placed");
             return false;
@@ -155,18 +171,8 @@ public class WandUtil
         // Call OnBlockPlaced method
         block.getBlock().onPlaced(world, pos, block, player, stack);
 
-        if (includedItem != null) {
-            // Create Copycats compat
-            if (ModCompat.create) {
-                if (block.getBlock() instanceof CopycatBlock c) {
-                    var cEnt = c.getBlockEntity(world, pos);
-                    if (cEnt != null) {
-                        cEnt.setMaterial(((BlockItem)includedItem.getItem()).getBlock().getDefaultState());
-                        cEnt.setConsumedItem(includedItem);
-                    }
-                }
-            }
-        }
+        // Let mods do their thing
+        ModCompat.afterBlockPlacement(world, player, block, pos, item, includedItem);
 
         return true;
     }
@@ -177,18 +183,7 @@ public class WandUtil
         if(!world.canPlayerModifyAt(player, pos)) return false;
 
         if(!player.isCreative()) {
-            boolean hasEntity = false;
-
-            var ent = world.getBlockEntity(pos);
-
-            if (ent != null) {
-                hasEntity = true;
-                if (ModCompat.create) {
-                    if (ent instanceof CopycatBlockEntity) {
-                        hasEntity = false;
-                    }
-                }
-            }
+            boolean hasEntity = hasBlockEntity(world, pos);
 
             if(currentBlock.getHardness(world, pos) <= -1 || hasEntity) return false;
 
@@ -263,9 +258,19 @@ public class WandUtil
         if(!isPositionModifiable(world, player, pos)) return false;
 
         if(!player.isCreative()) {
-            return !(world.getBlockState(pos).getHardness(world, pos) <= -1) && world.getBlockEntity(pos) == null;
+            return !(world.getBlockState(pos).getHardness(world, pos) <= -1) && !hasBlockEntity(world, pos);
         }
         return true;
+    }
+
+    public static boolean hasBlockEntity(World world, BlockPos pos) {
+        var ent = world.getBlockEntity(pos);
+        boolean out = false;
+
+        if (ent != null) {
+            out = !ModCompat.allowBlockEntityRemoval(world, pos, ent);
+        }
+        return out;
     }
 
     public static boolean isBlockPermeable(World world, BlockPos pos) {

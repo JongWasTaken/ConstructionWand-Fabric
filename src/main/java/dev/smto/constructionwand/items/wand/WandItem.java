@@ -5,6 +5,7 @@ import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.wand.WandJob;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.fabricmc.api.EnvType;
@@ -41,6 +42,10 @@ public abstract class WandItem extends Item
         World world = context.getWorld();
 
         if(world.isClient || player == null) return ActionResult.PASS;
+
+        if (ModCompat.preventWandOnBlock(context)) {
+            return ActionResult.PASS;
+        }
 
         ItemStack stack = player.getStackInHand(hand);
 

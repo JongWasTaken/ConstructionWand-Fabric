@@ -60,7 +60,7 @@ public class ConstructionWand implements ModInitializer
     public void onInitialize() {
         ensureConfigManager();
         Network.init();
-        ModCompat.checkForMods();
+        ModCompat.init();
         if (ModCompat.polymerEnabled) {
             REGISTRY = new PolymerRegistry();
         } else REGISTRY = new DefaultRegistry();
@@ -116,5 +116,19 @@ public class ConstructionWand implements ModInitializer
         public static WandConfigEntry infinityWand = new WandConfigEntry(true, -1, 1024, 16, 81);
 
 
+    }
+
+    /**
+     * Adds a mod compat handler for your mod.<br><br>
+     * A handler allows you to add custom behavior to the wand when interacting with blocks added by your mod.<br>
+     * Check out {@link CreateModCompatHandler} for an example implementation, but note that all builtin handlers use reflection instead of APIs to reduce maintenance and dependency issues.<br><br>
+     * In addition, a class implementing IModCompatHandler can also implement IContainerHandler,
+     * which will allow a wand to use the inventory of an item added by your mod.<br><br>
+     * This is a more convenient alias for ModCompat.addModCompatHandler, see below for details.
+     * @see ModCompat#addModCompatHandler(IModCompatHandler)
+     * @param handler Your mod compat handler instance
+     */
+    public static void addModCompatHandler(IModCompatHandler handler) {
+        ModCompat.addModCompatHandler(handler);
     }
 }
