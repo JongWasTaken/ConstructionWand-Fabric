@@ -26,7 +26,7 @@ public class RenderBlockPreview
         if(player == null) return true;
 
         var tickCounter = MinecraftClient.getInstance().getRenderTickCounter();
-        HitResult hitResult = context.gameRenderer().findCrosshairTarget(player, player.getBlockInteractionRange(), player.getEntityInteractionRange(), tickCounter.getTickProgress(true));
+        HitResult hitResult = context.gameRenderer().findCrosshairTarget(context.gameRenderer().getClient().getCameraEntity(), player.getBlockInteractionRange(), player.getEntityInteractionRange(), tickCounter.getTickProgress(true));
 
         BlockHitResult rtr = hitResult instanceof BlockHitResult ? (BlockHitResult) hitResult : null;
         if(rtr == null) return true;
