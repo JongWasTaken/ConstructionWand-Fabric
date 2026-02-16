@@ -4,7 +4,7 @@ import dev.smto.constructionwand.api.IContainerHandler;
 import dev.smto.constructionwand.containers.handlers.HandlerBundleComponent;
 import dev.smto.constructionwand.containers.handlers.HandlerContainerComponent;
 import dev.smto.constructionwand.containers.handlers.HandlerNBTInventory;
-import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
@@ -46,7 +46,7 @@ public class ContainerManager
         ContainerManager.register(new HandlerNBTInventory());
         ContainerManager.register(new HandlerBundleComponent());
 
-        ModCompat.registerModContainerHandlers();
+        ModCompat.init();
 
         initialized = true;
     }

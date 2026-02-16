@@ -1,19 +1,16 @@
 package dev.smto.constructionwand.items.wand;
 
 import dev.smto.constructionwand.ConstructionWand;
-import dev.smto.constructionwand.ConstructionWandClient;
 import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.wand.WandJob;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.input.AbstractInput;
-import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,6 +45,10 @@ public abstract class WandItem extends Item
         World world = context.getWorld();
 
         if(world.isClient() || player == null) return ActionResult.PASS;
+
+        if (ModCompat.preventWandOnBlock(context)) {
+            return ActionResult.PASS;
+        }
 
         ItemStack stack = player.getStackInHand(hand);
 

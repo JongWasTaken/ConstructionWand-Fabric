@@ -2,7 +2,7 @@ package dev.smto.constructionwand.wand.undo;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.Network;
-import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;

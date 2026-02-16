@@ -2,9 +2,10 @@ package dev.smto.constructionwand.wand.undo;
 
 //import com.simibubi.create.content.decoration.copycat.CopycatBlock;
 
+import dev.smto.constructionwand.api.SnapshotCreationContext;
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
-import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.wand.WandItemUseContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.SlabType;
@@ -58,21 +59,9 @@ public class PlaceSnapshot implements ISnapshot
             }
         }
 
-        // Create Copycats compat
-        ItemStack includedItem = null;
-        boolean giveBackIncludedItem = true;
-        // dont bother on the client side, CopycatBlock.getBlockEntity() behaves weirdly there
-        if (!world.isClient()) {
-            if (ModCompat.create) {
-                //if (supportingBlock.getBlock() instanceof CopycatBlock b) {
-                //    var be = b.getBlockEntity(world, pos.offset(rayTraceResult.getSide().getOpposite()));
-                //    includedItem = be.getConsumedItem();
-                //    giveBackIncludedItem = false;
-                //    if (includedItem.getItem() == Items.AIR) includedItem = null;
-                //}
-            }
-        }
-        return new PlaceSnapshot(blockState, pos, new ItemStack(item, count), supportingBlock, targetMode, includedItem, giveBackIncludedItem);
+        var context = ModCompat.mutateSnapshot(new SnapshotCreationContext(world, blockState, supportingBlock, rayTraceResult, count, player, item, pos, options));
+        return new PlaceSnapshot(blockState, pos, new ItemStack(item, context.getPrimaryItemsToConsumeCount()),
+                supportingBlock, targetMode, context.getIncludedItemStack(), context.shouldGiveBackIncludedItem());
     }
 
     @Override
