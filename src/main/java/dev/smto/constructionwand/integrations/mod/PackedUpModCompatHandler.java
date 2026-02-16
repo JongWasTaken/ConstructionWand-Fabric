@@ -1,16 +1,17 @@
-package dev.smto.constructionwand.containers.handlers;
+package dev.smto.constructionwand.integrations.mod;
 
 import com.supermartijn642.packedup.BackpackInventory;
 import com.supermartijn642.packedup.BackpackItem;
 import com.supermartijn642.packedup.BackpackStorageManager;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IContainerHandler;
+import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.basics.WandUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 
-public class HandlerPackedUpBackpack implements IContainerHandler {
+public class PackedUpModCompatHandler implements IModCompatHandler, IContainerHandler {
     @Override
     public boolean matches(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
         return inventoryStack != null && inventoryStack.getCount() == 1 && inventoryStack.getItem() instanceof BackpackItem;

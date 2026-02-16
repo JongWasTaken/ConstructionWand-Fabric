@@ -6,6 +6,7 @@ import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.api.SnapshotCreationContext;
 import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.integrations.polymer.PolymerManager;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -14,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +28,10 @@ public class ModCompat {
     private static final HashMap<String, Supplier<IModCompatHandler>> SUPPORTED_COMPAT = new HashMap<>() {{
         this.put("create", CreateModCompatHandler::new);
         this.put("openpartiesandclaims", OpenPACModCompatHandler::new);
-        // this.put("bankstorage", UnimplementedModCompat::new);
-        // this.put("packedup", UnimplementedModCompat::new);
-        // this.put("sophisticatedbackpacks", UnimplementedModCompat::new);
-        // this.put("botania", UnimplementedModCompat::new);
+        this.put("bankstorage", BankStorageModCompatHandler::new);
+        this.put("packedup", PackedUpModCompatHandler::new);
+        this.put("sophisticatedbackpacks", SophisticatedBackpackModCompatHandler::new);
+        this.put("botania", BotaniaModCompatHandler::new);
     }};
 
     private static final ArrayList<IModCompatHandler> ENABLED_COMPAT = new ArrayList<>();

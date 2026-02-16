@@ -1,6 +1,7 @@
-package dev.smto.constructionwand.containers.handlers;
+package dev.smto.constructionwand.integrations.mod;
 
 import dev.smto.constructionwand.api.IContainerHandler;
+import dev.smto.constructionwand.api.IModCompatHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -10,7 +11,7 @@ import vazkii.botania.api.item.BlockProvider;
 
 import java.util.Optional;
 
-public class HandlerBotania implements IContainerHandler
+public class BotaniaModCompatHandler implements IModCompatHandler, IContainerHandler
 {
     @Override
     public boolean matches(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {

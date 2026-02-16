@@ -1,8 +1,8 @@
-package dev.smto.constructionwand.containers.handlers;
+package dev.smto.constructionwand.integrations.mod;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IContainerHandler;
-import io.github.fabricators_of_create.porting_lib.transfer.item.ItemStackHandlerSlot;
+import dev.smto.constructionwand.api.IModCompatHandler;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +13,7 @@ import net.p3pp3rf1y.sophisticatedbackpacks.common.BackpackWrapperLookup;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HandlerSophisticatedBackpack implements IContainerHandler {
+public class SophisticatedBackpackModCompatHandler implements IModCompatHandler, IContainerHandler {
     @Override
     public boolean matches(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
         return inventoryStack != null && inventoryStack.getCount() == 1 && inventoryStack.getItem() instanceof BackpackItem;

@@ -2,7 +2,9 @@ package dev.smto.constructionwand.crafting;
 
 import com.google.gson.JsonObject;
 import dev.smto.constructionwand.ConstructionWand;
+import dev.smto.constructionwand.api.IWandUpgrade;
 import dev.smto.constructionwand.api.WandConfigEntry;
+import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.items.wand.WandItem;
 import net.minecraft.inventory.RecipeInputInventory;
 import net.minecraft.item.ItemStack;
@@ -17,8 +19,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import dev.smto.constructionwand.api.IWandUpgrade;
-import dev.smto.constructionwand.basics.option.WandOptions;
 
 import static dev.smto.constructionwand.ConstructionWand.MOD_ID;
 

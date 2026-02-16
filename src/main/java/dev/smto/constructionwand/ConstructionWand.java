@@ -1,10 +1,12 @@
 package dev.smto.constructionwand;
 
+import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.api.ModRegistry;
 import dev.smto.constructionwand.api.WandConfigEntry;
 import dev.smto.constructionwand.basics.ReplacementRegistry;
 import dev.smto.constructionwand.containers.ContainerManager;
-import dev.smto.constructionwand.integrations.ModCompat;
+import dev.smto.constructionwand.integrations.mod.CreateModCompatHandler;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.integrations.polymer.PolymerRegistry;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
 import dev.smto.simpleconfig.ConfigLoggers;

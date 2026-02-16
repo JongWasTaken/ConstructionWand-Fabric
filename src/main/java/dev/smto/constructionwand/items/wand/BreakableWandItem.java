@@ -3,8 +3,6 @@ package dev.smto.constructionwand.items.wand;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ToolMaterial;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
 
 public class BreakableWandItem extends WandItem
 {

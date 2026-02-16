@@ -3,6 +3,7 @@ package dev.smto.constructionwand.integrations.mod;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.items.wand.WandItem;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +14,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 

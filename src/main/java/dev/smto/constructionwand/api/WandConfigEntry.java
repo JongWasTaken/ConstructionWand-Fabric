@@ -2,7 +2,6 @@ package dev.smto.constructionwand.api;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 
 public record WandConfigEntry(boolean upgradeable, int durability, int range, int angelDistance, int destructionLimit) {

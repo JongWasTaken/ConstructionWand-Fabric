@@ -3,6 +3,7 @@ package dev.smto.constructionwand.integrations.mod;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.api.SnapshotCreationContext;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -11,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class CreateModCompatHandler implements IModCompatHandler {
     // Adding the actual mod as a compile-time dependency caused a name conflict, so I just decided to make compat handlers use reflection instead
@@ -24,9 +24,8 @@ public class CreateModCompatHandler implements IModCompatHandler {
         // because we use reflection instead of an api, we have to check if the classes we need are present at runtime and disable the compat handler if they aren't
         boolean enabled;
         try {
-            // this is specifically for create-fly, as other versions of create don't exist for recent fabric minecraft versions
-            this.copycatBlockClass = Class.forName("com.zurrtum.create.content.decoration.copycat.CopycatBlock");
-            this.copycatBlockEntityClass = Class.forName("com.zurrtum.create.content.decoration.copycat.CopycatBlockEntity");
+            this.copycatBlockClass = Class.forName("com.simibubi.create.content.decoration.copycat.CopycatBlock");
+            this.copycatBlockEntityClass = Class.forName("com.simibubi.create.content.decoration.copycat.CopycatBlockEntity");
             enabled = true;
         } catch (ClassNotFoundException exception) {
             ConstructionWand.LOGGER.warn("Failed to load Create compat handler: {}", exception.getMessage());

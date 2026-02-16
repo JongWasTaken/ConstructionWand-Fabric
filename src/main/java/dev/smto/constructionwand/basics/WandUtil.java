@@ -1,13 +1,11 @@
 package dev.smto.constructionwand.basics;
-import com.copycatsplus.copycats.content.copycat.shaft.CopycatShaftBlock;
-import com.simibubi.create.content.decoration.copycat.CopycatBlock;
-import com.simibubi.create.content.decoration.copycat.CopycatBlockEntity;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.WandItemUseContext;
+import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -16,7 +14,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
@@ -28,7 +25,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,15 +40,7 @@ public class WandUtil
     }
 
     private static boolean stackIsInvalid(ItemStack stack) {
-        if (!stack.getComponentChanges().equals(ComponentChanges.EMPTY)) {
-            return true;
-        }
-        // fail if stack in question contains items (shulker box destruction prevention tm)
-        if (stack.contains(DataComponentTypes.CONTAINER)) {
-            if (!Objects.equals(stack.get(DataComponentTypes.CONTAINER), ContainerComponent.DEFAULT)) return true;
-        }
-
-        return false;
+        return stack.hasNbt();
     }
 
     public static boolean stackEquals(ItemStack stackA, Item item) {

@@ -1,6 +1,7 @@
-package dev.smto.constructionwand.containers.handlers;
+package dev.smto.constructionwand.integrations.mod;
 
 import dev.smto.constructionwand.api.IContainerHandler;
+import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.basics.WandUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,7 @@ import net.natte.bankstorage.item.CachedBankStorage;
 import net.natte.bankstorage.packet.NetworkUtil;
 import net.natte.bankstorage.util.Util;
 
-public class HandlerBankStorage implements IContainerHandler {
+public class BankStorageModCompatHandler implements IModCompatHandler, IContainerHandler {
     @Override
     public boolean matches(PlayerEntity player, ItemStack itemStack, ItemStack inventoryStack) {
         try {

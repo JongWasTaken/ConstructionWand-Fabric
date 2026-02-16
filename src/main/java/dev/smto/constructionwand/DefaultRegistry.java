@@ -10,7 +10,6 @@ import dev.smto.constructionwand.items.wand.InfinityWandItem;
 import dev.smto.constructionwand.items.wand.WandItem;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.item.Item;
-import net.minecraft.item.ToolMaterial;
 import net.minecraft.item.ToolMaterials;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.registry.Registries;

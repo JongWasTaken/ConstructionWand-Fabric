@@ -2,8 +2,8 @@ package dev.smto.constructionwand.containers;
 
 import dev.smto.constructionwand.api.IContainerHandler;
 import dev.smto.constructionwand.containers.handlers.HandlerBundle;
-import dev.smto.constructionwand.containers.handlers.HandlerShulkerbox;
 import dev.smto.constructionwand.containers.handlers.HandlerNBTInventory;
+import dev.smto.constructionwand.containers.handlers.HandlerShulkerbox;
 import dev.smto.constructionwand.integrations.mod.ModCompat;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;

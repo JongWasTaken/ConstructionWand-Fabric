@@ -1,7 +1,5 @@
 package dev.smto.constructionwand.integrations.polymer.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 
 public class PolymerInfinityWandItem extends PolymerWandItem
