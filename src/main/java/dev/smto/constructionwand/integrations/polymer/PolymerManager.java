@@ -39,17 +39,24 @@ public class PolymerManager {
     private static final HashSet<UUID> PLAYERS_WITH_BLOCKED_SCREENS = new HashSet<>();
 
     public static void init() {
+        ConstructionWand.LOGGER.info("Polymer addon detected, enabling Polymer compat!");
         PolymerResourcePackUtils.addModAssets(ConstructionWand.MOD_ID);
         PolymerResourcePackUtils.markAsRequired();
 
         ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
+            PLAYERS_WITH_CLIENT.remove(handler.player.getUuid());
+            unblockServerScreen(handler.player);
             ServerPlayNetworking.send(handler.player, new Network.Payloads.S2CPing(false));
+        });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer minecraftServer) -> {
+            PLAYERS_WITH_CLIENT.remove(handler.player.getUuid());
+            unblockServerScreen(handler.player);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Network.Payloads.C2SPong.ID, (payload, context) -> {
             context.server().execute(() -> {
                 ServerPlayerEntity player = context.player();
-                if(player == null) return;
                 ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player.getName().getLiteralString());
                 PLAYERS_WITH_CLIENT.add(player.getUuid());
             });
@@ -117,24 +124,11 @@ public class PolymerManager {
                 };
             }
             if (key instanceof WandOptions.Match match) {
-                switch (match) {
-                    case EXACT:
-                        return Items.GRASS_BLOCK.getDefaultStack();
-                    case SIMILAR:
-                        return Items.DIRT.getDefaultStack();
-                    case ANY:
-                        return Items.PUMPKIN.getDefaultStack();
-                }
-            }
-            if (key instanceof WandOptions.Match match) {
-                switch (match) {
-                    case EXACT:
-                        return Items.GRASS_BLOCK.getDefaultStack();
-                    case SIMILAR:
-                        return Items.DIRT.getDefaultStack();
-                    case ANY:
-                        return Items.PUMPKIN.getDefaultStack();
-                }
+                return switch (match) {
+                    case EXACT -> Items.GRASS_BLOCK.getDefaultStack();
+                    case SIMILAR -> Items.DIRT.getDefaultStack();
+                    case ANY -> Items.PUMPKIN.getDefaultStack();
+                };
             }
             if (key instanceof Boolean b) {
                 if (option.getKey().equals("replace")) {
