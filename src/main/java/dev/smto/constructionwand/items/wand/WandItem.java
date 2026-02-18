@@ -67,9 +67,15 @@ public abstract class WandItem extends Item
         if(!player.isSneaking()) {
             if(world.isClient) return TypedActionResult.fail(wand);
 
+            var bhr = BlockHitResult.createMissed(player.getEyePos(),
+                    WandUtil.fromVector(player.getEyePos()), player.getBlockPos());
+
+            if (ModCompat.preventWandOnBlock(new ItemUsageContext(world, player, hand, wand, bhr))) {
+                return ActionResult.PASS;
+            }
+
             // Right click: Place angel block
-            WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
-                    WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
+            WandJob job = new WandJob(player, world, bhr, wand);
             //ConstructionWand.LOGGER.warn("Job: {}", job);
             return job.run() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
         }

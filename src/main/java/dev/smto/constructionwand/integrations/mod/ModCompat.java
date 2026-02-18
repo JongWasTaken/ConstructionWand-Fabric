@@ -16,8 +16,8 @@ import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.function.Supplier;
 
 public class ModCompat {
@@ -34,7 +34,7 @@ public class ModCompat {
         this.put("botania", BotaniaModCompatHandler::new);
     }};
 
-    private static final ArrayList<IModCompatHandler> ENABLED_COMPAT = new ArrayList<>();
+    private static final HashSet<IModCompatHandler> ENABLED_COMPAT = new HashSet<>();
 
     public static void init() {
         if (checked) return;

@@ -39,11 +39,19 @@ public class PolymerManager {
     private static final HashSet<UUID> PLAYERS_WITH_BLOCKED_SCREENS = new HashSet<>();
 
     public static void init() {
+        ConstructionWand.LOGGER.info("Polymer addon detected, enabling Polymer compat!");
         PolymerResourcePackUtils.addModAssets(ConstructionWand.MOD_ID);
         PolymerResourcePackUtils.markAsRequired();
 
         ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
+            PLAYERS_WITH_CLIENT.remove(handler.player.getUuid());
+            unblockServerScreen(handler.player);
             ServerPlayNetworking.send(handler.player, Network.Payloads.S2CPing.getId(), Network.Payloads.S2CPing.encode(new Network.Payloads.S2CPing(false)));
+        });
+
+        ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer minecraftServer) -> {
+            PLAYERS_WITH_CLIENT.remove(handler.player.getUuid());
+            unblockServerScreen(handler.player);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Network.Payloads.C2SPong.ID, (MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) -> {
