@@ -71,12 +71,11 @@ public abstract class WandItem extends Item
                     WandUtil.fromVector(player.getEyePos()), player.getBlockPos());
 
             if (ModCompat.preventWandOnBlock(new ItemUsageContext(world, player, hand, wand, bhr))) {
-                return ActionResult.PASS;
+                return TypedActionResult.pass(wand);
             }
 
             // Right click: Place angel block
             WandJob job = new WandJob(player, world, bhr, wand);
-            //ConstructionWand.LOGGER.warn("Job: {}", job);
             return job.run() ? TypedActionResult.success(wand) : TypedActionResult.fail(wand);
         }
         return TypedActionResult.fail(wand);
