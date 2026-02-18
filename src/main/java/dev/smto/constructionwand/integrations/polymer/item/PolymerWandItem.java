@@ -5,6 +5,7 @@ import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
+import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.WandJob;
@@ -63,6 +64,10 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
 
         if(world.isClient() || player == null) return ActionResult.PASS;
 
+        if (ModCompat.preventWandOnBlock(context)) {
+            return ActionResult.PASS;
+        }
+
         ItemStack stack = player.getStackInHand(hand);
 
         if(UndoHistory.isUndoActive(player)) {
@@ -84,9 +89,14 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
         if (world.isClient()) return ActionResult.FAIL;
         if(!UndoHistory.isUndoActive(player)) {
             if (offHandStack.isEmpty()) return ActionResult.FAIL;
+            var bhr = BlockHitResult.createMissed(player.getEyePos(),
+                    WandUtil.fromVector(player.getEyePos()), player.getBlockPos());
+
+            if (ModCompat.preventWandOnBlock(new ItemUsageContext(world, player, hand, wand, bhr))) {
+                return ActionResult.PASS;
+            }
             // Right click: Place angel block
-            WandJob job = new WandJob(player, world, BlockHitResult.createMissed(player.getEyePos(),
-                    WandUtil.fromVector(player.getEyePos()), player.getBlockPos()), wand);
+            WandJob job = new WandJob(player, world, bhr, wand);
             return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
         } else {
             if (!PolymerManager.hasClientMod(player) && !PolymerManager.isScreenBlocked(player)) {
