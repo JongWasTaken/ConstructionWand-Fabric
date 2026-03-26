@@ -3,14 +3,14 @@ package dev.smto.constructionwand.integrations.mod;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.api.SnapshotCreationContext;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public class CreateModCompatHandler implements IModCompatHandler {
@@ -39,7 +39,7 @@ public class CreateModCompatHandler implements IModCompatHandler {
     public SnapshotCreationContext onSnapshotCreation(SnapshotCreationContext context) {
         // pulls the included item from the block entity of the block being copied, if it's a copycat block
         if (!this.enabled) return context;
-        if (!context.getWorld().isClient()) {
+        if (!context.getWorld().isClientSide()) {
             if (this.copycatBlockClass.isAssignableFrom(context.getSupportingBlockState().getBlock().getClass())) {
                 var gbe = context.getWorld().getBlockEntity(context.getRayTraceResult().getBlockPos());
                 if (gbe == null) return context;
@@ -57,7 +57,7 @@ public class CreateModCompatHandler implements IModCompatHandler {
     }
 
     @Override
-    public void afterBlockPlacement(World world, PlayerEntity player, BlockState blockState, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
+    public void afterBlockPlacement(Level world, Player player, BlockState blockState, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
         // sets the block entity data for a placed copycat block to match the block that was copied, if applicable
         if (!this.enabled) return;
         if (includedItem != null) {
@@ -66,7 +66,7 @@ public class CreateModCompatHandler implements IModCompatHandler {
                 if (gbe == null) return;
                 if (gbe.getClass().isAssignableFrom(this.copycatBlockEntityClass)) {
                     try {
-                        this.copycatBlockEntityClass.getMethod("setMaterial", BlockState.class).invoke(gbe,((BlockItem)includedItem.getItem()).getBlock().getDefaultState());
+                        this.copycatBlockEntityClass.getMethod("setMaterial", BlockState.class).invoke(gbe,((BlockItem)includedItem.getItem()).getBlock().defaultBlockState());
                         this.copycatBlockEntityClass.getMethod("setConsumedItem", ItemStack.class).invoke(gbe, includedItem);
                     } catch (Throwable ignored) {}
                 }
@@ -75,7 +75,7 @@ public class CreateModCompatHandler implements IModCompatHandler {
     }
 
     @Override
-    public boolean allowBlockEntityRemoval(World world, BlockPos pos, BlockEntity blockEntity) {
+    public boolean allowBlockEntityRemoval(Level world, BlockPos pos, BlockEntity blockEntity) {
         // makes copycat blocks removable by the wand
         if (!this.enabled) return false;
         return blockEntity.getClass().isAssignableFrom(this.copycatBlockEntityClass);

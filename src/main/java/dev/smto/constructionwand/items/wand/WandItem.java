@@ -1,5 +1,6 @@
 package dev.smto.constructionwand.items.wand;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.basics.WandUtil;
@@ -10,80 +11,79 @@ import dev.smto.constructionwand.wand.WandJob;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
 public abstract class WandItem extends Item
 {
-    public final RegistryKey<Item> registryKey;
-    public WandItem(RegistryKey<Item> id, Item.Settings properties) {
-        super(properties.registryKey(id));
+    public final ResourceKey<Item> registryKey;
+    public WandItem(ResourceKey<Item> id, Item.Properties properties) {
+        super(properties.setId(id));
         this.registryKey = id;
     }
 
     @NotNull
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        PlayerEntity player = context.getPlayer();
-        Hand hand = context.getHand();
-        World world = context.getWorld();
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        InteractionHand hand = context.getHand();
+        Level world = context.getLevel();
 
-        if(world.isClient() || player == null) return ActionResult.PASS;
+        if(world.isClientSide() || player == null) return InteractionResult.PASS;
 
         if (ModCompat.preventWandOnBlock(context)) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        ItemStack stack = player.getStackInHand(hand);
+        ItemStack stack = player.getItemInHand(hand);
 
-        if(player.isSneaking() && UndoHistory.isUndoActive(player)) {
-            return UndoHistory.undo(player, world, context.getBlockPos()) ? ActionResult.SUCCESS : ActionResult.FAIL;
+        if(player.isShiftKeyDown() && UndoHistory.isUndoActive(player)) {
+            return UndoHistory.undo(player, world, context.getClickedPos()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
         else {
-            WandJob job = new WandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
-            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            WandJob job = new WandJob(player, world, new BlockHitResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), false), stack);
+            return job.run() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
     }
 
     @NotNull
     @Override
-    public ActionResult use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
-        ItemStack offHandStack = player.getOffHandStack();
-        ItemStack wand = player.getStackInHand(hand);
-        if (offHandStack.isEmpty()) return ActionResult.FAIL;
-        if (wand.equals(offHandStack)) return ActionResult.FAIL;
-        if(!player.isSneaking()) {
-            if(world.isClient()) return ActionResult.FAIL;
+    public InteractionResult use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
+        ItemStack offHandStack = player.getOffhandItem();
+        ItemStack wand = player.getItemInHand(hand);
+        if (offHandStack.isEmpty()) return InteractionResult.FAIL;
+        if (wand.equals(offHandStack)) return InteractionResult.FAIL;
+        if(!player.isShiftKeyDown()) {
+            if(world.isClientSide()) return InteractionResult.FAIL;
 
-            var bhr = BlockHitResult.createMissed(player.getEyePos(),
-                    WandUtil.fromVector(player.getEyePos()), player.getBlockPos());
+            var bhr = BlockHitResult.miss(player.getEyePosition(),
+                    WandUtil.fromVector(player.getEyePosition()), player.blockPosition());
 
-            if (ModCompat.preventWandOnBlock(new ItemUsageContext(world, player, hand, wand, bhr))) {
-                return ActionResult.PASS;
+            if (ModCompat.preventWandOnBlock(new UseOnContext(world, player, hand, wand, bhr))) {
+                return InteractionResult.PASS;
             }
 
             // Right click: Place angel block
             WandJob job = new WandJob(player, world, bhr, wand);
             //ConstructionWand.LOGGER.warn("Job: {}", job);
-            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            return job.run() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     public int remainingDurability(ItemStack stack) {
@@ -92,44 +92,44 @@ public abstract class WandItem extends Item
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
         WandOptions options = WandOptions.of(stack);
         int limit = options.cores.get().getWandAction().getLimit(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         // +SHIFT tooltip: show all options + installed cores
-        if(InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), InputUtil.GLFW_KEY_LEFT_SHIFT)) {
+        if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) {
             for(int i = 1; i < options.allOptions.length; i++) {
                 IOption<?> opt = options.allOptions[i];
-                textConsumer.accept(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
-                        .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.GRAY))
+                textConsumer.accept(Component.translatable(opt.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
+                        .append(Component.translatable(opt.getValueTranslation()).withStyle(ChatFormatting.GRAY))
                 );
             }
             if(!options.cores.getUpgrades().isEmpty()) {
-                textConsumer.accept(Text.literal(""));
-                textConsumer.accept(Text.translatable(langTooltip + "cores").formatted(Formatting.GRAY));
+                textConsumer.accept(Component.literal(""));
+                textConsumer.accept(Component.translatable(langTooltip + "cores").withStyle(ChatFormatting.GRAY));
 
                 for(IWandCore core : options.cores.getUpgrades()) {
-                    textConsumer.accept(Text.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
+                    textConsumer.accept(Component.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
                 }
             }
         }
         // Default tooltip: show block limit + active wand core
         else {
             IOption<?> opt = options.allOptions[0];
-            textConsumer.accept(Text.translatable(langTooltip + "blocks", limit).formatted(Formatting.GRAY));
-            textConsumer.accept(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
-                    .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.WHITE)));
-            textConsumer.accept(Text.translatable(langTooltip + "shift").formatted(Formatting.AQUA));
+            textConsumer.accept(Component.translatable(langTooltip + "blocks", limit).withStyle(ChatFormatting.GRAY));
+            textConsumer.accept(Component.translatable(opt.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
+                    .append(Component.translatable(opt.getValueTranslation()).withStyle(ChatFormatting.WHITE)));
+            textConsumer.accept(Component.translatable(langTooltip + "shift").withStyle(ChatFormatting.AQUA));
         }
 
     }
 
-    public static void optionMessage(PlayerEntity player, IOption<?> option) {
-        player.sendMessage(
-                        Text.translatable(option.getKeyTranslation()).formatted(Formatting.AQUA)
-                        .append(Text.translatable(option.getValueTranslation()).formatted(Formatting.WHITE))
-                        .append(Text.literal(" - ").formatted(Formatting.GRAY))
-                        .append(Text.translatable(option.getDescTranslation()).formatted(Formatting.WHITE))
-                , true);
+    public static void optionMessage(Player player, IOption<?> option) {
+        player.sendOverlayMessage(
+                        Component.translatable(option.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
+                        .append(Component.translatable(option.getValueTranslation()).withStyle(ChatFormatting.WHITE))
+                        .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
+                        .append(Component.translatable(option.getDescTranslation()).withStyle(ChatFormatting.WHITE))
+                );
     }
 }

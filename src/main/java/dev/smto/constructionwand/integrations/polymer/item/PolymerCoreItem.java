@@ -4,32 +4,33 @@ import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import dev.smto.constructionwand.items.core.CoreItem;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
-import eu.pb4.polymer.core.api.utils.PolymerKeepModel;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import org.jspecify.annotations.Nullable;
 
-public abstract class PolymerCoreItem extends CoreItem implements PolymerItem, PolymerKeepModel, PolymerClientDecoded
+public abstract class PolymerCoreItem extends CoreItem implements PolymerItem, PolymerClientDecoded
 {
-    public PolymerCoreItem(RegistryKey<Item> id, Settings properties) {
+    public PolymerCoreItem(ResourceKey<Item> id, Properties properties) {
         super(id, properties);
     }
 
     @Override
     public Item getPolymerItem(ItemStack itemStack, PacketContext context) {
-        var player = context.getPlayer();
-        if (player == null) return Items.STICK;
-        if (PolymerManager.hasClientMod(player)) {
+        var playerProfile = (context.get(PacketContext.GAME_PROFILE));
+        if (playerProfile == null) return Items.STICK;
+        if (PolymerManager.hasClientMod(playerProfile.id())) {
             return this;
         }
         return Items.STICK;
     }
 
     @Override
-    public Identifier getPolymerItemModel(ItemStack stack, PacketContext context) {
-        return this.registryKey.getValue();
+    public @Nullable Identifier getPolymerItemModel(ItemStack stack, PacketContext context, HolderLookup.Provider lookup) {
+        return this.registryKey.identifier();
     }
 }

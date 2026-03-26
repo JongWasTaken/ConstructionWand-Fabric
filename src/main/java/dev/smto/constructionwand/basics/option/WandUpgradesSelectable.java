@@ -1,13 +1,13 @@
 package dev.smto.constructionwand.basics.option;
 
 import dev.smto.constructionwand.api.IWandUpgrade;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 
 public class WandUpgradesSelectable<T extends IWandUpgrade> extends WandUpgrades<T> implements IOption<T>
 {
     private byte selector;
 
-    public WandUpgradesSelectable(NbtCompound tag, String key, T dval) {
+    public WandUpgradesSelectable(CompoundTag tag, String key, T dval) {
         super(tag, key, dval);
     }
 

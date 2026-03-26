@@ -1,18 +1,18 @@
 package dev.smto.constructionwand.basics.pool;
 
-import net.minecraft.util.math.random.Random;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import net.minecraft.util.RandomSource;
 
 public class RandomPool<T> implements IPool<T>
 {
-    private final Random rng;
+    private final RandomSource rng;
     private final HashMap<T, Integer> elements;
     private HashSet<T> pool;
 
-    public RandomPool(Random rng) {
+    public RandomPool(RandomSource rng) {
         this.rng = rng;
         elements = new HashMap<>();
         reset();

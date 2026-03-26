@@ -1,13 +1,12 @@
 package dev.smto.constructionwand.wand.undo;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public interface ISnapshot
 {
@@ -19,11 +18,11 @@ public interface ISnapshot
 
     boolean shouldGiveBackIncludedItem();
 
-    boolean execute(World world, PlayerEntity player, BlockHitResult rayTraceResult);
+    boolean execute(Level world, Player player, BlockHitResult rayTraceResult);
 
-    boolean canRestore(World world, PlayerEntity player);
+    boolean canRestore(Level world, Player player);
 
-    boolean restore(World world, PlayerEntity player);
+    boolean restore(Level world, Player player);
 
-    void forceRestore(World world);
+    void forceRestore(Level world);
 }

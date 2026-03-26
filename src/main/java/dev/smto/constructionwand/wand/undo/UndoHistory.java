@@ -5,14 +5,13 @@ import dev.smto.constructionwand.Network;
 import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,23 +19,23 @@ public class UndoHistory
 {
     private static final HashMap<UUID, PlayerEntityEntry> history = new HashMap<>();
 
-    private static PlayerEntityEntry getEntryFromPlayerEntity(PlayerEntity player) {
-        return history.computeIfAbsent(player.getUuid(), k -> new PlayerEntityEntry());
+    private static PlayerEntityEntry getEntryFromPlayerEntity(Player player) {
+        return history.computeIfAbsent(player.getUUID(), k -> new PlayerEntityEntry());
     }
 
-    public static void add(PlayerEntity player, World world, List<ISnapshot> placeSnapshots) {
+    public static void add(Player player, Level world, List<ISnapshot> placeSnapshots) {
         LinkedList<HistoryEntry> list = getEntryFromPlayerEntity(player).entries;
         list.add(new HistoryEntry(placeSnapshots, world));
         while(list.size() > ConstructionWand.Config.undoHistorySize) list.removeFirst();
     }
 
-    public static void removePlayerEntity(PlayerEntity player) {
-        history.remove(player.getUuid());
+    public static void removePlayerEntity(Player player) {
+        history.remove(player.getUUID());
     }
 
-    public static void updateClient(PlayerEntity player, boolean ctrlDown) {
-        World world = player.getEntityWorld();
-        if(world.isClient()) return;
+    public static void updateClient(Player player, boolean ctrlDown) {
+        Level world = player.level();
+        if(world.isClientSide()) return;
 
         // Set state of CTRL key
         PlayerEntityEntry playerEntry = getEntryFromPlayerEntity(player);
@@ -54,17 +53,17 @@ public class UndoHistory
             else positions = entry.getBlockPositions();
         }
 
-        ServerPlayNetworking.send((ServerPlayerEntity) player, new Network.Payloads.S2CUndoBlocksPayload(positions.stream().toList()));
+        ServerPlayNetworking.send((ServerPlayer) player, new Network.Payloads.S2CUndoBlocksPayload(positions.stream().toList()));
     }
 
-    public static boolean isUndoActive(PlayerEntity player) {
+    public static boolean isUndoActive(Player player) {
         if (ModCompat.polymerEnabled) {
-            if (PolymerManager.hasClientMod(player)) return getEntryFromPlayerEntity(player).undoActive;
-            return player.isSneaking();
+            if (PolymerManager.hasClientMod(player.getUUID())) return getEntryFromPlayerEntity(player).undoActive;
+            return player.isShiftKeyDown();
         } else return getEntryFromPlayerEntity(player).undoActive;
     }
 
-    public static boolean undo(PlayerEntity player, World world, BlockPos pos) {
+    public static boolean undo(Player player, Level world, BlockPos pos) {
         PlayerEntityEntry playerEntry = getEntryFromPlayerEntity(player);
 
         // Get the most recent entry for undo
@@ -94,7 +93,7 @@ public class UndoHistory
         }
     }
 
-    private record HistoryEntry(List<ISnapshot> placeSnapshots, World world) {
+    private record HistoryEntry(List<ISnapshot> placeSnapshots, Level world) {
 
         public Set<BlockPos> getBlockPositions() {
                 return placeSnapshots.stream().map(ISnapshot::getPos).collect(Collectors.toSet());
@@ -106,12 +105,12 @@ public class UndoHistory
                 if (positions.contains(pos)) return true;
 
                 for (BlockPos p : positions) {
-                    if (pos.isWithinDistance(p, 3)) return true;
+                    if (pos.closerThan(p, 3)) return true;
                 }
                 return false;
             }
 
-            public boolean undo(PlayerEntity player) {
+            public boolean undo(Player player) {
                 // Check first if all snapshots can be restored
                 for (ISnapshot snapshot : placeSnapshots) {
                     if (!snapshot.canRestore(world, player)) return false;
@@ -120,16 +119,16 @@ public class UndoHistory
                     if (snapshot.restore(world, player) && !player.isCreative()) {
                         for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
                             if (i == 0 || snapshot.shouldGiveBackIncludedItem()) {
-                                player.giveOrDropStack(snapshot.getRequiredItems().get(i));
+                                player.handleExtraItemsCreatedOnUse(snapshot.getRequiredItems().get(i));
                             }
                         }
                     }
                 }
-                player.getInventory().markDirty();
+                player.getInventory().setChanged();
 
                 // Play teleport sound
-                SoundEvent sound = SoundEvents.ITEM_CHORUS_FRUIT_TELEPORT;
-                world.playSound(null, player.getBlockPos(), sound, SoundCategory.PLAYERS, 1.0F, 1.0F);
+                SoundEvent sound = SoundEvents.CHORUS_FRUIT_TELEPORT;
+                world.playSound(null, player.blockPosition(), sound, SoundSource.PLAYERS, 1.0F, 1.0F);
 
                 return true;
             }

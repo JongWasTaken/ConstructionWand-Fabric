@@ -1,11 +1,11 @@
 package dev.smto.constructionwand.integrations.polymer.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 
 public class PolymerInfinityWandItem extends PolymerWandItem
 {
-    public PolymerInfinityWandItem(RegistryKey<Item> id) {
-        super(id, new Settings().maxCount(1).fireproof());
+    public PolymerInfinityWandItem(ResourceKey<Item> id) {
+        super(id, new Properties().stacksTo(1).fireResistant());
     }
 }

@@ -4,7 +4,7 @@ import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandAction;
 import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.wand.action.ActionConstruction;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public class CoreDefault implements IWandCore
 {

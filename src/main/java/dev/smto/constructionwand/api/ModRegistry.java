@@ -4,17 +4,16 @@ import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.crafting.RecipeWandUpgrade;
 import dev.smto.constructionwand.items.core.CoreItem;
 import dev.smto.constructionwand.items.wand.WandItem;
-import net.minecraft.item.Item;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public abstract class ModRegistry {
-    public static RegistryKey<Item> createKey(String name) {
-        return RegistryKey.of(RegistryKeys.ITEM, ConstructionWand.id(name));
+    public static ResourceKey<Item> createKey(String name) {
+        return ResourceKey.create(Registries.ITEM, ConstructionWand.id(name));
     }
 
     public List<WandItem> getWands() {

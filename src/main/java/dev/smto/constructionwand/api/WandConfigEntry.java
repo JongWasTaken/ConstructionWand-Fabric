@@ -3,8 +3,8 @@ package dev.smto.constructionwand.api;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 public record WandConfigEntry(boolean upgradeable, int durability, int range, int angelDistance, int destructionLimit) {
     public static Codec<WandConfigEntry> CODEC = RecordCodecBuilder.create(i ->
@@ -17,5 +17,5 @@ public record WandConfigEntry(boolean upgradeable, int durability, int range, in
         ).apply(i, WandConfigEntry::new)
     );
 
-    public static PacketCodec<ByteBuf, WandConfigEntry> PACKET_CODEC = PacketCodecs.codec(CODEC);
+    public static StreamCodec<ByteBuf, WandConfigEntry> PACKET_CODEC = ByteBufCodecs.fromCodec(CODEC);
 }

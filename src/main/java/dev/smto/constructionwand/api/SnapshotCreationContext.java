@@ -1,13 +1,13 @@
 package dev.smto.constructionwand.api;
 
 import dev.smto.constructionwand.basics.option.WandOptions;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class SnapshotCreationContext {
@@ -15,8 +15,8 @@ public class SnapshotCreationContext {
     private boolean giveBackIncludedItem = true;
     private int primaryItemsToConsumeCount;
 
-    private final World world;
-    private final PlayerEntity player;
+    private final Level world;
+    private final Player player;
     private final BlockHitResult rayTraceResult;
     private final BlockPos blockPos;
     private final BlockItem item;
@@ -49,7 +49,7 @@ public class SnapshotCreationContext {
         return wandOptions;
     }
 
-    public PlayerEntity getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
@@ -81,13 +81,13 @@ public class SnapshotCreationContext {
         return target;
     }
 
-    public World getWorld() {
+    public Level getWorld() {
         return world;
     }
 
-    public SnapshotCreationContext(World world, BlockState target,
+    public SnapshotCreationContext(Level world, BlockState target,
                                    BlockState supportingBlock, BlockHitResult rayTraceResult,
-                                   int primaryItemsToConsumeCount, PlayerEntity player, BlockItem item,
+                                   int primaryItemsToConsumeCount, Player player, BlockItem item,
                                    BlockPos blockPos, @Nullable WandOptions wandOptions) {
         this.world = world;
         this.wandOptions = wandOptions;

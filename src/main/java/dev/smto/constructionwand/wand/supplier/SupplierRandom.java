@@ -3,16 +3,16 @@ package dev.smto.constructionwand.wand.supplier;
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.basics.pool.RandomPool;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 
 public class SupplierRandom extends SupplierInventory
 {
-    public SupplierRandom(PlayerEntity player, WandOptions options) {
+    public SupplierRandom(Player player, WandOptions options) {
         super(player, options);
     }
 

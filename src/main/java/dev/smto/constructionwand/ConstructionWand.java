@@ -17,10 +17,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.Item;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.item.Item;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,7 +51,7 @@ public class ConstructionWand implements ModInitializer
     public static final Map<Item, Field> WAND_CONFIG_MAP = new HashMap<>();
 
     public static Identifier id(String name) {
-        return Identifier.of(MOD_ID, name);
+        return Identifier.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static ModRegistry getRegistry() {
@@ -79,7 +79,7 @@ public class ConstructionWand implements ModInitializer
             ReplacementRegistry.init();
             ContainerManager.init();
         });
-        ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer server) -> UndoHistory.removePlayerEntity(handler.player));
+        ServerPlayConnectionEvents.DISCONNECT.register((ServerGamePacketListenerImpl handler, MinecraftServer server) -> UndoHistory.removePlayerEntity(handler.player));
     }
 
     public static class Config {

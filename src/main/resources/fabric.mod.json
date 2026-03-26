@@ -46,7 +46,7 @@
 		"minecraft": "~${minecraft_version}",
 		"java": ">=21",
 		"fabric-api": ">=${fabric_version}",
-		"fabric-key-binding-api-v1": "*"
+		"fabric-key-mapping-api-v1": "*"
 	},
 	"suggests": {
 		"roughly-enough-items": "${rei_version}"

@@ -8,41 +8,41 @@ import dev.smto.constructionwand.basics.pool.IPool;
 import dev.smto.constructionwand.basics.pool.OrderedPool;
 import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.wand.undo.PlaceSnapshot;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Default WandSupplier. Takes items from player inventory.
  */
 public class SupplierInventory implements IWandSupplier
 {
-    protected final PlayerEntity player;
+    protected final Player player;
     protected final WandOptions options;
 
     protected HashMap<BlockItem, Integer> itemCounts;
     protected IPool<BlockItem> itemPool;
 
-    public SupplierInventory(PlayerEntity player, WandOptions options) {
+    public SupplierInventory(Player player, WandOptions options) {
         this.player = player;
         this.options = options;
     }
 
     public void getSupply(@Nullable BlockItem target) {
         itemCounts = new LinkedHashMap<>();
-        ItemStack offhandStack = player.getStackInHand(Hand.OFF_HAND);
+        ItemStack offhandStack = player.getItemInHand(InteractionHand.OFF_HAND);
 
         itemPool = new OrderedPool<>();
 
@@ -73,7 +73,7 @@ public class SupplierInventory implements IWandSupplier
 
     @Override
     @Nullable
-    public PlaceSnapshot getPlaceSnapshot(World world, BlockPos pos, BlockHitResult rayTraceResult,
+    public PlaceSnapshot getPlaceSnapshot(Level world, BlockPos pos, BlockHitResult rayTraceResult,
                                           @Nullable BlockState supportingBlock) {
         if(!WandUtil.isPositionPlaceable(world, player, pos, options.replace.get())) return null;
         itemPool.reset();
@@ -104,7 +104,7 @@ public class SupplierInventory implements IWandSupplier
         int count = targetItem.getCount();
         Item item = targetItem.getItem();
 
-        if(player.getInventory().getMainStacks() == null) return count;
+        if(player.getInventory().getNonEquipmentItems() == null) return count;
         if(player.isCreative()) return 0;
 
         List<ItemStack> hotbar = WandUtil.getHotbarWithOffhand(player);
@@ -131,9 +131,9 @@ public class SupplierInventory implements IWandSupplier
 
             if(!container && WandUtil.stackEquals(stack, item)) {
                 int toTake = Math.min(count, stack.getCount());
-                stack.decrement(toTake);
+                stack.shrink(toTake);
                 count -= toTake;
-                player.getInventory().markDirty();
+                player.getInventory().setChanged();
             }
         }
         return count;

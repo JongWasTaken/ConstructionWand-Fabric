@@ -1,5 +1,6 @@
 package dev.smto.constructionwand.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.smto.constructionwand.ConstructionWandClient;
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
@@ -9,15 +10,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class ClientEvents
 {
@@ -38,28 +38,28 @@ public class ClientEvents
 
         // Sneak+(OPT)+Left click wand to change core
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
-            if (client.world == null) return;
-            if (lastClickTime + 5 > client.world.getTime()) return;
-            if(client.options.attackKey.isPressed()) {
+            if (client.level == null) return;
+            if (lastClickTime + 5 > client.level.getGameTime()) return;
+            if(client.options.keyAttack.isDown()) {
                 if(client.player == null || !canChangeMode(client.player)) return;
-                var target = MinecraftClient.getInstance().crosshairTarget;
-                if (target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
+                var target = Minecraft.getInstance().hitResult;
+                if (target != null && target.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) {
+                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getItemInHand(client.player.getUsedItemHand()));
                     if(!(wand.getItem() instanceof WandItem)) return;
                     WandOptions wandOptions = WandOptions.of(wand);
                     wandOptions.cores.next();
                     ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(wandOptions.cores, true));
-                    lastClickTime = client.world.getTime();
+                    lastClickTime = client.level.getGameTime();
                 }
             }
             // menu key, if bound
             if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
-                if (ConstructionWandClient.optionalMenuKey.isPressed() && client.player != null) {
-                    if (client.currentScreen == null) {
-                        ConstructionWandClient.optionalMenuKey.setPressed(false);
-                        ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
+                if (ConstructionWandClient.optionalMenuKey.isDown() && client.player != null) {
+                    if (client.screen == null) {
+                        ConstructionWandClient.optionalMenuKey.setDown(false);
+                        ItemStack wand = WandUtil.convertPolymerStack(client.player.getItemInHand(client.player.getUsedItemHand()));
                         if(!(wand.getItem() instanceof WandItem)) return;
-                        if (client.currentScreen != null) return;
+                        if (client.screen != null) return;
                         client.setScreen(new ScreenWand(wand));
                     }
                 }
@@ -67,22 +67,22 @@ public class ClientEvents
         });
 
         // Sneak+(OPT)+Right click wand to open GUI
-        UseItemCallback.EVENT.register((PlayerEntity player, World world, Hand hand) -> {
-            if(!world.isClient()) return ActionResult.PASS;
-            var target = MinecraftClient.getInstance().crosshairTarget;
-            if (canOpenGui(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
-                if(!(wand.getItem() instanceof WandItem)) return ActionResult.PASS;
-                MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
-                return ActionResult.FAIL;
+        UseItemCallback.EVENT.register((Player player, Level world, InteractionHand hand) -> {
+            if(!world.isClientSide()) return InteractionResult.PASS;
+            var target = Minecraft.getInstance().hitResult;
+            if (canOpenGui(player) && target != null && target.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) {
+                ItemStack wand = WandUtil.convertPolymerStack(player.getItemInHand(player.getUsedItemHand()));
+                if(!(wand.getItem() instanceof WandItem)) return InteractionResult.PASS;
+                Minecraft.getInstance().setScreen(new ScreenWand(wand));
+                return InteractionResult.FAIL;
             }
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         });
-        WorldRenderEvents.BEFORE_BLOCK_OUTLINE.register(RenderBlockPreview::renderBlockHighlight);
+        LevelRenderEvents.BEFORE_BLOCK_OUTLINE.register(RenderBlockPreview::renderBlockHighlight);
     }
 
     public static boolean onScroll(double scrollDelta) {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null || !canChangeMode(client.player) || scrollDelta == 0) return false;
 
         ItemStack wand = WandUtil.holdingWand(client.player);
@@ -97,14 +97,14 @@ public class ClientEvents
 
     public static boolean isOptKeyDown() {
         // a bit hacky, but allows the user to use any key regardless of conflicts
-        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), ConstructionWandClient.optKey.boundKey.getCode());
+        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), ConstructionWandClient.optKey.key.getValue());
     }
 
-    public static boolean canChangeMode(PlayerEntity player) {
-        return player.isSneaking() && (isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForActions);
+    public static boolean canChangeMode(Player player) {
+        return player.isShiftKeyDown() && (isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForActions);
     }
 
-    public static boolean canOpenGui(PlayerEntity player) {
-        return player.isSneaking() && (isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForMenu);
+    public static boolean canOpenGui(Player player) {
+        return player.isShiftKeyDown() && (isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForMenu);
     }
 }

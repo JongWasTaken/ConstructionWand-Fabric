@@ -7,13 +7,13 @@ import dev.smto.constructionwand.api.SnapshotCreationContext;
 import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.integrations.polymer.PolymerManager;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -72,7 +72,7 @@ public class ModCompat {
     }
 
     // hook for WandItem.useOnBlock
-    public static boolean preventWandOnBlock(ItemUsageContext context) {
+    public static boolean preventWandOnBlock(UseOnContext context) {
         boolean out = false;
         for (IModCompatHandler iModCompat : ENABLED_COMPAT) {
             if (out) break;
@@ -88,12 +88,12 @@ public class ModCompat {
     }
 
     // hook for WandUtil.placeBlock
-    public static void afterBlockPlacement(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
+    public static void afterBlockPlacement(Level world, Player player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
         for (IModCompatHandler iModCompat : ENABLED_COMPAT) iModCompat.afterBlockPlacement(world, player, block, pos, item, includedItem);
     }
 
     // hook for WandUtil.placeBlock
-    public static boolean shouldCancelBlockPlacement(World world, PlayerEntity player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
+    public static boolean shouldCancelBlockPlacement(Level world, Player player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
         boolean out = false;
         for (IModCompatHandler iModCompat : ENABLED_COMPAT) {
             if (out) break;
@@ -103,7 +103,7 @@ public class ModCompat {
     }
 
     // hook for WandUtil.hasBlockEntity
-    public static boolean allowBlockEntityRemoval(World world, BlockPos pos, BlockEntity blockEntity) {
+    public static boolean allowBlockEntityRemoval(Level world, BlockPos pos, BlockEntity blockEntity) {
         boolean out = false;
         for (IModCompatHandler iModCompat : ENABLED_COMPAT) {
             if (out) break;

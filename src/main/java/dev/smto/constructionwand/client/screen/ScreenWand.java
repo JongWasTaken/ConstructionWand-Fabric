@@ -4,15 +4,15 @@ import dev.smto.constructionwand.ConstructionWandClient;
 import dev.smto.constructionwand.basics.option.IOption;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.ItemStack;
 
 public class ScreenWand extends Screen {
     private final ItemStack wand;
@@ -29,7 +29,7 @@ public class ScreenWand extends Screen {
     private static final int FIELD_HEIGHT = N_ROWS * (BUTTON_HEIGHT + SPACING_HEIGHT) - SPACING_HEIGHT;
 
     public ScreenWand(ItemStack wand) {
-        super(Text.literal("Construction Wand Item Settings"));
+        super(Component.literal("Construction Wand Item Settings"));
         this.wand = wand;
         wandOptions = WandOptions.of(wand);
     }
@@ -42,31 +42,31 @@ public class ScreenWand extends Screen {
         createButton(1, 0, wandOptions.replace);
         createButton(1, 1, wandOptions.match);
         createButton(1, 2, wandOptions.random);
-        int w = textRenderer.getWidth(wand.getName());
-        this.addDrawable(new TextWidget((width / 2) - (w / 2), getY(0) - 40, w, 20, wand.getName(), textRenderer));
-        Text t = Text.translatable("gui.constructionwand.settings_button");
-        ButtonWidget button = ButtonWidget.builder(t, (bt) -> {
-                    this.close();
-                    MinecraftClient.getInstance().setScreen(new ScreenSettings(this));
+        int w = font.width(wand.getHoverName());
+        this.addRenderableOnly(new StringWidget((width / 2) - (w / 2), getY(0) - 40, w, 20, wand.getHoverName(), font));
+        Component t = Component.translatable("gui.constructionwand.settings_button");
+        Button button = Button.builder(t, (bt) -> {
+                    this.onClose();
+                    Minecraft.getInstance().setScreen(new ScreenSettings(this));
                 })
-                .position(2, 2)
-                .size(textRenderer.getWidth(t) + 8, 16)
+                .pos(2, 2)
+                .size(font.width(t) + 8, 16)
                 .build();
-        this.addDrawableChild(button);
+        this.addRenderableWidget(button);
     }
 
     private void createButton(int cx, int cy, IOption<?> option) {
-        ButtonWidget button = ButtonWidget.builder(getButtonLabel(option), (bt) -> clickButton(bt, option))
-                .position(getX(cx), getY(cy))
+        Button button = Button.builder(getButtonLabel(option), (bt) -> clickButton(bt, option))
+                .pos(getX(cx), getY(cy))
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
                 .tooltip(getButtonTooltip(option))
-                .narrationSupplier(x -> getButtonLabel(option))
+                .createNarration(x -> getButtonLabel(option))
                 .build();
         button.active = option.isEnabled();
-        this.addDrawableChild(button);
+        this.addRenderableWidget(button);
     }
 
-    private void clickButton(ButtonWidget button, IOption<?> option) {
+    private void clickButton(Button button, IOption<?> option) {
         option.next();
         ClientPlayNetworking.send(dev.smto.constructionwand.Network.Payloads.C2SWandOptionPayload.of(option, true));
         button.setMessage(getButtonLabel(option));
@@ -74,11 +74,11 @@ public class ScreenWand extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput k) {
+    public boolean keyPressed(KeyEvent k) {
         if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
-            if (ConstructionWandClient.optionalMenuKey.matchesKey(k)) {
-                this.close();
-                ConstructionWandClient.optionalMenuKey.setPressed(false);
+            if (ConstructionWandClient.optionalMenuKey.matches(k)) {
+                this.onClose();
+                ConstructionWandClient.optionalMenuKey.setDown(false);
                 return true;
             }
         }
@@ -94,11 +94,11 @@ public class ScreenWand extends Screen {
         return height / 2 - FIELD_HEIGHT / 2 + n * (BUTTON_HEIGHT + SPACING_HEIGHT) + 20;
     }
 
-    private MutableText getButtonLabel(IOption<?> option) {
-        return Text.translatable(option.getKeyTranslation()).append(Text.translatable(option.getValueTranslation()));
+    private MutableComponent getButtonLabel(IOption<?> option) {
+        return Component.translatable(option.getKeyTranslation()).append(Component.translatable(option.getValueTranslation()));
     }
 
     private Tooltip getButtonTooltip(IOption<?> option) {
-        return Tooltip.of(Text.translatable(option.getDescTranslation()));
+        return Tooltip.create(Component.translatable(option.getDescTranslation()));
     }
 }

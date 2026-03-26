@@ -1,12 +1,12 @@
 package dev.smto.constructionwand.api;
 
 import dev.smto.constructionwand.wand.undo.PlaceSnapshot;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -20,7 +20,7 @@ public interface IWandSupplier
      * in that position.
      */
     @Nullable
-    PlaceSnapshot getPlaceSnapshot(World world, BlockPos pos, BlockHitResult rayTraceResult,
+    PlaceSnapshot getPlaceSnapshot(Level world, BlockPos pos, BlockHitResult rayTraceResult,
                                    @Nullable BlockState supportingBlock);
 
     /**

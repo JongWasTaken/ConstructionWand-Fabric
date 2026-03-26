@@ -1,5 +1,6 @@
 package dev.smto.constructionwand;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.smto.constructionwand.client.ClientEvents;
 import dev.smto.constructionwand.client.Network;
 import dev.smto.simpleconfig.ConfigLoggers;
@@ -8,10 +9,9 @@ import dev.smto.simpleconfig.api.ConfigAnnotations;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.KeyMapping;
 
 @Environment(EnvType.CLIENT)
 public class ConstructionWandClient implements ClientModInitializer {
@@ -21,15 +21,16 @@ public class ConstructionWandClient implements ClientModInitializer {
             ConfigLoggers.create(ConstructionWand.LOGGER::debug, ConstructionWand.LOGGER::info, ConstructionWand.LOGGER::warn, ConstructionWand.LOGGER::error)
     );
 
-    public static KeyBinding optKey;
-    public static KeyBinding optionalMenuKey;
+    public static KeyMapping optKey;
+    public static KeyMapping optionalMenuKey;
 
     @Override
     public void onInitializeClient() {
         Network.init();
-        var cat = KeyBinding.Category.create(ConstructionWand.id("all"));
-        optKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.opt_key", InputUtil.Type.KEYSYM, 341, cat));
-        optionalMenuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding("key.constructionwand.menu_key", InputUtil.Type.KEYSYM, 86, cat));
+        var cat = KeyMapping.Category.register(ConstructionWand.id("all"));
+
+        optKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.opt_key", InputConstants.Type.KEYSYM, 341, cat));
+        optionalMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.menu_key", InputConstants.Type.KEYSYM, 86, cat));
 
         ClientEvents.init();
     }

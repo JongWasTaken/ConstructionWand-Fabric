@@ -8,19 +8,19 @@ import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.wand.undo.DestroySnapshot;
 import dev.smto.constructionwand.wand.undo.ISnapshot;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 public class ActionDestruction implements IWandAction
 {
@@ -35,7 +35,7 @@ public class ActionDestruction implements IWandAction
 
     @NotNull
     @Override
-    public List<ISnapshot> getSnapshots(World world, PlayerEntity player, BlockHitResult rayTraceResult,
+    public List<ISnapshot> getSnapshots(Level world, Player player, BlockHitResult rayTraceResult,
                                         ItemStack wand, WandOptions options, IWandSupplier supplier, int limit) {
         LinkedList<ISnapshot> destroySnapshots = new LinkedList<>();
         // Current list of block positions to process
@@ -44,7 +44,7 @@ public class ActionDestruction implements IWandAction
         HashSet<BlockPos> allCandidates = new HashSet<>();
 
         // Block face the wand was pointed at
-        Direction breakFace = rayTraceResult.getSide();
+        Direction breakFace = rayTraceResult.getDirection();
         // Block the wand was pointed at
         BlockPos startingPoint = rayTraceResult.getBlockPos();
         BlockState targetBlock = world.getBlockState(rayTraceResult.getBlockPos());
@@ -64,7 +64,7 @@ public class ActionDestruction implements IWandAction
             BlockPos currentCandidate = candidates.removeFirst();
 
             // Only break blocks facing the player, with no collidable blocks in between
-            if(!WandUtil.isBlockPermeable(world, currentCandidate.add(breakFace.getVector()))) continue;
+            if(!WandUtil.isBlockPermeable(world, currentCandidate.offset(breakFace.getUnitVec3i()))) continue;
 
             try {
                 BlockState candidateBlock = world.getBlockState(currentCandidate);
@@ -80,52 +80,52 @@ public class ActionDestruction implements IWandAction
                         case DOWN:
                         case UP:
                             if(options.testLock(WandOptions.Lock.NORTHSOUTH)) {
-                                candidates.add(currentCandidate.add(Direction.NORTH.getVector()));
-                                candidates.add(currentCandidate.add(Direction.SOUTH.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()));
                             }
                             if(options.testLock(WandOptions.Lock.EASTWEST)) {
-                                candidates.add(currentCandidate.add(Direction.EAST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.WEST.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.EAST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.WEST.getUnitVec3i()));
                             }
                             if(options.testLock(WandOptions.Lock.NORTHSOUTH) && options.testLock(WandOptions.Lock.EASTWEST)) {
-                                candidates.add(currentCandidate.add(Direction.NORTH.getVector()).add(Direction.EAST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.NORTH.getVector()).add(Direction.WEST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.SOUTH.getVector()).add(Direction.EAST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.SOUTH.getVector()).add(Direction.WEST.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()).offset(Direction.WEST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()).offset(Direction.WEST.getUnitVec3i()));
                             }
                             break;
                         case NORTH:
                         case SOUTH:
                             if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
-                                candidates.add(currentCandidate.add(Direction.EAST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.WEST.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.EAST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.WEST.getUnitVec3i()));
                             }
                             if(options.testLock(WandOptions.Lock.VERTICAL)) {
-                                candidates.add(currentCandidate.add(Direction.UP.getVector()));
-                                candidates.add(currentCandidate.add(Direction.DOWN.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()));
                             }
                             if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
-                                candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.EAST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.WEST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.EAST.getVector()));
-                                candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.WEST.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.WEST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()).offset(Direction.WEST.getUnitVec3i()));
                             }
                             break;
                         case EAST:
                         case WEST:
                             if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
-                                candidates.add(currentCandidate.add(Direction.NORTH.getVector()));
-                                candidates.add(currentCandidate.add(Direction.SOUTH.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()));
                             }
                             if(options.testLock(WandOptions.Lock.VERTICAL)) {
-                                candidates.add(currentCandidate.add(Direction.UP.getVector()));
-                                candidates.add(currentCandidate.add(Direction.DOWN.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()));
                             }
                             if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
-                                candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.NORTH.getVector()));
-                                candidates.add(currentCandidate.add(Direction.UP.getVector()).add(Direction.SOUTH.getVector()));
-                                candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.NORTH.getVector()));
-                                candidates.add(currentCandidate.add(Direction.DOWN.getVector()).add(Direction.SOUTH.getVector()));
+                                candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.NORTH.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.SOUTH.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()).offset(Direction.NORTH.getUnitVec3i()));
+                                candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()).offset(Direction.SOUTH.getUnitVec3i()));
                             }
                             break;
                     }
@@ -140,7 +140,7 @@ public class ActionDestruction implements IWandAction
 
     @NotNull
     @Override
-    public List<ISnapshot> getSnapshotsFromAir(World world, PlayerEntity player, BlockHitResult rayTraceResult,
+    public List<ISnapshot> getSnapshotsFromAir(Level world, Player player, BlockHitResult rayTraceResult,
                                                ItemStack wand, WandOptions options, IWandSupplier supplier, int limit) {
         return new ArrayList<>();
     }

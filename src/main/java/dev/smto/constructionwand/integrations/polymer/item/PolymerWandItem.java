@@ -12,118 +12,119 @@ import dev.smto.constructionwand.wand.WandJob;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
-import eu.pb4.polymer.core.api.utils.PolymerKeepModel;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.Items;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.world.World;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
+import net.minecraft.core.HolderLookup;
 import org.jetbrains.annotations.NotNull;
-import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import org.jspecify.annotations.Nullable;
 
-public abstract class PolymerWandItem extends WandItem implements PolymerItem, PolymerKeepModel, PolymerClientDecoded
+public abstract class PolymerWandItem extends WandItem implements PolymerItem, PolymerClientDecoded
 {
-    public PolymerWandItem(RegistryKey<Item> id, Settings properties) {
+    public PolymerWandItem(ResourceKey<Item> id, Properties properties) {
         super(id, properties);
     }
 
     @Override
     public Item getPolymerItem(ItemStack itemStack, PacketContext context) {
-        var player = context.getPlayer();
-        if (player == null) return Items.STICK;
-        if (PolymerManager.hasClientMod(player)) {
+        var playerProfile = (context.get(PacketContext.GAME_PROFILE));
+        if (playerProfile == null) return Items.STICK;
+        if (PolymerManager.hasClientMod(playerProfile.id())) {
             return this;
         }
         return Items.STICK;
     }
 
     @Override
-    public Identifier getPolymerItemModel(ItemStack stack, PacketContext context) {
-        return this.registryKey.getValue();
+    public @Nullable Identifier getPolymerItemModel(ItemStack stack, PacketContext context, HolderLookup.Provider lookup) {
+        return this.registryKey.identifier();
     }
 
     @NotNull
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        PlayerEntity player = context.getPlayer();
-        Hand hand = context.getHand();
-        World world = context.getWorld();
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+        InteractionHand hand = context.getHand();
+        Level world = context.getLevel();
 
-        if(world.isClient() || player == null) return ActionResult.PASS;
+        if(world.isClientSide() || player == null) return InteractionResult.PASS;
 
         if (ModCompat.preventWandOnBlock(context)) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        ItemStack stack = player.getStackInHand(hand);
+        ItemStack stack = player.getItemInHand(hand);
 
         if(UndoHistory.isUndoActive(player)) {
             PolymerManager.blockServerScreen(player);
-            return UndoHistory.undo(player, world, context.getBlockPos()) ? ActionResult.SUCCESS : ActionResult.FAIL;
+            return UndoHistory.undo(player, world, context.getClickedPos()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
         else {
-            WandJob job = new WandJob(player, world, new BlockHitResult(context.getHitPos(), context.getSide(), context.getBlockPos(), false), stack);
-            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            WandJob job = new WandJob(player, world, new BlockHitResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), false), stack);
+            return job.run() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
     }
 
     @NotNull
     @Override
-    public ActionResult use(@NotNull World world, PlayerEntity player, @NotNull Hand hand) {
-        ItemStack offHandStack = player.getOffHandStack();
-        ItemStack wand = player.getStackInHand(hand);
-        if (wand.equals(offHandStack)) return ActionResult.FAIL;
-        if (world.isClient()) return ActionResult.FAIL;
+    public InteractionResult use(@NotNull Level world, Player player, @NotNull InteractionHand hand) {
+        ItemStack offHandStack = player.getOffhandItem();
+        ItemStack wand = player.getItemInHand(hand);
+        if (wand.equals(offHandStack)) return InteractionResult.FAIL;
+        if (world.isClientSide()) return InteractionResult.FAIL;
         if(!UndoHistory.isUndoActive(player)) {
-            if (offHandStack.isEmpty()) return ActionResult.FAIL;
-            var bhr = BlockHitResult.createMissed(player.getEyePos(),
-                    WandUtil.fromVector(player.getEyePos()), player.getBlockPos());
+            if (offHandStack.isEmpty()) return InteractionResult.FAIL;
+            var bhr = BlockHitResult.miss(player.getEyePosition(),
+                    WandUtil.fromVector(player.getEyePosition()), player.blockPosition());
 
-            if (ModCompat.preventWandOnBlock(new ItemUsageContext(world, player, hand, wand, bhr))) {
-                return ActionResult.PASS;
+            if (ModCompat.preventWandOnBlock(new UseOnContext(world, player, hand, wand, bhr))) {
+                return InteractionResult.PASS;
             }
             // Right click: Place angel block
             WandJob job = new WandJob(player, world, bhr, wand);
-            return job.run() ? ActionResult.SUCCESS : ActionResult.FAIL;
+            return job.run() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         } else {
-            if (!PolymerManager.hasClientMod(player) && !PolymerManager.isScreenBlocked(player)) {
-                PolymerManager.openServerScreen((ServerPlayerEntity) player, wand);
+            if (!PolymerManager.hasClientMod(player.getUUID()) && !PolymerManager.isScreenBlocked(player)) {
+                PolymerManager.openServerScreen((ServerPlayer) player, wand);
             } else PolymerManager.unblockServerScreen(player);
         }
-        return ActionResult.FAIL;
+        return InteractionResult.FAIL;
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
         WandOptions options = WandOptions.of(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         int limit = options.cores.get().getWandAction().getLimit(stack);
-        textConsumer.accept(Text.translatable(langTooltip + "blocks", limit).formatted(Formatting.GRAY));
+        textConsumer.accept(Component.translatable(langTooltip + "blocks", limit).withStyle(ChatFormatting.GRAY));
         for(int i = 1; i < options.allOptions.length; i++) {
             IOption<?> opt = options.allOptions[i];
-            textConsumer.accept(Text.translatable(opt.getKeyTranslation()).formatted(Formatting.AQUA)
-                    .append(Text.translatable(opt.getValueTranslation()).formatted(Formatting.GRAY))
+            textConsumer.accept(Component.translatable(opt.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
+                    .append(Component.translatable(opt.getValueTranslation()).withStyle(ChatFormatting.GRAY))
             );
         }
         if(!options.cores.getUpgrades().isEmpty()) {
-            textConsumer.accept(Text.literal(""));
-            textConsumer.accept(Text.translatable(langTooltip + "cores").formatted(Formatting.GRAY));
+            textConsumer.accept(Component.literal(""));
+            textConsumer.accept(Component.translatable(langTooltip + "cores").withStyle(ChatFormatting.GRAY));
 
             for(IWandCore core : options.cores.getUpgrades()) {
-                textConsumer.accept(Text.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
+                textConsumer.accept(Component.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
             }
         }
     }

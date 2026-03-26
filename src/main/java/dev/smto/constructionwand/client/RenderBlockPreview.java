@@ -2,19 +2,18 @@ package dev.smto.constructionwand.client;
 
 import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.wand.WandJob;
-import net.fabricmc.fabric.api.client.rendering.v1.world.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.RenderLayers;
-import net.minecraft.client.render.VertexRendering;
-import net.minecraft.client.render.state.OutlineRenderState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.shape.VoxelShapes;
-
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.shapes.Shapes;
 import java.util.Set;
 
 public class RenderBlockPreview
@@ -22,12 +21,12 @@ public class RenderBlockPreview
     private static WandJob wandJob;
     public static Set<BlockPos> undoBlocks;
 
-    public static boolean renderBlockHighlight(WorldRenderContext context, OutlineRenderState outlineRenderState) {
-        ClientPlayerEntity player = context.gameRenderer().getClient().player;
+    public static boolean renderBlockHighlight(LevelRenderContext context, BlockOutlineRenderState outlineRenderState) {
+        LocalPlayer player = context.gameRenderer().getMinecraft().player;
         if(player == null) return true;
 
-        var tickCounter = MinecraftClient.getInstance().getRenderTickCounter();
-        HitResult hitResult = player.getCrosshairTarget(tickCounter.getTickProgress(true), context.gameRenderer().getClient().getCameraEntity());
+        var tickCounter = Minecraft.getInstance().getDeltaTracker();
+        HitResult hitResult = player.raycastHitResult(tickCounter.getGameTimeDeltaPartialTick(true), context.gameRenderer().getMinecraft().getCameraEntity());
 
         BlockHitResult rtr = hitResult instanceof BlockHitResult ? (BlockHitResult) hitResult : null;
         if(rtr == null) return true;
@@ -39,13 +38,13 @@ public class RenderBlockPreview
         if(wand == null) return true;
 
 
-        if(!(player.isSneaking() && ClientEvents.isOptKeyDown())) {
+        if(!(player.isShiftKeyDown() && ClientEvents.isOptKeyDown())) {
             // Use cached wandJob for previews of the same target pos/dir
             // Exception: always update if blockCount < 2 to prevent 1-block previews when block updates
             // from the last placement are lagging
             if(wandJob == null || !compareRTR(wandJob.rayTraceResult, rtr) || !(wandJob.wand.equals(wand))
                     || wandJob.blockCount() < 2) {
-                wandJob = new WandJob(player, player.getEntityWorld(), rtr, wand);
+                wandJob = new WandJob(player, player.level(), rtr, wand);
             }
             blocks = wandJob.getBlockPositions();
         }
@@ -56,17 +55,17 @@ public class RenderBlockPreview
 
         if(blocks == null || blocks.isEmpty()) return true;
 
-        double d0 = player.lastRenderX + (player.getX() - player.lastRenderX) * tickCounter.getTickProgress(true);
-        double d1 = player.lastRenderY + player.getStandingEyeHeight() + (player.getY() - player.lastRenderY) * tickCounter.getTickProgress(true);
-        double d2 = player.lastRenderZ + (player.getZ() - player.lastRenderZ) * tickCounter.getTickProgress(true);
+        double d0 = player.xOld + (player.getX() - player.xOld) * tickCounter.getGameTimeDeltaPartialTick(true);
+        double d1 = player.yOld + player.getEyeHeight() + (player.getY() - player.yOld) * tickCounter.getGameTimeDeltaPartialTick(true);
+        double d2 = player.zOld + (player.getZ() - player.zOld) * tickCounter.getGameTimeDeltaPartialTick(true);
 
         for(BlockPos block : blocks) {
-            VertexRendering.drawOutline(
-                    context.matrices(),
-                    context.consumers().getBuffer(RenderLayers.lines()),
-                    VoxelShapes.fullCube(),
+            ShapeRenderer.renderShape(
+                    context.poseStack(),
+                    context.bufferSource().getBuffer(RenderTypes.lines()),
+                    Shapes.block(),
                     block.getX() -d0, block.getY() -d1, block.getZ() -d2,
-                    ColorHelper.getArgb(colorR, colorG, colorB), 2F
+                    ARGB.color(colorR, colorG, colorB), 2F
             );
         }
 
@@ -78,6 +77,6 @@ public class RenderBlockPreview
     }
 
     private static boolean compareRTR(BlockHitResult rtr1, BlockHitResult rtr2) {
-        return rtr1.getBlockPos().equals(rtr2.getBlockPos()) && rtr1.getSide().equals(rtr2.getSide());
+        return rtr1.getBlockPos().equals(rtr2.getBlockPos()) && rtr1.getDirection().equals(rtr2.getDirection());
     }
 }

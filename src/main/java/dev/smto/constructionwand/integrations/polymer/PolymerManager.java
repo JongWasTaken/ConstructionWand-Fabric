@@ -13,23 +13,23 @@ import eu.pb4.sgui.api.ClickType;
 import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.SimpleGui;
+import eu.pb4.sgui.api.gui.SlotBasedGui;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.Stats;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -43,113 +43,113 @@ public class PolymerManager {
         PolymerResourcePackUtils.addModAssets(ConstructionWand.MOD_ID);
         PolymerResourcePackUtils.markAsRequired();
 
-        ServerPlayConnectionEvents.JOIN.register((ServerPlayNetworkHandler handler, PacketSender sender, MinecraftServer server) -> {
-            PLAYERS_WITH_CLIENT.remove(handler.player.getUuid());
+        ServerPlayConnectionEvents.JOIN.register((ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) -> {
+            PLAYERS_WITH_CLIENT.remove(handler.player.getUUID());
             unblockServerScreen(handler.player);
             ServerPlayNetworking.send(handler.player, new Network.Payloads.S2CPing(false));
         });
 
-        ServerPlayConnectionEvents.DISCONNECT.register((ServerPlayNetworkHandler handler, MinecraftServer minecraftServer) -> {
-            PLAYERS_WITH_CLIENT.remove(handler.player.getUuid());
+        ServerPlayConnectionEvents.DISCONNECT.register((ServerGamePacketListenerImpl handler, MinecraftServer minecraftServer) -> {
+            PLAYERS_WITH_CLIENT.remove(handler.player.getUUID());
             unblockServerScreen(handler.player);
         });
 
         ServerPlayNetworking.registerGlobalReceiver(Network.Payloads.C2SPong.ID, (payload, context) -> {
             context.server().execute(() -> {
-                ServerPlayerEntity player = context.player();
-                ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player.getName().getLiteralString());
-                PLAYERS_WITH_CLIENT.add(player.getUuid());
+                ServerPlayer player = context.player();
+                ConstructionWand.LOGGER.info("Player {} connected with polymer client support!", player.getName().tryCollapseToString());
+                PLAYERS_WITH_CLIENT.add(player.getUUID());
             });
         });
     }
 
-    public static boolean hasClientMod(PlayerEntity player) {
-        return PLAYERS_WITH_CLIENT.contains(player.getUuid());
+    public static boolean hasClientMod(UUID player) {
+        return PLAYERS_WITH_CLIENT.contains(player);
     }
 
-    public static void blockServerScreen(PlayerEntity player) {
-        PLAYERS_WITH_BLOCKED_SCREENS.add(player.getUuid());
+    public static void blockServerScreen(Player player) {
+        PLAYERS_WITH_BLOCKED_SCREENS.add(player.getUUID());
     }
 
-    public static void unblockServerScreen(PlayerEntity player) {
-        PLAYERS_WITH_BLOCKED_SCREENS.remove(player.getUuid());
+    public static void unblockServerScreen(Player player) {
+        PLAYERS_WITH_BLOCKED_SCREENS.remove(player.getUUID());
     }
 
-    public static boolean isScreenBlocked(PlayerEntity player) {
-        return PLAYERS_WITH_BLOCKED_SCREENS.contains(player.getUuid());
+    public static boolean isScreenBlocked(Player player) {
+        return PLAYERS_WITH_BLOCKED_SCREENS.contains(player.getUUID());
     }
 
-    public static void openServerScreen(ServerPlayerEntity player, ItemStack wand) {
+    public static void openServerScreen(ServerPlayer player, ItemStack wand) {
         WandServerScreen.open(player, wand);
     }
 
     private static class WandServerScreen extends SimpleGui {
         private final ItemStack wand;
         private final WandOptions options;
-        private final ServerPlayerEntity player;
+        private final ServerPlayer player;
 
         private static ItemStack getIcon(IOption<?> option) {
             var key = option.get();
             if (key instanceof IWandCore core) {
                 if (core instanceof PolymerDestructionCoreItem) {
-                    var model = ConstructionWand.getRegistry().getDestructionCore().getDefaultStack().get(DataComponentTypes.ITEM_MODEL);
-                    var item = Items.STICK.getDefaultStack();
-                    item.set(DataComponentTypes.ITEM_MODEL, model);
+                    var model = ConstructionWand.getRegistry().getDestructionCore().getDefaultInstance().get(DataComponents.ITEM_MODEL);
+                    var item = Items.STICK.getDefaultInstance();
+                    item.set(DataComponents.ITEM_MODEL, model);
                     return item;
                 }
                 if (core instanceof PolymerAngelCoreItem) {
-                    var model = ConstructionWand.getRegistry().getAngelCore().getDefaultStack().get(DataComponentTypes.ITEM_MODEL);
-                    var item = Items.STICK.getDefaultStack();
-                    item.set(DataComponentTypes.ITEM_MODEL, model);
+                    var model = ConstructionWand.getRegistry().getAngelCore().getDefaultInstance().get(DataComponents.ITEM_MODEL);
+                    var item = Items.STICK.getDefaultInstance();
+                    item.set(DataComponents.ITEM_MODEL, model);
                     return item;
                 }
-                return Items.BRICKS.getDefaultStack();
+                return Items.BRICKS.getDefaultInstance();
             }
             if (key instanceof WandOptions.Lock lock) {
                 switch (lock) {
                     case HORIZONTAL:
-                        return Items.OAK_SLAB.getDefaultStack();
+                        return Items.OAK_SLAB.getDefaultInstance();
                     case VERTICAL:
-                        return Items.OAK_FENCE.getDefaultStack();
+                        return Items.OAK_FENCE.getDefaultInstance();
                     case NORTHSOUTH:
-                        return Items.RAIL.getDefaultStack();
+                        return Items.RAIL.getDefaultInstance();
                     case EASTWEST:
-                        return Items.POWERED_RAIL.getDefaultStack();
+                        return Items.POWERED_RAIL.getDefaultInstance();
                 }
             }
             if (key instanceof WandOptions.Direction direction) {
                 return switch (direction) {
-                    case TARGET -> Items.OAK_LOG.getDefaultStack();
-                    case PLAYER -> Items.PLAYER_HEAD.getDefaultStack();
+                    case TARGET -> Items.OAK_LOG.getDefaultInstance();
+                    case PLAYER -> Items.PLAYER_HEAD.getDefaultInstance();
                 };
             }
             if (key instanceof WandOptions.Match match) {
                 return switch (match) {
-                    case EXACT -> Items.GRASS_BLOCK.getDefaultStack();
-                    case SIMILAR -> Items.DIRT.getDefaultStack();
-                    case ANY -> Items.PUMPKIN.getDefaultStack();
+                    case EXACT -> Items.GRASS_BLOCK.getDefaultInstance();
+                    case SIMILAR -> Items.DIRT.getDefaultInstance();
+                    case ANY -> Items.PUMPKIN.getDefaultInstance();
                 };
             }
             if (key instanceof Boolean b) {
                 if (option.getKey().equals("replace")) {
-                    if (b) return Items.WATER_BUCKET.getDefaultStack();
-                    return Items.BARRIER.getDefaultStack();
+                    if (b) return Items.WATER_BUCKET.getDefaultInstance();
+                    return Items.BARRIER.getDefaultInstance();
                 }
                 if (option.getKey().equals("random")) {
-                    if (b) return Items.COMMAND_BLOCK.getDefaultStack();
-                    return Items.BEDROCK.getDefaultStack();
+                    if (b) return Items.COMMAND_BLOCK.getDefaultInstance();
+                    return Items.BEDROCK.getDefaultInstance();
                 }
             }
 
-            return Items.STICK.getDefaultStack();
+            return Items.STICK.getDefaultInstance();
         }
 
-        private WandServerScreen(ServerPlayerEntity player, ItemStack wand) {
-            super(ScreenHandlerType.GENERIC_9X1, player, false);
+        private WandServerScreen(ServerPlayer player, ItemStack wand) {
+            super(MenuType.GENERIC_9x1, player, false);
             this.player = player;
             this.wand = wand;
             this.options = WandOptions.of(wand);
-            this.setTitle(wand.getName());
+            this.setTitle(wand.getHoverName());
         }
 
         @Override
@@ -158,20 +158,19 @@ public class PolymerManager {
             for (int i = 0; i < options.allOptions.length; i++) {
                 this.addSlot(buildElement(options.allOptions[i]));
             }
-            this.setSlot(8, GuiElementBuilder.from(Items.EXPERIENCE_BOTTLE.getDefaultStack())
+            this.setSlot(8, GuiElementBuilder.from(Items.EXPERIENCE_BOTTLE.getDefaultInstance())
                     .hideDefaultTooltip()
                     .setName(
-                            ((MutableText)PolymerStat.getName(ConstructionWand.getRegistry().getUseWandStat())).formatted(Formatting.AQUA)
+                            ((MutableComponent)PolymerStat.getName(ConstructionWand.getRegistry().getUseWandStat())).withStyle(ChatFormatting.AQUA)
                     )
-                    .addLoreLine(Text.literal(String.valueOf(this.player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(ConstructionWand.getRegistry().getUseWandStat())))).formatted(Formatting.GRAY))
-                    .setCallback((int index, ClickType type, SlotActionType action) -> {
-                    })
+                    .addLoreLine(Component.literal(String.valueOf(this.player.getStats().getValue(Stats.CUSTOM.get(ConstructionWand.getRegistry().getUseWandStat())))).withStyle(ChatFormatting.GRAY))
+                    .setCallback((ClickType action) -> {})
                     .build()
             );
         }
 
-        private Text getCapitalizedKey(IOption<?> option) {
-            var str = Text.translatable(option.getKey()).getString();
+        private Component getCapitalizedKey(IOption<?> option) {
+            var str = Component.translatable(option.getKey()).getString();
             str = str.substring(0,1).toUpperCase() + str.substring(1).toLowerCase();
             str = switch (str) {
                 case "Cores" -> "Selected Core";
@@ -180,19 +179,18 @@ public class PolymerManager {
                 case "Match" -> "Matching";
                 default -> str;
             };
-            return Text.literal(str).formatted(Formatting.AQUA);
+            return Component.literal(str).withStyle(ChatFormatting.AQUA);
         }
 
         private GuiElement buildElement(IOption<?> option) {
             return GuiElementBuilder.from(getIcon(option))
                     .setLore(List.of())
                     .hideDefaultTooltip()
-                    .noDefaults()
                     .setName(getCapitalizedKey(option))
-                    .addLoreLine(Text.translatable(option.getValueTranslation()).formatted(Formatting.GRAY))
-                    .addLoreLine(Text.literal(" "))
-                    .addLoreLine(Text.translatable(option.getDescTranslation()).formatted(Formatting.GRAY))
-                    .setCallback((int index, ClickType type, SlotActionType action) -> {
+                    .addLoreLine(Component.translatable(option.getValueTranslation()).withStyle(ChatFormatting.GRAY))
+                    .addLoreLine(Component.literal(" "))
+                    .addLoreLine(Component.translatable(option.getDescTranslation()).withStyle(ChatFormatting.GRAY))
+                    .setCallback((int index, ClickType type, ContainerInput action, SlotBasedGui gui) -> {
                         option.next(!type.isRight);
                         this.setSlot(index, buildElement(option));
                     })
@@ -200,13 +198,20 @@ public class PolymerManager {
         }
 
         @Override
-        public void onClose() {
-            super.onClose();
-            this.options.writeToStack(this.wand);
-            player.getInventory().markDirty();
+        public void onPlayerClose(boolean success) {
+            // not sure if this is needed
+            this.onManualClose();
+            super.onPlayerClose(success);
         }
 
-        public static void open(ServerPlayerEntity player, ItemStack wand) {
+        @Override
+        public void onManualClose() {
+            super.onManualClose();
+            this.options.writeToStack(this.wand);
+            player.getInventory().setChanged();
+        }
+
+        public static void open(ServerPlayer player, ItemStack wand) {
             new WandServerScreen(player, wand).open();
         }
     }

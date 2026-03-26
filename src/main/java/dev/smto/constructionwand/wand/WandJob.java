@@ -9,28 +9,28 @@ import dev.smto.constructionwand.wand.supplier.SupplierInventory;
 import dev.smto.constructionwand.wand.supplier.SupplierRandom;
 import dev.smto.constructionwand.wand.undo.ISnapshot;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 public class WandJob
 {
-    public final PlayerEntity player;
-    public final World world;
+    public final Player player;
+    public final Level world;
     public final BlockHitResult rayTraceResult;
     public final WandOptions options;
     public final ItemStack wand;
@@ -41,7 +41,7 @@ public class WandJob
 
     private List<ISnapshot> placeSnapshots;
 
-    public WandJob(PlayerEntity player, World world, BlockHitResult rayTraceResult, ItemStack wand) {
+    public WandJob(Player player, Level world, BlockHitResult rayTraceResult, ItemStack wand) {
         this.player = player;
         this.world = world;
         this.rayTraceResult = rayTraceResult;
@@ -63,7 +63,7 @@ public class WandJob
     }
 
     @Nullable
-    private static BlockItem getTargetItem(World world, BlockHitResult rayTraceResult) {
+    private static BlockItem getTargetItem(Level world, BlockHitResult rayTraceResult) {
         // Get target item
         Item tgitem = world.getBlockState(rayTraceResult.getBlockPos()).getBlock().asItem();
         if(!(tgitem instanceof BlockItem)) return null;
@@ -123,7 +123,7 @@ public class WandJob
                 if (!success) {
                     for (ItemStack item : taken) {
                         // if it fails, return any taken items
-                        player.giveOrDropStack(item);
+                        player.handleExtraItemsCreatedOnUse(item);
                     }
                     continue;
                 }
@@ -133,23 +133,23 @@ public class WandJob
                 executed.add(snapshot);
                 if (!player.isCreative()) {
                     // layered blocks would need multiple right-clicks, so each removes 1 durability
-                    wand.damage(snapshot.getRequiredItems().getFirst().getCount(), player, EquipmentSlot.MAINHAND);
+                    wand.hurtAndBreak(snapshot.getRequiredItems().getFirst().getCount(), player, EquipmentSlot.MAINHAND);
                 }
             } else {
                 snapshot.forceRestore(world);
                 for (ItemStack item : taken) {
                     // if it fails, return any taken items
-                    player.giveOrDropStack(item);
+                    player.handleExtraItemsCreatedOnUse(item);
                 }
             }
-            player.increaseStat(ConstructionWand.getRegistry().getUseWandStat(), 1);
+            player.awardStat(ConstructionWand.getRegistry().getUseWandStat(), 1);
         }
         placeSnapshots = executed;
 
         // Play place sound
         if(!placeSnapshots.isEmpty()) {
-            BlockSoundGroup sound = placeSnapshots.getFirst().getBlockState().getSoundGroup();
-            world.playSound(null, player.getBlockPos(), sound.getPlaceSound(), SoundCategory.BLOCKS, sound.volume, sound.pitch);
+            SoundType sound = placeSnapshots.getFirst().getBlockState().getSoundType();
+            world.playSound(null, player.blockPosition(), sound.getPlaceSound(), SoundSource.BLOCKS, sound.volume, sound.pitch);
 
             // Add to job history for undo
             UndoHistory.add(player, world, placeSnapshots);

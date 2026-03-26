@@ -2,23 +2,22 @@ package dev.smto.constructionwand.basics.option;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandUpgrade;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.util.ArrayList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
 public class WandUpgrades<T extends IWandUpgrade>
 {
-    protected final NbtCompound tag;
+    protected final CompoundTag tag;
     protected final String key;
     protected final ArrayList<T> upgrades;
     protected final T dval;
 
-    public WandUpgrades(NbtCompound tag, String key, T dval) {
+    public WandUpgrades(CompoundTag tag, String key, T dval) {
         this.tag = tag;
         this.key = key;
         this.dval = dval;
@@ -30,12 +29,12 @@ public class WandUpgrades<T extends IWandUpgrade>
     }
 
     protected void deserialize() {
-        NbtList listnbt = tag.getList(key).orElse(new NbtList());
+        ListTag listnbt = tag.getList(key).orElse(new ListTag());
         boolean require_fix = false;
 
         for(int i = 0; i < listnbt.size(); i++) {
             String str = listnbt.getString(i).orElse("");
-            Item item = Registries.ITEM.get(Identifier.of(str));
+            Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(str));
 
             T data;
             try {
@@ -51,11 +50,11 @@ public class WandUpgrades<T extends IWandUpgrade>
     }
 
     protected void serialize() {
-        NbtList listnbt = new NbtList();
+        ListTag listnbt = new ListTag();
 
         for(T item : upgrades) {
             if(item == dval) continue;
-            listnbt.add(NbtString.of(item.getRegistryName().toString()));
+            listnbt.add(StringTag.valueOf(item.getRegistryName().toString()));
         }
         tag.put(key, listnbt);
     }

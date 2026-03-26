@@ -1,6 +1,6 @@
 package dev.smto.constructionwand.api;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
 
 public interface IWandUpgrade
 {

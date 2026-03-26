@@ -1,15 +1,14 @@
 package dev.smto.constructionwand.basics;
 
 import dev.smto.constructionwand.ConstructionWand;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.util.HashSet;
 import java.util.Set;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 public class ReplacementRegistry
 {
@@ -23,7 +22,7 @@ public class ReplacementRegistry
             HashSet<Item> set = new HashSet<>();
 
             for(String id : key.split(";")) {
-                Item item = Registries.ITEM.get(Identifier.of(id));
+                Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(id));
                 if(item == null || item == Items.AIR) {
                     ConstructionWand.LOGGER.warn("Replacement Registry: Could not find item " + id);
                     continue;

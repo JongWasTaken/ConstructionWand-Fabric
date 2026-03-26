@@ -7,13 +7,12 @@ import dev.emi.emi.api.stack.EmiStack;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.ConstructionWandClient;
 import dev.smto.constructionwand.api.WandConfigEntry;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 
 public class ConstructionWandEmiPlugin implements EmiPlugin {
     private static final String baseKey = ConstructionWand.MOD_ID + ".description.";
@@ -21,10 +20,10 @@ public class ConstructionWandEmiPlugin implements EmiPlugin {
 
     @Override
     public void register(EmiRegistry registry) {
-        Text optkeyText = Text.translatable(ConstructionWandClient.optKey.getBoundKeyTranslationKey())
-                .formatted(Formatting.BLUE);
-        Text wandModeText = keyComboText(ConstructionWandClient.Config.requireOptKeyForActions, optkeyText);
-        Text wandGuiText = keyComboText(ConstructionWandClient.Config.requireOptKeyForMenu, optkeyText);
+        Component optkeyText = Component.translatable(ConstructionWandClient.optKey.saveString())
+                .withStyle(ChatFormatting.BLUE);
+        Component wandModeText = keyComboText(ConstructionWandClient.Config.requireOptKeyForActions, optkeyText);
+        Component wandGuiText = keyComboText(ConstructionWandClient.Config.requireOptKeyForMenu, optkeyText);
 
         for(Item wand : ConstructionWand.getRegistry().getWands()) {
             WandConfigEntry wandProperties = null;
@@ -33,30 +32,30 @@ public class ConstructionWandEmiPlugin implements EmiPlugin {
             } catch (Throwable ignored) {}
 
             String durabilityKey = wand == ConstructionWand.getRegistry().getInfinityWand() ? "unlimited" : "limited";
-            Text durabilityText = Text.translatable(baseKey + "durability." + durabilityKey, wandProperties.durability());
+            Component durabilityText = Component.translatable(baseKey + "durability." + durabilityKey, wandProperties.durability());
 
             registry.addRecipe(new EmiInfoRecipe(
                     List.of(EmiStack.of(wand)),
-                    List.of(Text.translatable(baseKey + "wand",
-                            Text.translatable(baseKeyItem + Registries.ITEM.getId(wand).getPath()),
+                    List.of(Component.translatable(baseKey + "wand",
+                            Component.translatable(baseKeyItem + BuiltInRegistries.ITEM.getKey(wand).getPath()),
                             wandProperties.range(), durabilityText, optkeyText, wandModeText, wandGuiText)),
-                    Identifier.of(ConstructionWand.MOD_ID, Registries.ITEM.getId(wand).getPath() + "_info")
+                    Identifier.fromNamespaceAndPath(ConstructionWand.MOD_ID, BuiltInRegistries.ITEM.getKey(wand).getPath() + "_info")
             ));
         }
 
         for(Item core : ConstructionWand.getRegistry().getCores()) {
             registry.addRecipe(new EmiInfoRecipe(
                     List.of(EmiStack.of(core)),
-                    List.of(Text.translatable(baseKey + Registries.ITEM.getId(core).getPath())
+                    List.of(Component.translatable(baseKey + BuiltInRegistries.ITEM.getKey(core).getPath())
                             .append("\n\n")
-                            .append(Text.translatable(baseKey + "core", wandModeText))),
-                    Identifier.of(ConstructionWand.MOD_ID, Registries.ITEM.getId(core).getPath() + "_info")
+                            .append(Component.translatable(baseKey + "core", wandModeText))),
+                    Identifier.fromNamespaceAndPath(ConstructionWand.MOD_ID, BuiltInRegistries.ITEM.getKey(core).getPath() + "_info")
             ));
         }
     }
 
-    private Text keyComboText(boolean shiftOpt, Text optkeyText) {
+    private Component keyComboText(boolean shiftOpt, Component optkeyText) {
         String key = shiftOpt ? "sneak_opt" : "sneak";
-        return Text.translatable(baseKey + "key." + key, optkeyText).formatted(Formatting.BLUE);
+        return Component.translatable(baseKey + "key." + key, optkeyText).withStyle(ChatFormatting.BLUE);
     }
 }
