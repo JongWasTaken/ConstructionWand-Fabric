@@ -83,7 +83,7 @@ public class Network {
         }
 
         public record S2CPing(boolean unused) implements CustomPayload {
-            public static final CustomPayload.Id<S2CPing> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "pong"));
+            public static final CustomPayload.Id<S2CPing> ID = new CustomPayload.Id<>(Identifier.of(MOD_ID, "ping"));
             public static final PacketCodec<RegistryByteBuf, S2CPing> CODEC = PacketCodec.tuple(PacketCodecs.BOOLEAN, S2CPing::unused, S2CPing::new);
             @Override
             public CustomPayload.Id<? extends CustomPayload> getId() {
@@ -179,8 +179,8 @@ public class Network {
                 ServerPlayerEntity player = context.player();
                 if(player == null) return;
 
-                ItemStack wand = WandUtil.holdingWand(player);
-                if(wand == null) return;
+                ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
+                if(wand.isEmpty()) return;
                 WandOptions options = WandOptions.of(wand);
 
                 IOption<?> option = options.get(payload.key);

@@ -32,6 +32,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class WandUtil
     }
 
 
-    public static ItemStack convertPolymerStack(ItemStack stack) {
+    public static ItemStack tryConvertPolymerStack(ItemStack stack) {
         if (stack.getComponents().contains(DataComponentTypes.CUSTOM_DATA)) {
             var nbt = Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
             if (nbt.contains("$polymer:stack")) {
@@ -74,7 +75,7 @@ public class WandUtil
                     Identifier id = Identifier.tryParse(nbt.getString("id").orElse(""));
                     if (id != null) {
                         Item item = Registries.ITEM.get(id);
-                        if (item != null) {
+                        if (!item.equals(Items.AIR)) {
                             ItemStack newStack = item.getDefaultStack();
                             try {
                                 nbt = nbt.getCompound("components").orElse(new NbtCompound()).getCompound("minecraft:custom_data").orElse(new NbtCompound());
@@ -89,16 +90,16 @@ public class WandUtil
         return stack;
     }
 
-    public static ItemStack holdingWand(PlayerEntity player) {
+    public static @NotNull ItemStack getHeldWandOrEmpty(@NotNull PlayerEntity player) {
         if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
+            ItemStack stack = WandUtil.tryConvertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
         if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
+            ItemStack stack = WandUtil.tryConvertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public static BlockPos posFromVec(Vec3d vec) {
