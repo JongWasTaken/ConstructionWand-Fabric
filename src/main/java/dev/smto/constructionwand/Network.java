@@ -82,7 +82,7 @@ public class Network {
         }
 
         public record S2CPing(boolean unused) implements CustomPacketPayload {
-            public static final CustomPacketPayload.Type<S2CPing> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "pong"));
+            public static final CustomPacketPayload.Type<S2CPing> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "ping"));
             public static final StreamCodec<RegistryFriendlyByteBuf, S2CPing> CODEC = StreamCodec.composite(ByteBufCodecs.BOOL, S2CPing::unused, S2CPing::new);
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
@@ -178,7 +178,7 @@ public class Network {
                 ServerPlayer player = context.player();
                 if(player == null) return;
 
-                ItemStack wand = WandUtil.holdingWand(player);
+                ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
                 if(wand == null) return;
                 WandOptions options = WandOptions.of(wand);
 

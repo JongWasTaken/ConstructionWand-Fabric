@@ -34,7 +34,7 @@ public class RenderBlockPreview
         Set<BlockPos> blocks;
         int colorR = 0, colorG = 0, colorB = 0;
 
-        ItemStack wand = WandUtil.holdingWand(player);
+        ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
         if(wand == null) return true;
 
 

@@ -8,6 +8,7 @@ import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.WandItemUseContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -89,16 +90,16 @@ public class WandUtil
         return stack;
     }
 
-    public static ItemStack holdingWand(Player player) {
+    public static @NotNull ItemStack getHeldWandOrEmpty(@NotNull Player player) {
         if(player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getItemInHand(InteractionHand.MAIN_HAND));
+            ItemStack stack = WandUtil.convertPolymerStack(player.getItemInHand(InteractionHand.MAIN_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
         if(player.getItemInHand(InteractionHand.OFF_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getItemInHand(InteractionHand.OFF_HAND));
+            ItemStack stack = WandUtil.convertPolymerStack(player.getItemInHand(InteractionHand.OFF_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public static BlockPos posFromVec(Vec3 vec) {
