@@ -27,8 +27,8 @@ public class RenderBlockPreview
         Set<BlockPos> blocks;
         float colorR = 0, colorG = 0, colorB = 0;
 
-        ItemStack wand = WandUtil.holdingWand(player);
-        if(wand == null) return true;
+        ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
+        if(wand.isEmpty()) return true;
 
 
         if(!(player.isSneaking() && ClientEvents.isOptKeyDown())) {

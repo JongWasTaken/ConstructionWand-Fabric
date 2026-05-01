@@ -25,10 +25,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class WandUtil
@@ -74,16 +74,16 @@ public class WandUtil
         return stack;
     }
 
-    public static ItemStack holdingWand(PlayerEntity player) {
+    public static @NotNull ItemStack getHeldWandOrEmpty(@NotNull PlayerEntity player) {
         if(player.getStackInHand(Hand.MAIN_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
+            ItemStack stack = WandUtil.convertPolymerStack(player.getStackInHand(Hand.MAIN_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
         if(player.getStackInHand(Hand.OFF_HAND) != ItemStack.EMPTY) {
-            ItemStack stack = convertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
+            ItemStack stack = WandUtil.convertPolymerStack(player.getStackInHand(Hand.OFF_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 
     public static BlockPos posFromVec(Vec3d vec) {

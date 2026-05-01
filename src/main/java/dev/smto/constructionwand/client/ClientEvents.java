@@ -28,7 +28,7 @@ public class ClientEvents
         // send OPT key state to server
         ClientTickEvents.END_CLIENT_TICK.register((client) -> {
             if (client.player == null) return;
-            if(WandUtil.holdingWand(client.player) == null) return;
+            if(WandUtil.getHeldWandOrEmpty(client.player) == null) return;
             boolean optState = isOptKeyDown();
             if(optPressed != optState) {
                 optPressed = optState;
@@ -44,8 +44,8 @@ public class ClientEvents
                 if(client.player == null || !canChangeMode(client.player)) return;
                 var target = MinecraftClient.getInstance().crosshairTarget;
                 if (target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                    ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
-                    if(!(wand.getItem() instanceof WandItem)) return;
+                    ItemStack wand = WandUtil.getHeldWandOrEmpty(client.player);
+                    if(wand.isEmpty()) return;
                     WandOptions wandOptions = WandOptions.of(wand);
                     wandOptions.cores.next();
                     ClientPlayNetworking.send(
@@ -59,8 +59,8 @@ public class ClientEvents
                 if (ConstructionWandClient.optionalMenuKey.isPressed() && client.player != null) {
                     if (client.currentScreen == null) {
                         ConstructionWandClient.optionalMenuKey.setPressed(false);
-                        ItemStack wand = WandUtil.convertPolymerStack(client.player.getStackInHand(client.player.getActiveHand()));
-                        if(!(wand.getItem() instanceof WandItem)) return;
+                        ItemStack wand = WandUtil.getHeldWandOrEmpty(client.player);
+                        if(wand.isEmpty()) return;
                         if (client.currentScreen != null) return;
                         client.setScreen(new ScreenWand(wand));
                     }
@@ -73,8 +73,8 @@ public class ClientEvents
             if(!world.isClient) return TypedActionResult.pass(player.getStackInHand(player.getActiveHand()));
             var target = MinecraftClient.getInstance().crosshairTarget;
             if (canOpenGui(player) && target != null && target.getType() != net.minecraft.util.hit.HitResult.Type.BLOCK) {
-                ItemStack wand = WandUtil.convertPolymerStack(player.getStackInHand(player.getActiveHand()));
-                if(!(wand.getItem() instanceof WandItem)) return TypedActionResult.pass(player.getStackInHand(player.getActiveHand()));
+                ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
+                if(wand.isEmpty()) return TypedActionResult.pass(player.getStackInHand(player.getActiveHand()));
                 MinecraftClient.getInstance().setScreen(new ScreenWand(wand));
                 return TypedActionResult.fail(player.getStackInHand(player.getActiveHand()));
             }
@@ -87,7 +87,7 @@ public class ClientEvents
         var client = MinecraftClient.getInstance();
         if(client.player == null || !canChangeMode(client.player) || scrollDelta == 0) return false;
 
-        ItemStack wand = WandUtil.holdingWand(client.player);
+        ItemStack wand = WandUtil.getHeldWandOrEmpty(client.player);
         if(wand == null) return false;
 
         WandOptions wandOptions = WandOptions.of(wand);

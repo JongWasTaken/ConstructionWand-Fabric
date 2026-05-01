@@ -97,7 +97,7 @@ public class Network {
         }
 
         public record S2CPing(boolean unused) {
-            public static final Identifier ID = id("pong");
+            public static final Identifier ID = id("ping");
 
             public static PacketByteBuf encode(S2CPing input) {
                 var buf = PacketByteBufs.create();
@@ -246,7 +246,7 @@ public class Network {
             server.execute(() -> {
                 if(player == null) return;
 
-                ItemStack wand = WandUtil.holdingWand(player);
+                ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
                 if(wand == null) return;
                 WandOptions options = WandOptions.of(wand);
 
