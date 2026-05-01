@@ -35,8 +35,7 @@ public class RenderBlockPreview
         int colorR = 0, colorG = 0, colorB = 0;
 
         ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
-        if(wand == null) return true;
-
+        if(wand.isEmpty()) return true;
 
         if(!(player.isShiftKeyDown() && ClientEvents.isOptKeyDown())) {
             // Use cached wandJob for previews of the same target pos/dir
