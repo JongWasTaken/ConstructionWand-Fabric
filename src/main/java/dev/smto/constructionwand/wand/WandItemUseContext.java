@@ -11,11 +11,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class WandItemUseContext extends BlockPlaceContext
-{
+public class WandItemUseContext extends BlockPlaceContext {
     public WandItemUseContext(Level world, Player player, BlockHitResult rayTraceResult, BlockPos pos, BlockItem item) {
         super(world, player, InteractionHand.MAIN_HAND, new ItemStack(item),
-                new BlockHitResult(getBlockHitVec(rayTraceResult, pos), rayTraceResult.getDirection(), pos, false));
+                new BlockHitResult(WandItemUseContext.getBlockHitVec(rayTraceResult, pos), rayTraceResult.getDirection(), pos, false));
     }
 
     private static Vec3 getBlockHitVec(BlockHitResult rayTraceResult, BlockPos pos) {
@@ -28,6 +27,6 @@ public class WandItemUseContext extends BlockPlaceContext
 
     @Override
     public boolean canPlace() {
-        return replaceClicked;
+        return this.replaceClicked;
     }
 }

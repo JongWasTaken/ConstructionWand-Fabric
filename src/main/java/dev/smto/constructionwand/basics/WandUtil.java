@@ -8,13 +8,6 @@ import dev.smto.constructionwand.containers.ContainerManager;
 import dev.smto.constructionwand.integrations.mod.ModCompat;
 import dev.smto.constructionwand.items.wand.WandItem;
 import dev.smto.constructionwand.wand.WandItemUseContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponentPatch;
@@ -39,12 +32,18 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class WandUtil
-{
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+public class WandUtil {
     public static boolean stackEquals(ItemStack stackA, ItemStack stackB) {
-        if (stackIsInvalid(stackA)) return false;
-        if (stackIsInvalid(stackB)) return false;
+        if (WandUtil.stackIsInvalid(stackA)) return false;
+        if (WandUtil.stackIsInvalid(stackB)) return false;
         return ItemStack.isSameItem(stackA, stackB);
     }
 
@@ -54,7 +53,7 @@ public class WandUtil
         }
         // fail if stack in question contains items (shulker box destruction prevention tm)
         if (stack.has(DataComponents.CONTAINER)) {
-            if (!Objects.equals(stack.get(DataComponents.CONTAINER), ItemContainerContents.EMPTY)) return true;
+            return !Objects.equals(stack.get(DataComponents.CONTAINER), ItemContainerContents.EMPTY);
         }
 
         return false;
@@ -62,7 +61,7 @@ public class WandUtil
 
     public static boolean stackEquals(ItemStack stackA, Item item) {
         ItemStack stackB = new ItemStack(item);
-        return stackEquals(stackA, stackB);
+        return WandUtil.stackEquals(stackA, stackB);
     }
 
 
@@ -75,11 +74,12 @@ public class WandUtil
                     Identifier id = Identifier.tryParse(nbt.getString("id").orElse(""));
                     if (id != null) {
                         Item item = BuiltInRegistries.ITEM.getValue(id);
-                        if (item != null) {
+                        if (item != Items.AIR) {
                             ItemStack newStack = item.getDefaultInstance();
                             try {
                                 nbt = nbt.getCompound("components").orElse(new CompoundTag()).getCompound("minecraft:custom_data").orElse(new CompoundTag());
-                            } catch (Exception ignored) {}
+                            } catch (Exception ignored) {
+                            }
                             newStack.set(DataComponents.CUSTOM_DATA, CustomData.of(nbt));
                             return newStack;
                         }
@@ -91,11 +91,11 @@ public class WandUtil
     }
 
     public static @NotNull ItemStack getHeldWandOrEmpty(@NotNull Player player) {
-        if(player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY) {
+        if (player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY) {
             ItemStack stack = WandUtil.convertPolymerStack(player.getItemInHand(InteractionHand.MAIN_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
-        if(player.getItemInHand(InteractionHand.OFF_HAND) != ItemStack.EMPTY) {
+        if (player.getItemInHand(InteractionHand.OFF_HAND) != ItemStack.EMPTY) {
             ItemStack stack = WandUtil.convertPolymerStack(player.getItemInHand(InteractionHand.OFF_HAND));
             if (stack.getItem() instanceof WandItem) return stack;
         }
@@ -141,10 +141,10 @@ public class WandUtil
     }
 
     public static boolean isTEAllowed(BlockState state) {
-        if(!state.hasBlockEntity()) return true;
+        if (!state.hasBlockEntity()) return true;
 
         Identifier name = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        if(name == null) return false;
+        if (name.equals(BuiltInRegistries.BLOCK.getDefaultKey())) return false;
 
         String fullId = name.toString();
         String modId = name.getNamespace();
@@ -160,13 +160,13 @@ public class WandUtil
             return false;
         }
 
-        if(!world.setBlockAndUpdate(pos, block)) {
+        if (!world.setBlockAndUpdate(pos, block)) {
             ConstructionWand.LOGGER.info("Block could not be placed");
             return false;
         }
 
         ItemStack stack;
-        if(item == null) stack = new ItemStack(block.getBlock().asItem());
+        if (item == null) stack = new ItemStack(block.getBlock().asItem());
         else {
             stack = item;
             player.awardStat(Stats.ITEM_USED.get(item.getItem()), 1);
@@ -184,15 +184,15 @@ public class WandUtil
     public static boolean removeBlock(Level world, Player player, @Nullable BlockState block, BlockPos pos) {
         BlockState currentBlock = world.getBlockState(pos);
 
-        if(!world.mayInteract(player, pos)) return false;
+        if (!world.mayInteract(player, pos)) return false;
 
-        if(!player.isCreative()) {
-            boolean hasEntity = hasBlockEntity(world, pos);
+        if (!player.isCreative()) {
+            boolean hasEntity = WandUtil.hasBlockEntity(world, pos);
 
-            if(currentBlock.getDestroySpeed(world, pos) <= -1 || hasEntity) return false;
+            if (currentBlock.getDestroySpeed(world, pos) <= -1 || hasEntity) return false;
 
-            if(block != null)
-                if(!ReplacementRegistry.matchBlocks(currentBlock.getBlock(), block.getBlock())) return false;
+            if (block != null)
+                if (!ReplacementRegistry.matchBlocks(currentBlock.getBlock(), block.getBlock())) return false;
         }
 
         /*
@@ -206,21 +206,20 @@ public class WandUtil
     }
 
     public static int countItem(Player player, Item item) {
-        if(player.getInventory().getNonEquipmentItems() == null) return 0;
-        if(player.isCreative()) return Integer.MAX_VALUE;
+        if (player.getInventory().getNonEquipmentItems().isEmpty()) return 0;
+        if (player.isCreative()) return Integer.MAX_VALUE;
 
         int total = 0;
         List<ItemStack> inventory = WandUtil.getFullInv(player);
 
-        for(ItemStack stack : inventory) {
-            if(stack == null || stack.isEmpty()) continue;
+        for (ItemStack stack : inventory) {
+            if (stack == null || stack.isEmpty()) continue;
 
-            if(WandUtil.stackEquals(stack, item)) {
+            if (WandUtil.stackEquals(stack, item)) {
                 total += stack.getCount();
-            }
-            else {
+            } else {
                 int amount = ContainerManager.countItems(player, new ItemStack(item), stack);
-                if(amount == Integer.MAX_VALUE) return Integer.MAX_VALUE;
+                if (amount == Integer.MAX_VALUE) return Integer.MAX_VALUE;
                 total += amount;
             }
         }
@@ -229,16 +228,14 @@ public class WandUtil
 
     private static boolean isPositionModifiable(Level world, Player player, BlockPos pos) {
         // Is position out of world?
-        if(!world.isInWorldBounds(pos)) return false;
+        if (!world.isInWorldBounds(pos)) return false;
 
         // Is block modifiable?
-        if(!world.mayInteract(player, pos)) return false;
+        if (!world.mayInteract(player, pos)) return false;
 
         // Limit range
-        if(ConstructionWand.Config.maxRange > 0 &&
-                WandUtil.blockDistance(player.blockPosition(), pos) > ConstructionWand.Config.maxRange) return false;
-
-        return true;
+        return ConstructionWand.Config.maxRange <= 0 ||
+                WandUtil.blockDistance(player.blockPosition(), pos) <= ConstructionWand.Config.maxRange;
     }
 
     /**
@@ -246,10 +243,10 @@ public class WandUtil
      * This check is independent of the used block.
      */
     public static boolean isPositionPlaceable(Level world, Player player, BlockPos pos, boolean replace) {
-        if(!isPositionModifiable(world, player, pos)) return false;
+        if (!WandUtil.isPositionModifiable(world, player, pos)) return false;
 
         // If replace mode is off, target has to be air
-        if(world.isEmptyBlock(pos)) return true;
+        if (world.isEmptyBlock(pos)) return true;
 
         // Otherwise, check if the block can be replaced by a generic block
         return replace && world.getBlockState(pos).canBeReplaced(
@@ -259,10 +256,10 @@ public class WandUtil
     }
 
     public static boolean isBlockRemovable(Level world, Player player, BlockPos pos) {
-        if(!isPositionModifiable(world, player, pos)) return false;
+        if (!WandUtil.isPositionModifiable(world, player, pos)) return false;
 
-        if(!player.isCreative()) {
-            return !(world.getBlockState(pos).getDestroySpeed(world, pos) <= -1) && !hasBlockEntity(world, pos);
+        if (!player.isCreative()) {
+            return !(world.getBlockState(pos).getDestroySpeed(world, pos) <= -1) && !WandUtil.hasBlockEntity(world, pos);
         }
         return true;
     }
@@ -283,7 +280,7 @@ public class WandUtil
 
     public static boolean entitiesCollidingWithBlock(Level world, BlockState blockState, BlockPos pos) {
         VoxelShape shape = blockState.getCollisionShape(world, pos);
-        if(!shape.isEmpty()) {
+        if (!shape.isEmpty()) {
             AABB blockBB = shape.bounds().move(pos);
             return !world.getEntitiesOfClass(LivingEntity.class, blockBB, Predicate.not(Entity::isSpectator)).isEmpty();
         }

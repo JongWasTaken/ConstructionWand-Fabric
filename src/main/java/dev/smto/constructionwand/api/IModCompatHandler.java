@@ -14,9 +14,12 @@ public interface IModCompatHandler {
         return context;
     }
 
-    default boolean shouldCancelBlockPlacement(Level world, Player player, BlockState blockState, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) { return false; }
+    default boolean shouldCancelBlockPlacement(Level world, Player player, BlockState blockState, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
+        return false;
+    }
 
-    default void afterBlockPlacement(Level world, Player player, BlockState blockState, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {}
+    default void afterBlockPlacement(Level world, Player player, BlockState blockState, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
+    }
 
     default boolean allowBlockEntityRemoval(Level world, BlockPos pos, BlockEntity blockEntity) {
         return false;

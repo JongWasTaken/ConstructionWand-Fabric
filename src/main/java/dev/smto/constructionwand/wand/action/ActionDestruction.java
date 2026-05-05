@@ -8,12 +8,6 @@ import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.wand.undo.DestroySnapshot;
 import dev.smto.constructionwand.wand.undo.ISnapshot;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -21,15 +15,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 
-public class ActionDestruction implements IWandAction
-{
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+
+public class ActionDestruction implements IWandAction {
     @Override
     public int getLimit(ItemStack wand) {
-        WandConfigEntry wandConfig = null;
+        WandConfigEntry wandConfig;
         try {
             wandConfig = (WandConfigEntry) ConstructionWand.WAND_CONFIG_MAP.get(wand.getItem()).get(null);
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+            return 1;
+        }
         return wandConfig.destructionLimit();
     }
 
@@ -51,43 +52,43 @@ public class ActionDestruction implements IWandAction
 
         // Is break direction allowed by lock?
         // Tried to break blocks from top/bottom face, so the wand should allow breaking in NS/EW direction
-        if(breakFace == Direction.UP || breakFace == Direction.DOWN) {
-            if(options.testLock(WandOptions.Lock.NORTHSOUTH) || options.testLock(WandOptions.Lock.EASTWEST))
+        if (breakFace == Direction.UP || breakFace == Direction.DOWN) {
+            if (options.testLock(WandOptions.Lock.NORTHSOUTH) || options.testLock(WandOptions.Lock.EASTWEST))
                 candidates.add(startingPoint);
         }
         // Tried to break blocks from side face, so the wand should allow breaking in horizontal/vertical direction
-        else if(options.testLock(WandOptions.Lock.HORIZONTAL) || options.testLock(WandOptions.Lock.VERTICAL))
+        else if (options.testLock(WandOptions.Lock.HORIZONTAL) || options.testLock(WandOptions.Lock.VERTICAL))
             candidates.add(startingPoint);
 
         // Process current candidates, stop when none are avaiable or block limit is reached
-        while(!candidates.isEmpty() && destroySnapshots.size() < limit) {
+        while (!candidates.isEmpty() && destroySnapshots.size() < limit) {
             BlockPos currentCandidate = candidates.removeFirst();
 
             // Only break blocks facing the player, with no collidable blocks in between
-            if(!WandUtil.isBlockPermeable(world, currentCandidate.offset(breakFace.getUnitVec3i()))) continue;
+            if (!WandUtil.isBlockPermeable(world, currentCandidate.offset(breakFace.getUnitVec3i()))) continue;
 
             try {
                 BlockState candidateBlock = world.getBlockState(currentCandidate);
 
                 // If target and candidate blocks match and the current candidate has not been processed
-                if(options.matchBlocks(targetBlock.getBlock(), candidateBlock.getBlock()) &&
+                if (options.matchBlocks(targetBlock.getBlock(), candidateBlock.getBlock()) &&
                         allCandidates.add(currentCandidate)) {
                     DestroySnapshot snapshot = DestroySnapshot.get(world, player, currentCandidate);
-                    if(snapshot == null) continue;
+                    if (snapshot == null) continue;
                     destroySnapshots.add(snapshot);
 
-                    switch(breakFace) {
+                    switch (breakFace) {
                         case DOWN:
                         case UP:
-                            if(options.testLock(WandOptions.Lock.NORTHSOUTH)) {
+                            if (options.testLock(WandOptions.Lock.NORTHSOUTH)) {
                                 candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()));
                             }
-                            if(options.testLock(WandOptions.Lock.EASTWEST)) {
+                            if (options.testLock(WandOptions.Lock.EASTWEST)) {
                                 candidates.add(currentCandidate.offset(Direction.EAST.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.WEST.getUnitVec3i()));
                             }
-                            if(options.testLock(WandOptions.Lock.NORTHSOUTH) && options.testLock(WandOptions.Lock.EASTWEST)) {
+                            if (options.testLock(WandOptions.Lock.NORTHSOUTH) && options.testLock(WandOptions.Lock.EASTWEST)) {
                                 candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()).offset(Direction.WEST.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
@@ -96,15 +97,15 @@ public class ActionDestruction implements IWandAction
                             break;
                         case NORTH:
                         case SOUTH:
-                            if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
+                            if (options.testLock(WandOptions.Lock.HORIZONTAL)) {
                                 candidates.add(currentCandidate.offset(Direction.EAST.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.WEST.getUnitVec3i()));
                             }
-                            if(options.testLock(WandOptions.Lock.VERTICAL)) {
+                            if (options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()));
                             }
-                            if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
+                            if (options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.WEST.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()).offset(Direction.EAST.getUnitVec3i()));
@@ -113,15 +114,15 @@ public class ActionDestruction implements IWandAction
                             break;
                         case EAST:
                         case WEST:
-                            if(options.testLock(WandOptions.Lock.HORIZONTAL)) {
+                            if (options.testLock(WandOptions.Lock.HORIZONTAL)) {
                                 candidates.add(currentCandidate.offset(Direction.NORTH.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.SOUTH.getUnitVec3i()));
                             }
-                            if(options.testLock(WandOptions.Lock.VERTICAL)) {
+                            if (options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()));
                             }
-                            if(options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
+                            if (options.testLock(WandOptions.Lock.HORIZONTAL) && options.testLock(WandOptions.Lock.VERTICAL)) {
                                 candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.NORTH.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.UP.getUnitVec3i()).offset(Direction.SOUTH.getUnitVec3i()));
                                 candidates.add(currentCandidate.offset(Direction.DOWN.getUnitVec3i()).offset(Direction.NORTH.getUnitVec3i()));
@@ -130,7 +131,7 @@ public class ActionDestruction implements IWandAction
                             break;
                     }
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 // Can't do anything, could be anything.
                 // Skip if anything goes wrong.
             }

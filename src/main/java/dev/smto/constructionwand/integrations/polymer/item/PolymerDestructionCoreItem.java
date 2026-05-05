@@ -7,8 +7,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
-public class PolymerDestructionCoreItem extends PolymerCoreItem
-{
+public class PolymerDestructionCoreItem extends PolymerCoreItem {
     public PolymerDestructionCoreItem(ResourceKey<Item> id) {
         super(id, new Properties().stacksTo(1));
     }

@@ -10,8 +10,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 
-public interface IWandSupplier
-{
+public interface IWandSupplier {
     void getSupply(BlockItem target);
 
     /**

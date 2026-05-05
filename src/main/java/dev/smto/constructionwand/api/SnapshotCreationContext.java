@@ -11,7 +11,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class SnapshotCreationContext {
-    private ItemStack includedItemStack = null;
+    private ItemStack includedItemStack;
     private boolean giveBackIncludedItem = true;
     private int primaryItemsToConsumeCount;
 
@@ -25,7 +25,7 @@ public class SnapshotCreationContext {
     private final WandOptions wandOptions;
 
     public boolean shouldGiveBackIncludedItem() {
-        return giveBackIncludedItem;
+        return this.giveBackIncludedItem;
     }
 
     public void setGiveBackIncludedItem(boolean giveBackIncludedItem) {
@@ -33,7 +33,7 @@ public class SnapshotCreationContext {
     }
 
     public ItemStack getIncludedItemStack() {
-        return includedItemStack;
+        return this.includedItemStack;
     }
 
     public void setIncludedItemStack(ItemStack includedItem) {
@@ -41,28 +41,28 @@ public class SnapshotCreationContext {
     }
 
     public BlockItem getBlockItem() {
-        return item;
+        return this.item;
     }
 
     @Nullable
     public WandOptions getWandOptions() {
-        return wandOptions;
+        return this.wandOptions;
     }
 
     public Player getPlayer() {
-        return player;
+        return this.player;
     }
 
     public BlockPos getBlockPos() {
-        return blockPos;
+        return this.blockPos;
     }
 
     public void incrementPrimaryItemsToConsumeCount(int amount) {
-        primaryItemsToConsumeCount = primaryItemsToConsumeCount + amount;
+        this.primaryItemsToConsumeCount = this.primaryItemsToConsumeCount + amount;
     }
 
     public int getPrimaryItemsToConsumeCount() {
-        return primaryItemsToConsumeCount;
+        return this.primaryItemsToConsumeCount;
     }
 
     public void setPrimaryItemsToConsumeCount(int primaryItemsToConsumeCount) {
@@ -70,19 +70,19 @@ public class SnapshotCreationContext {
     }
 
     public BlockHitResult getRayTraceResult() {
-        return rayTraceResult;
+        return this.rayTraceResult;
     }
 
     public BlockState getSupportingBlockState() {
-        return supportingBlock;
+        return this.supportingBlock;
     }
 
     public BlockState getTargetBlockState() {
-        return target;
+        return this.target;
     }
 
     public Level getWorld() {
-        return world;
+        return this.world;
     }
 
     public SnapshotCreationContext(Level world, BlockState target,

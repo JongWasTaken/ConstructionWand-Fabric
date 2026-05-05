@@ -4,37 +4,36 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
-public class OrderedPool<T> implements IPool<T>
-{
+public class OrderedPool<T> implements IPool<T> {
     private final ArrayList<T> elements;
     private int index;
 
     public OrderedPool() {
-        elements = new ArrayList<>();
-        reset();
+        this.elements = new ArrayList<>();
+        this.reset();
     }
 
     @Override
     public void add(T element) {
-        elements.add(element);
+        this.elements.add(element);
     }
 
     @Override
     public void remove(T element) {
-        elements.remove(element);
+        this.elements.remove(element);
     }
 
     @Nullable
     @Override
     public T draw() {
-        if(index >= elements.size()) return null;
-        T e = elements.get(index);
-        index++;
+        if (this.index >= this.elements.size()) return null;
+        T e = this.elements.get(this.index);
+        this.index++;
         return e;
     }
 
     @Override
     public void reset() {
-        index = 0;
+        this.index = 0;
     }
 }

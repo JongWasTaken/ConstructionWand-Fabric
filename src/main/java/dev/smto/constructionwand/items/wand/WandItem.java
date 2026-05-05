@@ -29,10 +29,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
-public abstract class WandItem extends Item
-{
+public abstract class WandItem extends Item {
     public final ResourceKey<Item> registryKey;
-    public WandItem(ResourceKey<Item> id, Item.Properties properties) {
+
+    protected WandItem(ResourceKey<Item> id, Item.Properties properties) {
         super(properties.setId(id));
         this.registryKey = id;
     }
@@ -44,7 +44,7 @@ public abstract class WandItem extends Item
         InteractionHand hand = context.getHand();
         Level world = context.getLevel();
 
-        if(world.isClientSide() || player == null) return InteractionResult.PASS;
+        if (world.isClientSide() || player == null) return InteractionResult.PASS;
 
         if (ModCompat.preventWandOnBlock(context)) {
             return InteractionResult.PASS;
@@ -52,10 +52,9 @@ public abstract class WandItem extends Item
 
         ItemStack stack = player.getItemInHand(hand);
 
-        if(player.isShiftKeyDown() && UndoHistory.isUndoActive(player)) {
+        if (player.isShiftKeyDown() && UndoHistory.isUndoActive(player)) {
             return UndoHistory.undo(player, world, context.getClickedPos()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
-        }
-        else {
+        } else {
             WandJob job = new WandJob(player, world, new BlockHitResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), false), stack);
             return job.run() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
@@ -68,8 +67,8 @@ public abstract class WandItem extends Item
         ItemStack wand = player.getItemInHand(hand);
         if (offHandStack.isEmpty()) return InteractionResult.FAIL;
         if (wand.equals(offHandStack)) return InteractionResult.FAIL;
-        if(!player.isShiftKeyDown()) {
-            if(world.isClientSide()) return InteractionResult.FAIL;
+        if (!player.isShiftKeyDown()) {
+            if (world.isClientSide()) return InteractionResult.FAIL;
 
             var bhr = BlockHitResult.miss(player.getEyePosition(),
                     WandUtil.fromVector(player.getEyePosition()), player.blockPosition());
@@ -92,23 +91,23 @@ public abstract class WandItem extends Item
 
     @Environment(EnvType.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay displayComponent, @NotNull Consumer<Component> textConsumer, @NotNull TooltipFlag type) {
         WandOptions options = WandOptions.of(stack);
         int limit = options.cores.get().getWandAction().getLimit(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         // +SHIFT tooltip: show all options + installed cores
-        if(InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) {
-            for(int i = 1; i < options.allOptions.length; i++) {
+        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) {
+            for (int i = 1; i < options.allOptions.length; i++) {
                 IOption<?> opt = options.allOptions[i];
                 textConsumer.accept(Component.translatable(opt.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
                         .append(Component.translatable(opt.getValueTranslation()).withStyle(ChatFormatting.GRAY))
                 );
             }
-            if(!options.cores.getUpgrades().isEmpty()) {
+            if (!options.cores.getUpgrades().isEmpty()) {
                 textConsumer.accept(Component.literal(""));
                 textConsumer.accept(Component.translatable(langTooltip + "cores").withStyle(ChatFormatting.GRAY));
 
-                for(IWandCore core : options.cores.getUpgrades()) {
+                for (IWandCore core : options.cores.getUpgrades()) {
                     textConsumer.accept(Component.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
                 }
             }
@@ -126,10 +125,10 @@ public abstract class WandItem extends Item
 
     public static void optionMessage(Player player, IOption<?> option) {
         player.sendOverlayMessage(
-                        Component.translatable(option.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
+                Component.translatable(option.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
                         .append(Component.translatable(option.getValueTranslation()).withStyle(ChatFormatting.WHITE))
                         .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
                         .append(Component.translatable(option.getDescTranslation()).withStyle(ChatFormatting.WHITE))
-                );
+        );
     }
 }

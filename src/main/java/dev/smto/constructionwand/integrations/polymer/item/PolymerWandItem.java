@@ -13,11 +13,8 @@ import dev.smto.constructionwand.wand.undo.UndoHistory;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import eu.pb4.polymer.core.api.utils.PolymerClientDecoded;
 import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
-import net.minecraft.core.HolderLookup;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -33,11 +30,14 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public abstract class PolymerWandItem extends WandItem implements PolymerItem, PolymerClientDecoded
-{
-    public PolymerWandItem(ResourceKey<Item> id, Properties properties) {
+import java.util.function.Consumer;
+
+public abstract class PolymerWandItem extends WandItem implements PolymerItem, PolymerClientDecoded {
+    protected PolymerWandItem(ResourceKey<Item> id, Properties properties) {
         super(id, properties);
     }
 
@@ -63,7 +63,7 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
         InteractionHand hand = context.getHand();
         Level world = context.getLevel();
 
-        if(world.isClientSide() || player == null) return InteractionResult.PASS;
+        if (world.isClientSide() || player == null) return InteractionResult.PASS;
 
         if (ModCompat.preventWandOnBlock(context)) {
             return InteractionResult.PASS;
@@ -71,11 +71,10 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
 
         ItemStack stack = player.getItemInHand(hand);
 
-        if(UndoHistory.isUndoActive(player)) {
+        if (UndoHistory.isUndoActive(player)) {
             PolymerManager.blockServerScreen(player);
             return UndoHistory.undo(player, world, context.getClickedPos()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
-        }
-        else {
+        } else {
             WandJob job = new WandJob(player, world, new BlockHitResult(context.getClickLocation(), context.getClickedFace(), context.getClickedPos(), false), stack);
             return job.run() ? InteractionResult.SUCCESS : InteractionResult.FAIL;
         }
@@ -88,7 +87,7 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
         ItemStack wand = player.getItemInHand(hand);
         if (wand.equals(offHandStack)) return InteractionResult.FAIL;
         if (world.isClientSide()) return InteractionResult.FAIL;
-        if(!UndoHistory.isUndoActive(player)) {
+        if (!UndoHistory.isUndoActive(player)) {
             if (offHandStack.isEmpty()) return InteractionResult.FAIL;
             var bhr = BlockHitResult.miss(player.getEyePosition(),
                     WandUtil.fromVector(player.getEyePosition()), player.blockPosition());
@@ -108,22 +107,22 @@ public abstract class PolymerWandItem extends WandItem implements PolymerItem, P
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
+    public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay displayComponent, @NonNull Consumer<Component> textConsumer, @NonNull TooltipFlag type) {
         WandOptions options = WandOptions.of(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         int limit = options.cores.get().getWandAction().getLimit(stack);
         textConsumer.accept(Component.translatable(langTooltip + "blocks", limit).withStyle(ChatFormatting.GRAY));
-        for(int i = 1; i < options.allOptions.length; i++) {
+        for (int i = 1; i < options.allOptions.length; i++) {
             IOption<?> opt = options.allOptions[i];
             textConsumer.accept(Component.translatable(opt.getKeyTranslation()).withStyle(ChatFormatting.AQUA)
                     .append(Component.translatable(opt.getValueTranslation()).withStyle(ChatFormatting.GRAY))
             );
         }
-        if(!options.cores.getUpgrades().isEmpty()) {
+        if (!options.cores.getUpgrades().isEmpty()) {
             textConsumer.accept(Component.literal(""));
             textConsumer.accept(Component.translatable(langTooltip + "cores").withStyle(ChatFormatting.GRAY));
 
-            for(IWandCore core : options.cores.getUpgrades()) {
+            for (IWandCore core : options.cores.getUpgrades()) {
                 textConsumer.accept(Component.translatable(options.cores.getKeyTranslation() + "." + core.getRegistryName().toString()));
             }
         }

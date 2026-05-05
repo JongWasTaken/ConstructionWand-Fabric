@@ -10,8 +10,7 @@ import net.minecraft.world.item.component.BundleContents;
 
 import java.util.ArrayList;
 
-public class HandlerBundleComponent implements IContainerHandler
-{
+public class HandlerBundleComponent implements IContainerHandler {
     @Override
     public boolean matches(Player player, ItemStack target, ItemStack current) {
         return current.getComponents().has(DataComponents.BUNDLE_CONTENTS);
@@ -36,19 +35,20 @@ public class HandlerBundleComponent implements IContainerHandler
     public int useItems(Player player, ItemStack target, ItemStack current, int count) {
         var items = new ArrayList<>(current.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY).itemCopyStream().toList());
         if (!items.isEmpty()) {
-            for(int i = 0; i < items.size(); i++) {
+            for (int i = 0; i < items.size(); i++) {
                 ItemStack handlerStack = items.get(i);
-                if(WandUtil.stackEquals(target, handlerStack)) {
+                if (WandUtil.stackEquals(target, handlerStack)) {
                     int toTake = Math.min(count, handlerStack.getCount());
                     count -= toTake;
                     handlerStack.shrink(toTake);
                     if (handlerStack.getCount() == 0) items.set(i, ItemStack.EMPTY);
-                    if(count <= 0) break;
+                    if (count <= 0) break;
                 }
             }
             if (items.stream().allMatch(ItemStack::isEmpty)) {
                 current.set(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
-            } else current.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(items.stream().map(ItemStackTemplate::fromNonEmptyStack).toList()));
+            } else
+                current.set(DataComponents.BUNDLE_CONTENTS, new BundleContents(items.stream().map(ItemStackTemplate::fromNonEmptyStack).toList()));
         }
         return count;
     }

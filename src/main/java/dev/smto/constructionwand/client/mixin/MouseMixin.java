@@ -16,10 +16,11 @@ public class MouseMixin {
     private Minecraft minecraft;
 
     @Redirect(at = @At(target = "Lnet/minecraft/client/ScrollWheelHandler;getNextScrollWheelSelection(DII)I", value = "INVOKE"), method = "onScroll")
-    private int onMouseScroll(double amount, int selectedIndex, int total) {
-        if (!dev.smto.constructionwand.client.ClientEvents.onScroll(amount)) {
-            return ScrollWheelHandler.getNextScrollWheelSelection(amount, selectedIndex, total);
+    private int onMouseScroll(double wheel, int currentSelected, int limit) {
+        if (!dev.smto.constructionwand.client.ClientEvents.onScroll(wheel)) {
+            return ScrollWheelHandler.getNextScrollWheelSelection(wheel, currentSelected, limit);
         }
-        return this.minecraft.player.getInventory().getSelectedSlot();
+        if (this.minecraft.player != null) return this.minecraft.player.getInventory().getSelectedSlot();
+        return 0;
     }
 }

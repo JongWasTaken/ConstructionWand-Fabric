@@ -2,7 +2,6 @@ package dev.smto.constructionwand.basics.option;
 
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IWandUpgrade;
-import java.util.ArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,8 +9,9 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
-public class WandUpgrades<T extends IWandUpgrade>
-{
+import java.util.ArrayList;
+
+public class WandUpgrades<T extends IWandUpgrade> {
     protected final CompoundTag tag;
     protected final String key;
     protected final ArrayList<T> upgrades;
@@ -22,17 +22,17 @@ public class WandUpgrades<T extends IWandUpgrade>
         this.key = key;
         this.dval = dval;
 
-        upgrades = new ArrayList<>();
-        if(dval != null) upgrades.addFirst(dval);
+        this.upgrades = new ArrayList<>();
+        if (dval != null) this.upgrades.addFirst(dval);
 
-        deserialize();
+        this.deserialize();
     }
 
     protected void deserialize() {
-        ListTag listnbt = tag.getList(key).orElse(new ListTag());
+        ListTag listnbt = this.tag.getList(this.key).orElse(new ListTag());
         boolean require_fix = false;
 
-        for(int i = 0; i < listnbt.size(); i++) {
+        for (int i = 0; i < listnbt.size(); i++) {
             String str = listnbt.getString(i).orElse("");
             Item item = BuiltInRegistries.ITEM.getValue(Identifier.parse(str));
 
@@ -40,38 +40,38 @@ public class WandUpgrades<T extends IWandUpgrade>
             try {
                 //noinspection unchecked
                 data = (T) item;
-                upgrades.add(data);
-            } catch(ClassCastException e) {
+                this.upgrades.add(data);
+            } catch (ClassCastException e) {
                 ConstructionWand.LOGGER.warn("Invalid wand upgrade: {}", str);
                 require_fix = true;
             }
         }
-        if(require_fix) serialize();
+        if (require_fix) this.serialize();
     }
 
     protected void serialize() {
         ListTag listnbt = new ListTag();
 
-        for(T item : upgrades) {
-            if(item == dval) continue;
+        for (T item : this.upgrades) {
+            if (item == this.dval) continue;
             listnbt.add(StringTag.valueOf(item.getRegistryName().toString()));
         }
-        tag.put(key, listnbt);
+        this.tag.put(this.key, listnbt);
     }
 
     public boolean addUpgrade(T upgrade) {
-        if(hasUpgrade(upgrade)) return false;
+        if (this.hasUpgrade(upgrade)) return false;
 
-        upgrades.add(upgrade);
-        serialize();
+        this.upgrades.add(upgrade);
+        this.serialize();
         return true;
     }
 
     public boolean hasUpgrade(T upgrade) {
-        return upgrades.contains(upgrade);
+        return this.upgrades.contains(upgrade);
     }
 
     public ArrayList<T> getUpgrades() {
-        return upgrades;
+        return this.upgrades;
     }
 }

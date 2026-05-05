@@ -8,10 +8,6 @@ import dev.smto.constructionwand.basics.WandUtil;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.wand.undo.ISnapshot;
 import dev.smto.constructionwand.wand.undo.PlaceSnapshot;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.LinkedList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -20,15 +16,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 
-public class ActionAngel implements IWandAction
-{
+import java.util.LinkedList;
+import java.util.List;
+
+public class ActionAngel implements IWandAction {
     @Override
     public int getLimit(ItemStack wand) {
-        WandConfigEntry wandConfig = null;
+        WandConfigEntry wandConfig;
         try {
             wandConfig = (WandConfigEntry) ConstructionWand.WAND_CONFIG_MAP.get(wand.getItem()).get(null);
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+            return 1;
+        }
         return wandConfig.angelDistance();
     }
 
@@ -42,10 +43,10 @@ public class ActionAngel implements IWandAction
         BlockPos currentPos = rayTraceResult.getBlockPos();
         BlockState supportingBlock = world.getBlockState(currentPos);
 
-        for(int i = 0; i < limit; i++) {
+        for (int i = 0; i < limit; i++) {
             currentPos = currentPos.offset(placeDirection.getOpposite().getUnitVec3i());
             PlaceSnapshot snapshot = supplier.getPlaceSnapshot(world, currentPos, rayTraceResult, supportingBlock);
-            if(snapshot != null) {
+            if (snapshot != null) {
                 placeSnapshots.add(snapshot);
                 break;
             }
@@ -58,14 +59,15 @@ public class ActionAngel implements IWandAction
     public List<ISnapshot> getSnapshotsFromAir(Level world, Player player, BlockHitResult rayTraceResult,
                                                ItemStack wand, WandOptions options, IWandSupplier supplier, int limit) {
         LinkedList<ISnapshot> placeSnapshots = new LinkedList<>();
-        if(!player.isCreative() && !ConstructionWand.Config.angelFalling && player.fallDistance > 10) return placeSnapshots;
+        if (!player.isCreative() && !ConstructionWand.Config.angelFalling && player.fallDistance > 10)
+            return placeSnapshots;
         Vec3 playerVec = WandUtil.entityPositionVec(player);
         Vec3 lookVec = player.getLookAngle().multiply(2, 2, 2);
         Vec3 placeVec = playerVec.add(lookVec);
         BlockPos currentPos = WandUtil.posFromVec(placeVec);
 
         PlaceSnapshot snapshot = supplier.getPlaceSnapshot(world, currentPos, rayTraceResult, null);
-        if(snapshot != null) placeSnapshots.add(snapshot);
+        if (snapshot != null) placeSnapshots.add(snapshot);
         return placeSnapshots;
     }
 }

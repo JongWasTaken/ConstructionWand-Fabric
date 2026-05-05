@@ -13,9 +13,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jspecify.annotations.Nullable;
 
-public abstract class PolymerCoreItem extends CoreItem implements PolymerItem, PolymerClientDecoded
-{
-    public PolymerCoreItem(ResourceKey<Item> id, Properties properties) {
+public abstract class PolymerCoreItem extends CoreItem implements PolymerItem, PolymerClientDecoded {
+    protected PolymerCoreItem(ResourceKey<Item> id, Properties properties) {
         super(id, properties);
     }
 

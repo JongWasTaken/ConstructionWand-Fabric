@@ -13,8 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.storage.TagValueInput;
 
-public class HandlerNBTInventory implements IContainerHandler
-{
+public class HandlerNBTInventory implements IContainerHandler {
     @Override
     public boolean matches(Player player, ItemStack target, ItemStack current) {
         CompoundTag nbtCompound = current.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
@@ -30,9 +29,9 @@ public class HandlerNBTInventory implements IContainerHandler
             var inv = new SimpleContainer();
             TagValueInput.create(ProblemReporter.DISCARDING, RegistryAccess.EMPTY, nbtCompound).list("Inventory", ItemStack.CODEC).ifPresent(inv::fromItemList);
             int total = 0;
-            for(int i = 0; i < inv.getContainerSize(); i++) {
+            for (int i = 0; i < inv.getContainerSize(); i++) {
                 ItemStack containerStack = inv.getItem(i);
-                if(WandUtil.stackEquals(target, containerStack)) {
+                if (WandUtil.stackEquals(target, containerStack)) {
                     total += Math.max(0, containerStack.getCount());
                 }
             }
@@ -48,12 +47,12 @@ public class HandlerNBTInventory implements IContainerHandler
         if (!items.isEmpty()) {
             var inv = new SimpleContainer();
             TagValueInput.create(ProblemReporter.DISCARDING, RegistryAccess.EMPTY, nbtCompound).list("Inventory", ItemStack.CODEC).ifPresent(inv::fromItemList);
-            for(int i = 0; i < inv.getContainerSize(); i++) {
+            for (int i = 0; i < inv.getContainerSize(); i++) {
                 ItemStack handlerStack = inv.getItem(i);
-                if(WandUtil.stackEquals(target, handlerStack)) {
+                if (WandUtil.stackEquals(target, handlerStack)) {
                     ItemStack extracted = inv.removeItemType(handlerStack.getItem(), count);
                     count -= extracted.getCount();
-                    if(count <= 0) break;
+                    if (count <= 0) break;
                 }
             }
             return count;

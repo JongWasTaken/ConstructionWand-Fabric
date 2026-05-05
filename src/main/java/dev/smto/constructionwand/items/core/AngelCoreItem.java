@@ -7,8 +7,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
-public class AngelCoreItem extends CoreItem
-{
+public class AngelCoreItem extends CoreItem {
     public AngelCoreItem(ResourceKey<Item> id) {
         super(id, new Item.Properties().stacksTo(1));
     }

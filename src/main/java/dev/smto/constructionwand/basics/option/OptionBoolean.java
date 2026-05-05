@@ -2,8 +2,7 @@ package dev.smto.constructionwand.basics.option;
 
 import net.minecraft.nbt.CompoundTag;
 
-public class OptionBoolean implements IOption<Boolean>
-{
+public class OptionBoolean implements IOption<Boolean> {
     private final CompoundTag tag;
     private final String key;
     private final boolean enabled;
@@ -14,8 +13,8 @@ public class OptionBoolean implements IOption<Boolean>
         this.key = key;
         this.enabled = enabled;
 
-        if(tag.contains(key)) value = tag.getBoolean(key).orElse(false);
-        else value = dval;
+        if (tag.contains(key)) this.value = tag.getBoolean(key).orElse(false);
+        else this.value = dval;
     }
 
     public OptionBoolean(CompoundTag tag, String key, boolean dval) {
@@ -24,39 +23,39 @@ public class OptionBoolean implements IOption<Boolean>
 
     @Override
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     @Override
     public String getValueString() {
-        return value ? "yes" : "no";
+        return this.value ? "yes" : "no";
     }
 
     @Override
     public void setValueString(String val) {
-        set(val.equals("yes"));
+        this.set(val.equals("yes"));
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return this.enabled;
     }
 
     @Override
     public void set(Boolean val) {
-        if(!enabled) return;
-        value = val;
-        tag.putBoolean(key, value);
+        if (!this.enabled) return;
+        this.value = val;
+        this.tag.putBoolean(this.key, this.value);
     }
 
     @Override
     public Boolean get() {
-        return value;
+        return this.value;
     }
 
     @Override
     public Boolean next(boolean dir) {
-        set(!value);
-        return value;
+        this.set(!this.value);
+        return this.value;
     }
 }

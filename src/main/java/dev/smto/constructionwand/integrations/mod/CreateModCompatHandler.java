@@ -49,7 +49,8 @@ public class CreateModCompatHandler implements IModCompatHandler {
                         context.setGiveBackIncludedItem(false);
                         if (includedItem.getItem() == Items.AIR) includedItem = null;
                         context.setIncludedItemStack(includedItem);
-                    } catch (Throwable ignored) {}
+                    } catch (Throwable ignored) {
+                    }
                 }
             }
         }
@@ -66,9 +67,10 @@ public class CreateModCompatHandler implements IModCompatHandler {
                 if (gbe == null) return;
                 if (gbe.getClass().isAssignableFrom(this.copycatBlockEntityClass)) {
                     try {
-                        this.copycatBlockEntityClass.getMethod("setMaterial", BlockState.class).invoke(gbe,((BlockItem)includedItem.getItem()).getBlock().defaultBlockState());
+                        this.copycatBlockEntityClass.getMethod("setMaterial", BlockState.class).invoke(gbe, ((BlockItem) includedItem.getItem()).getBlock().defaultBlockState());
                         this.copycatBlockEntityClass.getMethod("setConsumedItem", ItemStack.class).invoke(gbe, includedItem);
-                    } catch (Throwable ignored) {}
+                    } catch (Throwable ignored) {
+                    }
                 }
             }
         }

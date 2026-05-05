@@ -21,9 +21,9 @@ import java.util.HashSet;
 import java.util.function.Supplier;
 
 public class ModCompat {
-    private static boolean checked = false;
+    private static boolean checked;
 
-    public static boolean polymerEnabled = false;
+    public static boolean polymerEnabled;
 
     private static final HashMap<String, Supplier<IModCompatHandler>> SUPPORTED_COMPAT = new HashMap<>() {{
         this.put("create", CreateModCompatHandler::new);
@@ -37,12 +37,12 @@ public class ModCompat {
     private static final HashSet<IModCompatHandler> ENABLED_COMPAT = new HashSet<>();
 
     public static void init() {
-        if (checked) return;
+        if (ModCompat.checked) return;
 
         FabricLoader.getInstance().getAllMods().forEach(mod -> {
-            if (SUPPORTED_COMPAT.containsKey(mod.getMetadata().getId())) {
-                var inst = SUPPORTED_COMPAT.get(mod.getMetadata().getId()).get();
-                ENABLED_COMPAT.add(inst);
+            if (ModCompat.SUPPORTED_COMPAT.containsKey(mod.getMetadata().getId())) {
+                var inst = ModCompat.SUPPORTED_COMPAT.get(mod.getMetadata().getId()).get();
+                ModCompat.ENABLED_COMPAT.add(inst);
                 if (inst instanceof IContainerHandler) {
                     ContainerManager.register((IContainerHandler) inst);
                 }
@@ -50,10 +50,10 @@ public class ModCompat {
             }
         });
 
-        polymerEnabled = FabricLoader.getInstance().isModLoaded(ConstructionWand.MOD_ID + "-polymer");
-        if (polymerEnabled) PolymerManager.init();
+        ModCompat.polymerEnabled = FabricLoader.getInstance().isModLoaded(ConstructionWand.MOD_ID + "-polymer");
+        if (ModCompat.polymerEnabled) PolymerManager.init();
 
-        checked = true;
+        ModCompat.checked = true;
     }
 
     /**
@@ -62,10 +62,11 @@ public class ModCompat {
      * Check out {@link CreateModCompatHandler} for an example implementation, but note that all builtin handlers use reflection instead of APIs to reduce maintenance and dependency issues.<br><br>
      * In addition, a class implementing IModCompatHandler can also implement IContainerHandler,
      * which will allow a wand to use the inventory of an item added by your mod.<br><br>
+     *
      * @param handler Your mod compat handler instance
      */
     public static void addModCompatHandler(IModCompatHandler handler) {
-        ENABLED_COMPAT.add(handler);
+        ModCompat.ENABLED_COMPAT.add(handler);
         if (handler instanceof IContainerHandler) {
             ContainerManager.register((IContainerHandler) handler);
         }
@@ -74,7 +75,7 @@ public class ModCompat {
     // hook for WandItem.useOnBlock
     public static boolean preventWandOnBlock(UseOnContext context) {
         boolean out = false;
-        for (IModCompatHandler iModCompat : ENABLED_COMPAT) {
+        for (IModCompatHandler iModCompat : ModCompat.ENABLED_COMPAT) {
             if (out) break;
             out = iModCompat.preventWandUseOnBlock(context);
         }
@@ -83,19 +84,20 @@ public class ModCompat {
 
     // hook for PlaceSnapshot.get
     public static SnapshotCreationContext mutateSnapshot(SnapshotCreationContext context) {
-        for (IModCompatHandler iModCompat : ENABLED_COMPAT) context = iModCompat.onSnapshotCreation(context);
+        for (IModCompatHandler iModCompat : ModCompat.ENABLED_COMPAT) context = iModCompat.onSnapshotCreation(context);
         return context;
     }
 
     // hook for WandUtil.placeBlock
     public static void afterBlockPlacement(Level world, Player player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
-        for (IModCompatHandler iModCompat : ENABLED_COMPAT) iModCompat.afterBlockPlacement(world, player, block, pos, item, includedItem);
+        for (IModCompatHandler iModCompat : ModCompat.ENABLED_COMPAT)
+            iModCompat.afterBlockPlacement(world, player, block, pos, item, includedItem);
     }
 
     // hook for WandUtil.placeBlock
     public static boolean shouldCancelBlockPlacement(Level world, Player player, BlockState block, BlockPos pos, @Nullable ItemStack item, @Nullable ItemStack includedItem) {
         boolean out = false;
-        for (IModCompatHandler iModCompat : ENABLED_COMPAT) {
+        for (IModCompatHandler iModCompat : ModCompat.ENABLED_COMPAT) {
             if (out) break;
             out = iModCompat.shouldCancelBlockPlacement(world, player, block, pos, item, includedItem);
         }
@@ -105,7 +107,7 @@ public class ModCompat {
     // hook for WandUtil.hasBlockEntity
     public static boolean allowBlockEntityRemoval(Level world, BlockPos pos, BlockEntity blockEntity) {
         boolean out = false;
-        for (IModCompatHandler iModCompat : ENABLED_COMPAT) {
+        for (IModCompatHandler iModCompat : ModCompat.ENABLED_COMPAT) {
             if (out) break;
             out = iModCompat.allowBlockEntityRemoval(world, pos, blockEntity);
         }

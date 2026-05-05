@@ -9,12 +9,6 @@ import dev.smto.constructionwand.wand.supplier.SupplierInventory;
 import dev.smto.constructionwand.wand.supplier.SupplierRandom;
 import dev.smto.constructionwand.wand.undo.ISnapshot;
 import dev.smto.constructionwand.wand.undo.UndoHistory;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -26,9 +20,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.Nullable;
 
-public class WandJob
-{
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class WandJob {
     public final Player player;
     public final Level world;
     public final BlockHitResult rayTraceResult;
@@ -50,44 +49,45 @@ public class WandJob
         // Get wand
         this.wand = wand;
         this.wandItem = (WandItem) wand.getItem();
-        options = WandOptions.of(wand);
+        this.options = WandOptions.of(wand);
 
         // Select wand action and supplier based on options
-        wandSupplier = options.random.get() ?
-                new SupplierRandom(player, options) : new SupplierInventory(player, options);
-        wandAction = options.cores.get().getWandAction();
+        this.wandSupplier = this.options.random.get() ?
+                new SupplierRandom(player, this.options) : new SupplierInventory(player, this.options);
+        this.wandAction = this.options.cores.get().getWandAction();
 
-        wandSupplier.getSupply(getTargetItem(world, rayTraceResult));
+        this.wandSupplier.getSupply(WandJob.getTargetItem(world, rayTraceResult));
 
-        getSnapshots();
+        this.getSnapshots();
     }
 
     @Nullable
     private static BlockItem getTargetItem(Level world, BlockHitResult rayTraceResult) {
         // Get target item
         Item tgitem = world.getBlockState(rayTraceResult.getBlockPos()).getBlock().asItem();
-        if(!(tgitem instanceof BlockItem)) return null;
+        if (!(tgitem instanceof BlockItem)) return null;
         return (BlockItem) tgitem;
     }
 
     private void getSnapshots() {
         int limit;
         // Infinity wand gets enhanced limit in creative mode
-        if(player.isCreative() && wandItem == ConstructionWand.getRegistry().getInfinityWand()) limit = ConstructionWand.Config.maxInfinityCreativeRange;
-        else limit = Math.min(wandItem.remainingDurability(wand), wandAction.getLimit(wand));
+        if (this.player.isCreative() && this.wandItem == ConstructionWand.getRegistry().getInfinityWand())
+            limit = ConstructionWand.Config.maxInfinityCreativeRange;
+        else limit = Math.min(this.wandItem.remainingDurability(this.wand), this.wandAction.getLimit(this.wand));
 
-        if(rayTraceResult.getType() == HitResult.Type.BLOCK)
-            placeSnapshots = wandAction.getSnapshots(world, player, rayTraceResult, wand, options, wandSupplier, limit);
+        if (this.rayTraceResult.getType() == HitResult.Type.BLOCK)
+            this.placeSnapshots = this.wandAction.getSnapshots(this.world, this.player, this.rayTraceResult, this.wand, this.options, this.wandSupplier, limit);
         else
-            placeSnapshots = wandAction.getSnapshotsFromAir(world, player, rayTraceResult, wand, options, wandSupplier, limit);
+            this.placeSnapshots = this.wandAction.getSnapshotsFromAir(this.world, this.player, this.rayTraceResult, this.wand, this.options, this.wandSupplier, limit);
     }
 
     public Set<BlockPos> getBlockPositions() {
-        return placeSnapshots.stream().map(ISnapshot::getPos).collect(Collectors.toSet());
+        return this.placeSnapshots.stream().map(ISnapshot::getPos).collect(Collectors.toSet());
     }
 
     public int blockCount() {
-        return placeSnapshots.size();
+        return this.placeSnapshots.size();
     }
 
     public boolean run() {
@@ -102,18 +102,17 @@ public class WandJob
 
         ArrayList<ISnapshot> executed = new ArrayList<>();
 
-        for(ISnapshot snapshot : placeSnapshots) {
-            if(wand.isEmpty() || wandItem.remainingDurability(wand) == 0) break;
+        for (ISnapshot snapshot : this.placeSnapshots) {
+            if (this.wand.isEmpty() || this.wandItem.remainingDurability(this.wand) == 0) break;
 
             // First try to remove all items from inventory
             List<ItemStack> taken = new ArrayList<>();
-            if (!player.isCreative()) {
+            if (!this.player.isCreative()) {
                 boolean success = true;
                 for (int i = 0; i < snapshot.getRequiredItems().size(); i++) {
-                    if(wandSupplier.takeItemStack(snapshot.getRequiredItems().get(i)) == 0) {
+                    if (this.wandSupplier.takeItemStack(snapshot.getRequiredItems().get(i)) == 0) {
                         taken.add(snapshot.getRequiredItems().get(i));
-                    }
-                    else {
+                    } else {
                         ConstructionWand.LOGGER.info("Item could not be taken!");
                         success = false;
                         break;
@@ -123,38 +122,38 @@ public class WandJob
                 if (!success) {
                     for (ItemStack item : taken) {
                         // if it fails, return any taken items
-                        player.handleExtraItemsCreatedOnUse(item);
+                        this.player.handleExtraItemsCreatedOnUse(item);
                     }
                     continue;
                 }
             }
 
-            if(snapshot.execute(world, player, rayTraceResult)) {
+            if (snapshot.execute(this.world, this.player, this.rayTraceResult)) {
                 executed.add(snapshot);
-                if (!player.isCreative()) {
+                if (!this.player.isCreative()) {
                     // layered blocks would need multiple right-clicks, so each removes 1 durability
-                    wand.hurtAndBreak(snapshot.getRequiredItems().getFirst().getCount(), player, EquipmentSlot.MAINHAND);
+                    this.wand.hurtAndBreak(snapshot.getRequiredItems().getFirst().getCount(), this.player, EquipmentSlot.MAINHAND);
                 }
             } else {
-                snapshot.forceRestore(world);
+                snapshot.forceRestore(this.world);
                 for (ItemStack item : taken) {
                     // if it fails, return any taken items
-                    player.handleExtraItemsCreatedOnUse(item);
+                    this.player.handleExtraItemsCreatedOnUse(item);
                 }
             }
-            player.awardStat(ConstructionWand.getRegistry().getUseWandStat(), 1);
+            this.player.awardStat(ConstructionWand.getRegistry().getUseWandStat(), 1);
         }
-        placeSnapshots = executed;
+        this.placeSnapshots = executed;
 
         // Play place sound
-        if(!placeSnapshots.isEmpty()) {
-            SoundType sound = placeSnapshots.getFirst().getBlockState().getSoundType();
-            world.playSound(null, player.blockPosition(), sound.getPlaceSound(), SoundSource.BLOCKS, sound.volume, sound.pitch);
+        if (!this.placeSnapshots.isEmpty()) {
+            SoundType sound = this.placeSnapshots.getFirst().getBlockState().getSoundType();
+            this.world.playSound(null, this.player.blockPosition(), sound.getPlaceSound(), SoundSource.BLOCKS, sound.volume, sound.pitch);
 
             // Add to job history for undo
-            UndoHistory.add(player, world, placeSnapshots);
+            UndoHistory.add(this.player, this.world, this.placeSnapshots);
         }
 
-        return !placeSnapshots.isEmpty();
+        return !this.placeSnapshots.isEmpty();
     }
 }

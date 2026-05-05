@@ -29,8 +29,8 @@ public class ConstructionWandClient implements ClientModInitializer {
         Network.init();
         var cat = KeyMapping.Category.register(ConstructionWand.id("all"));
 
-        optKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.opt_key", InputConstants.Type.KEYSYM, 341, cat));
-        optionalMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.menu_key", InputConstants.Type.KEYSYM, 86, cat));
+        ConstructionWandClient.optKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.opt_key", InputConstants.Type.KEYSYM, 341, cat));
+        ConstructionWandClient.optionalMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.menu_key", InputConstants.Type.KEYSYM, 86, cat));
 
         ClientEvents.init();
     }
@@ -38,8 +38,8 @@ public class ConstructionWandClient implements ClientModInitializer {
     public static class Config {
         @ConfigAnnotations.Header(header = "ConstructionWand client config")
         @ConfigAnnotations.Comment(comment = "Press SNEAK+OPTKEY instead of SNEAK for opening wand GUI")
-        public static boolean requireOptKeyForMenu = false;
+        public static boolean requireOptKeyForMenu;
         @ConfigAnnotations.Comment(comment = "Press SNEAK+OPTKEY instead of SNEAK for changing wand mode/direction lock")
-        public static boolean requireOptKeyForActions = false;
+        public static boolean requireOptKeyForActions;
     }
 }

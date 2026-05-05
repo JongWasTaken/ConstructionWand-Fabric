@@ -5,6 +5,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 import java.util.Set;
+
+@SuppressWarnings("resource")
 public class Network {
     @Environment(EnvType.CLIENT)
     public static void init() {
@@ -18,7 +20,7 @@ public class Network {
             });
         });
 
-        ClientPlayNetworking.registerGlobalReceiver(dev.smto.constructionwand.Network.Payloads.S2CPing.ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(dev.smto.constructionwand.Network.Payloads.S2CPing.ID, (_, context) -> {
             context.client().execute(() -> {
                 context.responseSender().sendPacket(new dev.smto.constructionwand.Network.Payloads.C2SPong(true));
             });

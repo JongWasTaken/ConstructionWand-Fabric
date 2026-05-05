@@ -7,8 +7,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
-public class PolymerAngelCoreItem extends PolymerCoreItem
-{
+public class PolymerAngelCoreItem extends PolymerCoreItem {
     public PolymerAngelCoreItem(ResourceKey<Item> id) {
         super(id, new Properties().stacksTo(1));
     }

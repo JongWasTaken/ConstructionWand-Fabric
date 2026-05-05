@@ -6,8 +6,7 @@ import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.wand.action.ActionConstruction;
 import net.minecraft.resources.Identifier;
 
-public class CoreDefault implements IWandCore
-{
+public class CoreDefault implements IWandCore {
     @Override
     public int getColor() {
         return -1;

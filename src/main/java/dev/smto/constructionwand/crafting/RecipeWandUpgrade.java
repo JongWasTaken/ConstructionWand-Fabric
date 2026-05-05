@@ -7,26 +7,19 @@ import dev.smto.constructionwand.api.IWandUpgrade;
 import dev.smto.constructionwand.api.WandConfigEntry;
 import dev.smto.constructionwand.basics.option.WandOptions;
 import dev.smto.constructionwand.items.wand.WandItem;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.PlacementInfo;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
-public class RecipeWandUpgrade implements CraftingRecipe
-{
+import java.util.List;
+
+public class RecipeWandUpgrade implements CraftingRecipe {
     public final List<Ingredient> ingredients;
     @Nullable
     private PlacementInfo ingredientPlacement;
@@ -36,25 +29,27 @@ public class RecipeWandUpgrade implements CraftingRecipe
     }
 
     @Override
-    public boolean matches(CraftingInput craftingRecipeInput, Level world) {
+    public boolean matches(CraftingInput craftingRecipeInput, @NonNull Level world) {
         ItemStack wand = null;
         IWandUpgrade upgrade = null;
 
-        for(int i = 0; i < craftingRecipeInput.items().size(); i++) {
+        for (int i = 0; i < craftingRecipeInput.items().size(); i++) {
             ItemStack stack = craftingRecipeInput.items().get(i);
-            if(!stack.isEmpty()) {
-                if(wand == null && stack.getItem() instanceof WandItem) wand = stack;
-                else if(upgrade == null && stack.getItem() instanceof IWandUpgrade)
+            if (!stack.isEmpty()) {
+                if (wand == null && stack.getItem() instanceof WandItem) wand = stack;
+                else if (upgrade == null && stack.getItem() instanceof IWandUpgrade)
                     upgrade = (IWandUpgrade) stack.getItem();
                 else return false;
             }
         }
 
-        if(wand == null || upgrade == null) return false;
-        WandConfigEntry wandConfig = null;
+        if (wand == null || upgrade == null) return false;
+        WandConfigEntry wandConfig;
         try {
             wandConfig = (WandConfigEntry) ConstructionWand.WAND_CONFIG_MAP.get(wand.getItem()).get(null);
-        } catch (Throwable ignored) {}
+        } catch (Throwable ignored) {
+            return false;
+        }
         return !WandOptions.of(wand).hasUpgrade(upgrade) && wandConfig.upgradeable();
     }
 
@@ -74,15 +69,15 @@ public class RecipeWandUpgrade implements CraftingRecipe
         ItemStack wand = null;
         IWandUpgrade upgrade = null;
 
-        for(int i = 0; i < craftingRecipeInput.items().size(); i++) {
+        for (int i = 0; i < craftingRecipeInput.items().size(); i++) {
             ItemStack stack = craftingRecipeInput.items().get(i);
-            if(!stack.isEmpty()) {
-                if(stack.getItem() instanceof WandItem) wand = stack;
-                else if(stack.getItem() instanceof IWandUpgrade) upgrade = (IWandUpgrade) stack.getItem();
+            if (!stack.isEmpty()) {
+                if (stack.getItem() instanceof WandItem) wand = stack;
+                else if (stack.getItem() instanceof IWandUpgrade) upgrade = (IWandUpgrade) stack.getItem();
             }
         }
         //LOGGER.warn("Crafting wand upgrade: " + wand + ", " + upgrade);
-        if(wand == null || upgrade == null) return ItemStack.EMPTY;
+        if (wand == null || upgrade == null) return ItemStack.EMPTY;
 
         ItemStack newWand = wand.copy();
 
@@ -94,12 +89,12 @@ public class RecipeWandUpgrade implements CraftingRecipe
     }
 
     @Override
-    public RecipeSerializer<RecipeWandUpgrade> getSerializer() {
+    public @NonNull RecipeSerializer<RecipeWandUpgrade> getSerializer() {
         return ConstructionWand.getRegistry().getRecipeSerializer();
     }
 
     @Override
-    public PlacementInfo placementInfo() {
+    public @NonNull PlacementInfo placementInfo() {
         if (this.ingredientPlacement == null) {
             this.ingredientPlacement = PlacementInfo.create(this.ingredients);
         }
@@ -108,7 +103,7 @@ public class RecipeWandUpgrade implements CraftingRecipe
     }
 
     @Override
-    public CraftingBookCategory category() {
+    public @NonNull CraftingBookCategory category() {
         return CraftingBookCategory.MISC;
     }
 

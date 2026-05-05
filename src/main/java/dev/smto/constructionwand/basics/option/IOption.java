@@ -2,8 +2,7 @@ package dev.smto.constructionwand.basics.option;
 
 import dev.smto.constructionwand.ConstructionWand;
 
-public interface IOption<T>
-{
+public interface IOption<T> {
     String getKey();
 
     String getValueString();
@@ -11,15 +10,15 @@ public interface IOption<T>
     void setValueString(String val);
 
     default String getKeyTranslation() {
-        return ConstructionWand.MOD_ID + ".option." + getKey();
+        return ConstructionWand.MOD_ID + ".option." + this.getKey();
     }
 
     default String getValueTranslation() {
-        return ConstructionWand.MOD_ID + ".option." + getKey() + "." + getValueString();
+        return ConstructionWand.MOD_ID + ".option." + this.getKey() + "." + this.getValueString();
     }
 
     default String getDescTranslation() {
-        return ConstructionWand.MOD_ID + ".option." + getKey() + "." + getValueString() + ".desc";
+        return ConstructionWand.MOD_ID + ".option." + this.getKey() + "." + this.getValueString() + ".desc";
     }
 
     boolean isEnabled();
@@ -31,6 +30,6 @@ public interface IOption<T>
     T next(boolean dir);
 
     default T next() {
-        return next(true);
+        return this.next(true);
     }
 }

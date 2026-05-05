@@ -4,9 +4,6 @@ import dev.smto.constructionwand.api.IWandCore;
 import dev.smto.constructionwand.api.IWandUpgrade;
 import dev.smto.constructionwand.basics.ReplacementRegistry;
 import dev.smto.constructionwand.items.core.CoreDefault;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
@@ -14,14 +11,15 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import org.jetbrains.annotations.Nullable;
 
-public class WandOptions
-{
+import java.util.List;
+
+public class WandOptions {
     public final CompoundTag tag;
     public final CustomModelData modelData;
 
-    public enum Lock
-    {
+    public enum Lock {
         HORIZONTAL,
         VERTICAL,
         NORTHSOUTH,
@@ -29,14 +27,12 @@ public class WandOptions
         NOLOCK
     }
 
-    public enum Direction
-    {
+    public enum Direction {
         TARGET,
         PLAYER
     }
 
-    public enum Match
-    {
+    public enum Match {
         EXACT,
         SIMILAR,
         ANY
@@ -60,54 +56,50 @@ public class WandOptions
 
     private WandOptions(ItemStack wandStack) {
         //tag = wandStack.getOrCreateSubNbt(TAG_ROOT);
-        tag = wandStack.getComponents().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        modelData = wandStack.getComponents().getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
+        this.tag = wandStack.getComponents().getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        this.modelData = wandStack.getComponents().getOrDefault(DataComponents.CUSTOM_MODEL_DATA, CustomModelData.EMPTY);
 
-        cores = new WandUpgradesSelectable<>(tag, "cores", new CoreDefault());
+        this.cores = new WandUpgradesSelectable<>(this.tag, "cores", new CoreDefault());
 
-        lock = new OptionEnum<>(tag, "lock", Lock.class, Lock.NOLOCK);
-        direction = new OptionEnum<>(tag, "direction", Direction.class, Direction.TARGET);
-        replace = new OptionBoolean(tag, "replace", true);
-        match = new OptionEnum<>(tag, "match", Match.class, Match.SIMILAR);
-        random = new OptionBoolean(tag, "random", false);
+        this.lock = new OptionEnum<>(this.tag, "lock", Lock.class, Lock.NOLOCK);
+        this.direction = new OptionEnum<>(this.tag, "direction", Direction.class, Direction.TARGET);
+        this.replace = new OptionBoolean(this.tag, "replace", true);
+        this.match = new OptionEnum<>(this.tag, "match", Match.class, Match.SIMILAR);
+        this.random = new OptionBoolean(this.tag, "random", false);
 
-        allOptions = new IOption[]{cores, lock, direction, replace, match, random};
+        this.allOptions = new IOption[]{this.cores, this.lock, this.direction, this.replace, this.match, this.random};
 
-        stack = wandStack;
+        this.stack = wandStack;
     }
 
     @Nullable
     public IOption<?> get(String key) {
-        for(IOption<?> option : allOptions) {
-            if(option.getKey().equals(key)) return option;
+        for (IOption<?> option : this.allOptions) {
+            if (option.getKey().equals(key)) return option;
         }
         return null;
     }
 
     public boolean testLock(Lock l) {
-        if(lock.get() == Lock.NOLOCK) return true;
-        return lock.get() == l;
+        if (this.lock.get() == Lock.NOLOCK) return true;
+        return this.lock.get() == l;
     }
 
     public boolean matchBlocks(Block b1, Block b2) {
-        switch(match.get()) {
-            case EXACT:
-                return b1 == b2;
-            case SIMILAR:
-                return ReplacementRegistry.matchBlocks(b1, b2);
-            case ANY:
-                return b1 != Blocks.AIR && b2 != Blocks.AIR;
-        }
-        return false;
+        return switch (this.match.get()) {
+            case EXACT -> b1 == b2;
+            case SIMILAR -> ReplacementRegistry.matchBlocks(b1, b2);
+            case ANY -> b1 != Blocks.AIR && b2 != Blocks.AIR;
+        };
     }
 
     public boolean hasUpgrade(IWandUpgrade upgrade) {
-        if(upgrade instanceof IWandCore) return cores.hasUpgrade((IWandCore) upgrade);
+        if (upgrade instanceof IWandCore) return this.cores.hasUpgrade((IWandCore) upgrade);
         return false;
     }
 
     public boolean addUpgrade(IWandUpgrade upgrade) {
-        if(upgrade instanceof IWandCore) return cores.addUpgrade((IWandCore) upgrade);
+        if (upgrade instanceof IWandCore) return this.cores.addUpgrade((IWandCore) upgrade);
         return false;
     }
 
@@ -115,18 +107,19 @@ public class WandOptions
     // because components cannot be used to match the model yet.
     // So we use custom model data instead.
     // Cant wait to once again rewrite this for 1.21.5!
+    // Update: it is 26.1.2 now and i still have not rewritten this because it works well enough lmao
 
     public void writeToStack() {
-        this.stack.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        this.stack.set(DataComponents.CUSTOM_MODEL_DATA, mutateModelData());
+        this.stack.set(DataComponents.CUSTOM_DATA, CustomData.of(this.tag));
+        this.stack.set(DataComponents.CUSTOM_MODEL_DATA, this.mutateModelData());
     }
 
     public void writeToStack(ItemStack target) {
-        target.set(DataComponents.CUSTOM_DATA, CustomData.of(tag));
-        this.stack.set(DataComponents.CUSTOM_MODEL_DATA, mutateModelData());
+        target.set(DataComponents.CUSTOM_DATA, CustomData.of(this.tag));
+        this.stack.set(DataComponents.CUSTOM_MODEL_DATA, this.mutateModelData());
     }
 
     private CustomModelData mutateModelData() {
-        return new CustomModelData(modelData.floats(), List.of(!(cores.get() instanceof CoreDefault)), modelData.strings(), List.of(cores.get().getColor()));
+        return new CustomModelData(this.modelData.floats(), List.of(!(this.cores.get() instanceof CoreDefault)), this.modelData.strings(), List.of(this.cores.get().getColor()));
     }
 }

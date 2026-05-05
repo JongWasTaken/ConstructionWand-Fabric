@@ -22,74 +22,75 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import static dev.smto.constructionwand.ConstructionWand.MOD_ID;
 
 public class PolymerRegistry extends ModRegistry {
-    private final WandItem stoneWand = new PolymerBreakableWandItem(createKey("stone_wand"), new Item.Properties(), ToolMaterial.STONE);
-    private final WandItem ironWand = new PolymerBreakableWandItem(createKey("iron_wand"), new Item.Properties(), ToolMaterial.IRON);
-    private final WandItem diamondWand = new PolymerBreakableWandItem(createKey("diamond_wand"), new Item.Properties(), ToolMaterial.DIAMOND);
-    private final WandItem infinityWand = new PolymerInfinityWandItem(createKey("infinity_wand"));
-    private final CoreItem coreAngel = new PolymerAngelCoreItem(createKey("core_angel"));
-    private final CoreItem coreDestruction = new PolymerDestructionCoreItem(createKey("core_destruction"));
-    private final Identifier statUseWand = PolymerStat.registerStat(Identifier.fromNamespaceAndPath(ConstructionWand.MOD_ID, "use_wand"), StatFormatter.DEFAULT);
+    private final WandItem stoneWand = new PolymerBreakableWandItem(ModRegistry.createKey("stone_wand"), new Item.Properties(), ToolMaterial.STONE);
+    private final WandItem ironWand = new PolymerBreakableWandItem(ModRegistry.createKey("iron_wand"), new Item.Properties(), ToolMaterial.IRON);
+    private final WandItem diamondWand = new PolymerBreakableWandItem(ModRegistry.createKey("diamond_wand"), new Item.Properties(), ToolMaterial.DIAMOND);
+    private final WandItem infinityWand = new PolymerInfinityWandItem(ModRegistry.createKey("infinity_wand"));
+    private final CoreItem coreAngel = new PolymerAngelCoreItem(ModRegistry.createKey("core_angel"));
+    private final CoreItem coreDestruction = new PolymerDestructionCoreItem(ModRegistry.createKey("core_destruction"));
+    private final Identifier statUseWand = PolymerStat.registerStat(Identifier.fromNamespaceAndPath(MOD_ID, "use_wand"), StatFormatter.DEFAULT);
     private final RecipeSerializer<RecipeWandUpgrade> recipeWandUpgrade = RecipeWandUpgrade.Serializer.create();
 
     @Override
     public WandItem getStoneWand() {
-        return stoneWand;
+        return this.stoneWand;
     }
 
     @Override
     public WandItem getIronWand() {
-        return ironWand;
+        return this.ironWand;
     }
 
     @Override
     public WandItem getDiamondWand() {
-        return diamondWand;
+        return this.diamondWand;
     }
 
     @Override
     public WandItem getInfinityWand() {
-        return infinityWand;
+        return this.infinityWand;
     }
 
     @Override
     public CoreItem getAngelCore() {
-        return coreAngel;
+        return this.coreAngel;
     }
 
     @Override
     public CoreItem getDestructionCore() {
-        return coreDestruction;
+        return this.coreDestruction;
     }
 
     @Override
     public Identifier getUseWandStat() {
-        return statUseWand;
+        return this.statUseWand;
     }
 
     @Override
     public RecipeSerializer<RecipeWandUpgrade> getRecipeSerializer() {
-        return recipeWandUpgrade;
+        return this.recipeWandUpgrade;
     }
+
     @Override
     public void registerAll() {
-        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, stoneWand.registryKey, stoneWand);
-        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, ironWand.registryKey, ironWand);
-        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, diamondWand.registryKey, diamondWand);
-        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, infinityWand.registryKey, infinityWand);
-        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, coreAngel.registryKey, coreAngel);
-        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, coreDestruction.registryKey, coreDestruction);
+        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, this.stoneWand.registryKey, this.stoneWand);
+        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, this.ironWand.registryKey, this.ironWand);
+        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, this.diamondWand.registryKey, this.diamondWand);
+        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, this.infinityWand.registryKey, this.infinityWand);
+        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, this.coreAngel.registryKey, this.coreAngel);
+        net.minecraft.core.Registry.register(BuiltInRegistries.ITEM, this.coreDestruction.registryKey, this.coreDestruction);
         var tabBuilder = PolymerCreativeModeTabUtils.builder();
         tabBuilder.title(Component.literal("Construction Wand"));
-        tabBuilder.icon(infinityWand::getDefaultInstance);
+        tabBuilder.icon(this.infinityWand::getDefaultInstance);
         tabBuilder.displayItems((displayContext, entries) -> {
-            entries.accept(stoneWand.getDefaultInstance());
-            entries.accept(ironWand.getDefaultInstance());
-            entries.accept(diamondWand.getDefaultInstance());
-            entries.accept(infinityWand.getDefaultInstance());
-            entries.accept(coreAngel.getDefaultInstance());
-            entries.accept(coreDestruction.getDefaultInstance());
+            entries.accept(this.stoneWand.getDefaultInstance());
+            entries.accept(this.ironWand.getDefaultInstance());
+            entries.accept(this.diamondWand.getDefaultInstance());
+            entries.accept(this.infinityWand.getDefaultInstance());
+            entries.accept(this.coreAngel.getDefaultInstance());
+            entries.accept(this.coreDestruction.getDefaultInstance());
         });
         PolymerCreativeModeTabUtils.registerPolymerCreativeModeTab(Identifier.fromNamespaceAndPath(MOD_ID, "items"), tabBuilder.build());
-        net.minecraft.core.Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ConstructionWand.id("wand_upgrade"), recipeWandUpgrade);
+        net.minecraft.core.Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, ConstructionWand.id("wand_upgrade"), this.recipeWandUpgrade);
     }
 }

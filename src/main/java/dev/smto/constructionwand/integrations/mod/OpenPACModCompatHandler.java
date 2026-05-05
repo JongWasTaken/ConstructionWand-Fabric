@@ -3,9 +3,6 @@ package dev.smto.constructionwand.integrations.mod;
 import dev.smto.constructionwand.ConstructionWand;
 import dev.smto.constructionwand.api.IModCompatHandler;
 import dev.smto.constructionwand.items.wand.WandItem;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Method;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,6 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Method;
 
 public class OpenPACModCompatHandler implements IModCompatHandler {
     // https://thexaero.github.io/open-parties-and-claims/javadoc/xaero/pac/common/server/claims/protection/api/IChunkProtectionAPI.html
@@ -57,10 +57,11 @@ public class OpenPACModCompatHandler implements IModCompatHandler {
         boolean result = false;
         if (context.getLevel() instanceof ServerLevel world) {
             try {
-                Object mainApiInstance = mainApiClassGetMethod.invoke(null, world.getServer());
-                Object chunkApiInstance = mainApiClassGetChunkApiMethod.invoke(mainApiInstance);
-                result = (boolean) protectionMethod.invoke(chunkApiInstance, context.getPlayer(), context.getHand(), context.getItemInHand(), world, context.getClickedPos(), context.getClickedFace(), false, true, true);
-            } catch (Throwable ignored) {}
+                Object mainApiInstance = this.mainApiClassGetMethod.invoke(null, world.getServer());
+                Object chunkApiInstance = this.mainApiClassGetChunkApiMethod.invoke(mainApiInstance);
+                result = (boolean) this.protectionMethod.invoke(chunkApiInstance, context.getPlayer(), context.getHand(), context.getItemInHand(), world, context.getClickedPos(), context.getClickedFace(), false, true, true);
+            } catch (Throwable ignored) {
+            }
             return result;
         }
         return false;
@@ -77,10 +78,11 @@ public class OpenPACModCompatHandler implements IModCompatHandler {
 
         if (w instanceof ServerLevel world) {
             try {
-                Object mainApiInstance = mainApiClassGetMethod.invoke(null, world.getServer());
-                Object chunkApiInstance = mainApiClassGetChunkApiMethod.invoke(mainApiInstance);
-                result = (boolean) protectionMethod.invoke(chunkApiInstance, player, hand, player.getItemInHand(hand), world, pos, null, false, false, true);
-            } catch (Throwable ignored) {}
+                Object mainApiInstance = this.mainApiClassGetMethod.invoke(null, world.getServer());
+                Object chunkApiInstance = this.mainApiClassGetChunkApiMethod.invoke(mainApiInstance);
+                result = (boolean) this.protectionMethod.invoke(chunkApiInstance, player, hand, player.getItemInHand(hand), world, pos, null, false, false, true);
+            } catch (Throwable ignored) {
+            }
             return result;
         }
         return false;

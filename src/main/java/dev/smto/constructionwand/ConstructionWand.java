@@ -30,20 +30,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConstructionWand implements ModInitializer
-{
+public class ConstructionWand implements ModInitializer {
     public static final String MOD_ID = "constructionwand";
     public static final Logger LOGGER = LogManager.getLogger();
     private static ModRegistry REGISTRY;
 
-    public static SimpleConfig configManager = null;
+    public static SimpleConfig configManager;
 
     public static void ensureConfigManager() {
-        if (configManager != null) return;
+        if (ConstructionWand.configManager != null) return;
         ConstructionWand.configManager = new SimpleConfig(
                 FabricLoader.getInstance().getConfigDir().resolve("construction_wand.conf"),
                 Config.class,
-                ConfigLoggers.create(LOGGER::debug, LOGGER::info, LOGGER::warn, LOGGER::error),
+                ConfigLoggers.create(ConstructionWand.LOGGER::debug, ConstructionWand.LOGGER::info, ConstructionWand.LOGGER::warn, ConstructionWand.LOGGER::error),
                 Map.of("stoneWand", WandConfigEntry.CODEC, "ironWand", WandConfigEntry.CODEC, "diamondWand", WandConfigEntry.CODEC, "infinityWand", WandConfigEntry.CODEC, "similarBlocks", Codec.STRING.listOf())
         );
     }
@@ -51,29 +50,30 @@ public class ConstructionWand implements ModInitializer
     public static final Map<Item, Field> WAND_CONFIG_MAP = new HashMap<>();
 
     public static Identifier id(String name) {
-        return Identifier.fromNamespaceAndPath(MOD_ID, name);
+        return Identifier.fromNamespaceAndPath(ConstructionWand.MOD_ID, name);
     }
 
     public static ModRegistry getRegistry() {
-        return REGISTRY;
+        return ConstructionWand.REGISTRY;
     }
 
     @Override
     public void onInitialize() {
-        ensureConfigManager();
+        ConstructionWand.ensureConfigManager();
         Network.init();
         ModCompat.init();
         if (ModCompat.polymerEnabled) {
-            REGISTRY = new PolymerRegistry();
-        } else REGISTRY = new DefaultRegistry();
-        LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
-        REGISTRY.registerAll();
+            ConstructionWand.REGISTRY = new PolymerRegistry();
+        } else ConstructionWand.REGISTRY = new DefaultRegistry();
+        ConstructionWand.LOGGER.info("ConstructionWand says hello - may the odds be ever in your favor.");
+        ConstructionWand.REGISTRY.registerAll();
         try {
-            WAND_CONFIG_MAP.put(REGISTRY.getStoneWand(), Config.class.getField("stoneWand"));
-            WAND_CONFIG_MAP.put(REGISTRY.getIronWand(), Config.class.getField("ironWand"));
-            WAND_CONFIG_MAP.put(REGISTRY.getDiamondWand(), Config.class.getField("diamondWand"));
-            WAND_CONFIG_MAP.put(REGISTRY.getInfinityWand(), Config.class.getField("infinityWand"));
-        } catch (Throwable ignored) {}
+            ConstructionWand.WAND_CONFIG_MAP.put(ConstructionWand.REGISTRY.getStoneWand(), Config.class.getField("stoneWand"));
+            ConstructionWand.WAND_CONFIG_MAP.put(ConstructionWand.REGISTRY.getIronWand(), Config.class.getField("ironWand"));
+            ConstructionWand.WAND_CONFIG_MAP.put(ConstructionWand.REGISTRY.getDiamondWand(), Config.class.getField("diamondWand"));
+            ConstructionWand.WAND_CONFIG_MAP.put(ConstructionWand.REGISTRY.getInfinityWand(), Config.class.getField("infinityWand"));
+        } catch (Throwable ignored) {
+        }
 
         ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> {
             ReplacementRegistry.init();
@@ -95,11 +95,11 @@ public class ConstructionWand implements ModInitializer
         public static ArrayList<String> similarBlocks = new ArrayList<>(List.of("minecraft:dirt;minecraft:grass_block;minecraft:coarse_dirt;minecraft:podzol;minecraft:mycelium;minecraft:farmland;minecraft:dirt_path;minecraft:rooted_dirt"));
 
         @ConfigAnnotations.Comment(comment = "Place blocks below you while falling > 10 blocks with angel core (Can be used to save you from drops/the void)")
-        public static boolean angelFalling = false;
+        public static boolean angelFalling;
 
         @ConfigAnnotations.Section(section = "Block Entity settings")
         @ConfigAnnotations.Comment(comment = "If set to true, treat blockEntityList as a whitelist, otherwise blacklist")
-        public static boolean whitelist = false;
+        public static boolean whitelist;
 
         @ConfigAnnotations.Comment(comment = "Allow/Prevent blocks with TEs from being placed by wand.\nYou can either add block ids like \"minecraft:chest\" or mod ids like \"minecraft\".")
         public static ArrayList<String> blockEntityList = new ArrayList<>(List.of(
@@ -129,8 +129,9 @@ public class ConstructionWand implements ModInitializer
      * In addition, a class implementing IModCompatHandler can also implement IContainerHandler,
      * which will allow a wand to use the inventory of an item added by your mod.<br><br>
      * This is a more convenient alias for ModCompat.addModCompatHandler, see below for details.
-     * @see ModCompat#addModCompatHandler(IModCompatHandler)
+     *
      * @param handler Your mod compat handler instance
+     * @see ModCompat#addModCompatHandler(IModCompatHandler)
      */
     public static void addModCompatHandler(IModCompatHandler handler) {
         ModCompat.addModCompatHandler(handler);

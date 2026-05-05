@@ -22,6 +22,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.item.ItemStack;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Network {
     public static class Payloads {
         public record S2CUndoBlocksPayload(List<BlockPos> blockPosList) implements CustomPacketPayload {
             public static final CustomPacketPayload.Type<S2CUndoBlocksPayload> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "undo_blocks"));
-            public static final StreamCodec<ByteBuf, List<BlockPos>> PACKET_CODEC = new StreamCodec<ByteBuf, List<BlockPos>>() {
+            public static final StreamCodec<ByteBuf, List<BlockPos>> PACKET_CODEC = new StreamCodec<>() {
                 public List<BlockPos> decode(ByteBuf byteBuf) {
                     if (byteBuf.readableBytes() <= 0) return new ArrayList<>();
                     List<BlockPos> out = new ArrayList<>();
@@ -49,11 +50,11 @@ public class Network {
                     }
                 }
             };
-            public static final StreamCodec<RegistryFriendlyByteBuf, S2CUndoBlocksPayload> CODEC = StreamCodec.composite(PACKET_CODEC, S2CUndoBlocksPayload::blockPosList, S2CUndoBlocksPayload::new);
+            public static final StreamCodec<RegistryFriendlyByteBuf, S2CUndoBlocksPayload> CODEC = StreamCodec.composite(S2CUndoBlocksPayload.PACKET_CODEC, S2CUndoBlocksPayload::blockPosList, S2CUndoBlocksPayload::new);
 
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-                return ID;
+                return S2CUndoBlocksPayload.ID;
             }
         }
 
@@ -63,17 +64,18 @@ public class Network {
 
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-                return ID;
+                return C2SQueryUndoPayload.ID;
             }
         }
 
-        public record C2SWandOptionPayload(String key, String value, boolean shouldNotify) implements CustomPacketPayload {
+        public record C2SWandOptionPayload(String key, String value,
+                                           boolean shouldNotify) implements CustomPacketPayload {
             public static final CustomPacketPayload.Type<C2SWandOptionPayload> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "wand_option"));
             public static final StreamCodec<RegistryFriendlyByteBuf, C2SWandOptionPayload> CODEC = StreamCodec.composite(ByteBufCodecs.STRING_UTF8, C2SWandOptionPayload::key, ByteBufCodecs.STRING_UTF8, C2SWandOptionPayload::value, ByteBufCodecs.BOOL, C2SWandOptionPayload::shouldNotify, C2SWandOptionPayload::new);
 
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-                return ID;
+                return C2SWandOptionPayload.ID;
             }
 
             public static C2SWandOptionPayload of(IOption<?> option, boolean notify) {
@@ -84,22 +86,26 @@ public class Network {
         public record S2CPing(boolean unused) implements CustomPacketPayload {
             public static final CustomPacketPayload.Type<S2CPing> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "ping"));
             public static final StreamCodec<RegistryFriendlyByteBuf, S2CPing> CODEC = StreamCodec.composite(ByteBufCodecs.BOOL, S2CPing::unused, S2CPing::new);
+
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-                return ID;
+                return S2CPing.ID;
             }
         }
 
         public record C2SPong(boolean unused) implements CustomPacketPayload {
             public static final CustomPacketPayload.Type<C2SPong> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "pong"));
             public static final StreamCodec<RegistryFriendlyByteBuf, C2SPong> CODEC = StreamCodec.composite(ByteBufCodecs.BOOL, C2SPong::unused, C2SPong::new);
+
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-                return ID;
+                return C2SPong.ID;
             }
         }
 
-        public record S2CSyncModConfigPayload(List<Integer> ints, List<Boolean> booleans, List<String> similarBlocks, List<String> blockEntityList, List<WandConfigEntry> wands) implements CustomPacketPayload {
+        public record S2CSyncModConfigPayload(List<Integer> ints, List<Boolean> booleans, List<String> similarBlocks,
+                                              List<String> blockEntityList,
+                                              List<WandConfigEntry> wands) implements CustomPacketPayload {
             public static final CustomPacketPayload.Type<S2CSyncModConfigPayload> ID = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(MOD_ID, "mod_config"));
             public static final StreamCodec<RegistryFriendlyByteBuf, S2CSyncModConfigPayload> CODEC = StreamCodec.composite(
                     ByteBufCodecs.INT.apply(ByteBufCodecs.list()), S2CSyncModConfigPayload::ints,
@@ -151,7 +157,7 @@ public class Network {
 
             @Override
             public CustomPacketPayload.Type<? extends CustomPacketPayload> type() {
-                return ID;
+                return S2CSyncModConfigPayload.ID;
             }
         }
     }
@@ -168,7 +174,7 @@ public class Network {
         ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SQueryUndoPayload.ID, (payload, context) -> {
             context.server().execute(() -> {
                 ServerPlayer player = context.player();
-                if(player == null) return;
+                if (player == null) return;
                 UndoHistory.updateClient(player, payload.undoPressed);
             });
         });
@@ -176,24 +182,25 @@ public class Network {
         ServerPlayNetworking.registerGlobalReceiver(Payloads.C2SWandOptionPayload.ID, (payload, context) -> {
             context.server().execute(() -> {
                 ServerPlayer player = context.player();
-                if(player == null) return;
+                if (player == null) return;
 
                 ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
-                if(wand == null) return;
+                if (wand == null) return;
                 WandOptions options = WandOptions.of(wand);
 
                 IOption<?> option = options.get(payload.key);
-                if(option == null) return;
+                if (option == null) return;
                 option.setValueString(payload.value);
 
-                if(payload.shouldNotify) WandItem.optionMessage(player, option);
+                if (payload.shouldNotify) WandItem.optionMessage(player, option);
                 options.writeToStack();
                 player.getInventory().setChanged();
             });
         });
 
         ServerPlayConnectionEvents.JOIN.register((ServerGamePacketListenerImpl handler, PacketSender sender, MinecraftServer server) -> {
-            if (server.isDedicatedServer()) ServerPlayNetworking.send(handler.player, Payloads.S2CSyncModConfigPayload.create());
+            if (server.isDedicatedServer())
+                ServerPlayNetworking.send(handler.player, Payloads.S2CSyncModConfigPayload.create());
             else ConstructionWand.ensureConfigManager();
         });
     }
