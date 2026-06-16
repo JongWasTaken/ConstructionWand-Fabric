@@ -54,25 +54,25 @@ public class ClientEvents {
             // menu key, if bound
             if (!ConstructionWandClient.optionalMenuKey.isUnbound()) {
                 if (ConstructionWandClient.optionalMenuKey.isDown() && client.player != null) {
-                    if (client.screen == null) {
+                    if (client.gui.screen() == null) {
                         ConstructionWandClient.optionalMenuKey.setDown(false);
                         ItemStack wand = WandUtil.getHeldWandOrEmpty(client.player);
                         if (wand.isEmpty()) return;
-                        if (client.screen != null) return;
-                        client.setScreen(new ScreenWand(wand));
+                        if (client.gui.screen() != null) return;
+                        client.gui.setScreen(new ScreenWand(wand));
                     }
                 }
             }
         });
 
         // Sneak+(OPT)+Right click wand to open GUI
-        UseItemCallback.EVENT.register((Player player, Level world, InteractionHand hand) -> {
+        UseItemCallback.EVENT.register((Player player, Level world, InteractionHand _) -> {
             if (!world.isClientSide()) return InteractionResult.PASS;
             var target = Minecraft.getInstance().hitResult;
             if (ClientEvents.canOpenGui(player) && target != null && target.getType() != net.minecraft.world.phys.HitResult.Type.BLOCK) {
                 ItemStack wand = WandUtil.getHeldWandOrEmpty(player);
                 if (wand.isEmpty()) return InteractionResult.PASS;
-                Minecraft.getInstance().setScreen(new ScreenWand(wand));
+                Minecraft.getInstance().gui.setScreen(new ScreenWand(wand));
                 return InteractionResult.FAIL;
             }
             return InteractionResult.PASS;
@@ -99,6 +99,7 @@ public class ClientEvents {
         return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), ConstructionWandClient.optKey.key.getValue());
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean canChangeMode(Player player) {
         return player.isShiftKeyDown() && (ClientEvents.isOptKeyDown() || !ConstructionWandClient.Config.requireOptKeyForActions);
     }

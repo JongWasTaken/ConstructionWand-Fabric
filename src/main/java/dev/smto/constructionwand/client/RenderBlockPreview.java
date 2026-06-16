@@ -5,7 +5,6 @@ import dev.smto.constructionwand.wand.WandJob;
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ShapeRenderer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
 import net.minecraft.core.BlockPos;
@@ -23,12 +22,12 @@ public class RenderBlockPreview {
     public static Set<BlockPos> undoBlocks;
 
     public static boolean renderBlockHighlight(LevelRenderContext context, BlockOutlineRenderState outlineRenderState) {
-        LocalPlayer player = context.gameRenderer().getMinecraft().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return true;
         HitResult hitResult;
         var tickCounter = Minecraft.getInstance().getDeltaTracker();
         try {
-            hitResult = player.raycastHitResult(tickCounter.getGameTimeDeltaPartialTick(true), Objects.requireNonNull(context.gameRenderer().getMinecraft().getCameraEntity()));
+            hitResult = player.raycastHitResult(tickCounter.getGameTimeDeltaPartialTick(true), Objects.requireNonNull(Minecraft.getInstance().getCameraEntity()));
         } catch (Throwable ignored) {
             return true;
         }
@@ -67,13 +66,12 @@ public class RenderBlockPreview {
         double d2 = player.zOld + (player.getZ() - player.zOld) * tickCounter.getGameTimeDeltaPartialTick(true);
 
         for (BlockPos block : blocks) {
-            ShapeRenderer.renderShape(
-                    context.poseStack(),
-                    context.bufferSource().getBuffer(RenderTypes.lines()),
-                    Shapes.block(),
-                    block.getX() - d0, block.getY() - d1, block.getZ() - d2,
-                    ARGB.color(colorR, colorG, colorB), 2.0F
+            context.poseStack().pushPose();
+            context.poseStack().translate(block.getX() - d0, block.getY() - d1, block.getZ() - d2);
+            context.submitNodeCollector().submitShapeOutline(
+                    context.poseStack(), Shapes.block(), RenderTypes.lines(), ARGB.color(colorR, colorG, colorB), 2.0F, true
             );
+            context.poseStack().popPose();
         }
 
         return false;

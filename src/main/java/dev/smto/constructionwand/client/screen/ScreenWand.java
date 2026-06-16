@@ -46,9 +46,9 @@ public class ScreenWand extends Screen {
         int w = this.font.width(this.wand.getHoverName());
         this.addRenderableOnly(new StringWidget((this.width / 2) - (w / 2), this.getY(0) - 40, w, 20, this.wand.getHoverName(), this.font));
         Component t = Component.translatable("gui.constructionwand.settings_button");
-        Button button = Button.builder(t, (bt) -> {
+        Button button = Button.builder(t, (_) -> {
                     this.onClose();
-                    Minecraft.getInstance().setScreen(new ScreenSettings(this));
+                    Minecraft.getInstance().gui.setScreen(new ScreenSettings(this));
                 })
                 .pos(2, 2)
                 .size(this.font.width(t) + 8, 16)
@@ -61,7 +61,7 @@ public class ScreenWand extends Screen {
                 .pos(this.getX(cx), this.getY(cy))
                 .size(ScreenWand.BUTTON_WIDTH, ScreenWand.BUTTON_HEIGHT)
                 .tooltip(this.getButtonTooltip(option))
-                .createNarration(x -> this.getButtonLabel(option))
+                .createNarration(_ -> this.getButtonLabel(option))
                 .build();
         button.active = option.isEnabled();
         this.addRenderableWidget(button);

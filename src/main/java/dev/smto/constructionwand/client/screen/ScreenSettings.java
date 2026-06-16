@@ -39,27 +39,27 @@ public class ScreenSettings extends Screen {
         this.createBooleanOption(1, Component.translatable("gui.constructionwand.require_opt_key_menu"), Component.translatable("gui.constructionwand.require_opt_key_menu.tooltip"), "requireOptKeyForMenu");
         this.createBooleanOption(2, Component.translatable("gui.constructionwand.require_opt_key_actions"), Component.translatable("gui.constructionwand.require_opt_key_actions.tooltip"), "requireOptKeyForActions");
         int r = ScreenSettings.BUTTON_WIDTH / 2;
-        Button saveButton = Button.builder(Component.translatable("gui.constructionwand.save"), (bt) -> {
+        Button saveButton = Button.builder(Component.translatable("gui.constructionwand.save"), (_) -> {
                     ConstructionWandClient.CONFIG_MANAGER.write(); // save to disk
                     if (this.parent != null) {
-                        this.minecraft.setScreen(this.parent);
+                        this.minecraft.gui.setScreen(this.parent);
                     } else this.onClose();
                 })
                 .pos((int) (this.width * 0.75) - r, this.height - 22)
                 .size(ScreenSettings.BUTTON_WIDTH, ScreenSettings.BUTTON_HEIGHT)
-                .createNarration(x -> Component.translatable("gui.constructionwand.save"))
+                .createNarration(_ -> Component.translatable("gui.constructionwand.save"))
                 .build();
         this.addRenderableWidget(saveButton);
 
-        Button discardButton = Button.builder(Component.translatable("gui.constructionwand.discard"), (bt) -> {
+        Button discardButton = Button.builder(Component.translatable("gui.constructionwand.discard"), (_) -> {
                     ConstructionWandClient.CONFIG_MANAGER.read(); // reload from disk to discard changes
                     if (this.parent != null) {
-                        this.minecraft.setScreen(this.parent);
+                        this.minecraft.gui.setScreen(this.parent);
                     } else this.onClose();
                 })
                 .pos((int) (this.width * 0.25) - r, this.height - 22)
                 .size(ScreenSettings.BUTTON_WIDTH, ScreenSettings.BUTTON_HEIGHT)
-                .createNarration(x -> Component.translatable("gui.constructionwand.discard"))
+                .createNarration(_ -> Component.translatable("gui.constructionwand.discard"))
                 .build();
         this.addRenderableWidget(discardButton);
     }
@@ -90,7 +90,7 @@ public class ScreenSettings extends Screen {
                 .pos(this.getX(1) + (ScreenSettings.BUTTON_WIDTH / 2), this.getY(cy))
                 .size(ScreenSettings.BUTTON_WIDTH / 2, ScreenSettings.BUTTON_HEIGHT)
                 .tooltip(Tooltip.create(buttonTooltip))
-                .createNarration(x -> Component.literal(String.valueOf(finalValue)))
+                .createNarration(_ -> Component.literal(String.valueOf(finalValue)))
                 .build();
         this.addRenderableWidget(button);
     }
