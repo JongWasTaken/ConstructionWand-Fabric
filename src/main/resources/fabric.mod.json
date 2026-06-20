@@ -24,7 +24,7 @@
 	"depends": {
 		"fabricloader": "*",
 		"minecraft": "*",
-		"java": ">=21",
+		"java": "*",
 		"constructionwand": ">=2.0.0",
 		"polymer-core": "*",
 		"polymer-resource-pack": "*",
