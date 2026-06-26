@@ -89,6 +89,7 @@ public class ClientEvents
 
         ItemStack wand = WandUtil.getHeldWandOrEmpty(client.player);
         if(wand == null) return false;
+	    if(wand.isEmpty()) return false;
 
         WandOptions wandOptions = WandOptions.of(wand);
         wandOptions.lock.next(scrollDelta < 0);
