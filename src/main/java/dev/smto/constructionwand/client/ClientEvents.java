@@ -96,7 +96,7 @@ public class ClientEvents {
 
     public static boolean isOptKeyDown() {
         // a bit hacky, but allows the user to use any key regardless of conflicts
-        return InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), ConstructionWandClient.optKey.key.getValue());
+        return InputConstants.isKeyDown(ConstructionWandClient.optKey.key.getValue());
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

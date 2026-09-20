@@ -96,7 +96,7 @@ public abstract class WandItem extends Item {
         int limit = options.cores.get().getWandAction().getLimit(stack);
         String langTooltip = ConstructionWand.MOD_ID + ".tooltip.";
         // +SHIFT tooltip: show all options + installed cores
-        if (InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) {
+        if (InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)) {
             for (int i = 1; i < options.allOptions.length; i++) {
                 IOption<?> opt = options.allOptions[i];
                 textConsumer.accept(Component.translatable(opt.getKeyTranslation()).withStyle(ChatFormatting.AQUA)

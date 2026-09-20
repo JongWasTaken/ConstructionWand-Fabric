@@ -29,8 +29,8 @@ public class ConstructionWandClient implements ClientModInitializer {
         Network.init();
         var cat = KeyMapping.Category.register(ConstructionWand.id("all"));
 
-        ConstructionWandClient.optKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.opt_key", InputConstants.Type.KEYSYM, 341, cat));
-        ConstructionWandClient.optionalMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.menu_key", InputConstants.Type.KEYSYM, 86, cat));
+        ConstructionWandClient.optKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.opt_key", InputConstants.Type.KEYBOARD, InputConstants.KEY_LCONTROL, cat));
+        ConstructionWandClient.optionalMenuKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.constructionwand.menu_key", InputConstants.Type.KEYBOARD, InputConstants.KEY_V, cat));
 
         ClientEvents.init();
     }

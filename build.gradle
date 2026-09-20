@@ -68,7 +68,7 @@ dependencies {
 	compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 	//compileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
 
-	compileOnly("mezz.jei:jei-26.1.2-fabric-api:${project.jei_version}")
+	compileOnly("mezz.jei:jei-26.3-fabric-api:${project.jei_version}")
 	//runtimeOnly("mezz.jei:jei-26.1.2-fabric:${project.jei_version}")
 
 	// polymer stuff

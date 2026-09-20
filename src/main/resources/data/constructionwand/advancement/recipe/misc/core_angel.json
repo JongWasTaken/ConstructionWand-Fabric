@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:feathers"
+            "items": "#c:feathers"
           }
         ]
       }
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "constructionwand:core_angel"
+        "recipes": "constructionwand:core_angel"
       }
     }
   },

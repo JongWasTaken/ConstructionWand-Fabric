@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "tag": "forge:storage_blocks/diamond"
+            "items": "#c:storage_blocks/diamond"
           }
         ]
       }
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "constructionwand:core_destruction"
+        "recipes": "constructionwand:core_destruction"
       }
     }
   },

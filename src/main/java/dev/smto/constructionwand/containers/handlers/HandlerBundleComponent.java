@@ -21,7 +21,7 @@ public class HandlerBundleComponent implements IContainerHandler {
         BundleContents bundle = current.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY);
         if (!bundle.isEmpty()) {
             int total = 0;
-            for (ItemStack containerStack : bundle.itemCopyStream().toList()) {
+            for (ItemStack containerStack : bundle.itemCopies().toList()) {
                 if (WandUtil.stackEquals(target, containerStack)) {
                     total += Math.max(0, containerStack.getCount());
                 }
@@ -33,7 +33,7 @@ public class HandlerBundleComponent implements IContainerHandler {
 
     @Override
     public int useItems(Player player, ItemStack target, ItemStack current, int count) {
-        var items = new ArrayList<>(current.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY).itemCopyStream().toList());
+        var items = new ArrayList<>(current.getOrDefault(DataComponents.BUNDLE_CONTENTS, BundleContents.EMPTY).itemCopies().toList());
         if (!items.isEmpty()) {
             for (int i = 0; i < items.size(); i++) {
                 ItemStack handlerStack = items.get(i);

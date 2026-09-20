@@ -17,7 +17,7 @@ public class HandlerContainerComponent implements IContainerHandler {
     @Override
     public int countItems(Player player, ItemStack target, ItemStack current) {
         ItemContainerContents container = current.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        var items = NonNullList.withSize((int) container.allItemsCopyStream().count(), ItemStack.EMPTY);
+        var items = NonNullList.withSize((int) container.nonEmptyItemCopyStream().count(), ItemStack.EMPTY);
         container.copyInto(items);
         if (!items.isEmpty()) {
             int total = 0;
@@ -34,7 +34,7 @@ public class HandlerContainerComponent implements IContainerHandler {
     @Override
     public int useItems(Player player, ItemStack target, ItemStack current, int count) {
         ItemContainerContents container = current.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY);
-        var items = NonNullList.withSize((int) container.allItemsCopyStream().count(), ItemStack.EMPTY);
+        var items = NonNullList.withSize((int) container.nonEmptyItemCopyStream().count(), ItemStack.EMPTY);
         container.copyInto(items);
         if (!items.isEmpty()) {
             for (int i = 0; i < items.size(); i++) {
